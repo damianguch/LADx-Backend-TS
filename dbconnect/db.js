@@ -8,7 +8,7 @@ mongoose
     process.exit(1);
   });
 
-// Connection object to communicate with mongodb
+// Connection object to communicate with database
 const db = mongoose.connection;
 
 module.exports = db;
