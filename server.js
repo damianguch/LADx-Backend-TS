@@ -4,8 +4,17 @@ require('dotenv').config();
 const db = require('./dbconnect/db');
 const app = express();
 
+const servicesRoutes = require('./routes/servicesRoutes');
+
+// Middleware to parse the request body (JSON and URL-encoded)
 app.use(express.json());
+app.use(express.urlencoded({ extended: true }));
+
+// CORS middleware
 app.use(cors());
+
+// ROUTES
+app.use('/', servicesRoutes);
 
 const PORT = process.env.PORT || 5000;
 
