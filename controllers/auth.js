@@ -72,31 +72,43 @@ const SignUp = async (req, res) => {
       });
     }
 
-    const encrypt_password = await encryptPasswordWithBcrypt(data.password);
-    const verification_code = await EmailCode(6); // generate 6digit code
-    const save_data = {
-      fullname: data.fullname,
-      email: data.email,
-      country: data.country,
-      password: encrypt_password,
-      confirm_password: encrypt_password,
-      password_reset_link: '',
-      email_verification_code: verification_code,
-      is_email_verified: 0
-    };
+    const existingUser = await User.findOne({ email: data.email });
 
-    // Save the user
-    const newUser = new User(save_data);
-    await newUser.save();
+    if (existingUser) {
+      return res.status(400).json({
+        status: 'E00',
+        success: false,
+        message: 'Email already registered'
+      });
+    } else {
+      const encrypt_password = await encryptPasswordWithBcrypt(data.password);
+      const verification_code = await EmailCode(6); // generate 6 digit code
 
-    // log data
-    await createAppLog(JSON.stringify(save_data));
+      const save_data = {
+        fullname: data.fullname,
+        email: data.email,
+        country: data.country,
+        password: encrypt_password,
+        confirm_password: encrypt_password,
+        password_reset_link: '',
+        email_verification_code: verification_code,
+        is_email_verified: 0
+      };
 
-    return res.status(200).json({
-      status: '00',
-      success: true,
-      message: 'Check the code sent to your email address and type below'
-    });
+      // Save the user to the database
+      const newUser = new User(save_data);
+      await User.init();
+      await newUser.save();
+
+      // log data
+      await createAppLog(JSON.stringify(save_data));
+
+      return res.status(200).json({
+        status: '00',
+        success: true,
+        message: 'Check the code sent to your email address and type below'
+      });
+    }
   } catch (err) {
     await createAppLog(JSON.stringify(err));
     console.log(err);

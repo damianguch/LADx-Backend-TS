@@ -9,7 +9,6 @@ mongoose
   });
 
 // Connection object to communicate with mongodb
-// A refernce to the global default connection
 const db = mongoose.connection;
 
 module.exports = db;

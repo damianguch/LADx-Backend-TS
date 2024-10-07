@@ -7,14 +7,15 @@ const app = express();
 const servicesRoutes = require('./routes/servicesRoutes');
 
 // Middleware to parse the request body (JSON and URL-encoded)
+// The request body is parsed before the routes access it
 app.use(express.json());
 app.use(express.urlencoded({ extended: true }));
 
-// CORS middleware
+// CORS middleware(to handle cross-origin requests.)
 app.use(cors());
 
-// ROUTES
-app.use('/', servicesRoutes);
+// Routes Declarations
+app.use('/api/v1', servicesRoutes);
 
 const PORT = process.env.PORT || 5000;
 
