@@ -19,3 +19,21 @@ Time logged: (3:46:45 PM):-  Message: {"fullname":"Agatha Christie","email":"aga
 Time logged: (4:01:31 PM):-  Message: "Email can not be empty"
 Time logged: (4:02:51 PM):-  Message: {}
 Time logged: (4:04:16 PM):-  Message: {"fullname":"John Doe","email":"agatha@test.com","country":"Ghana","password":"$2b$10$qosR22DEe1ZzVQ2.n/VZQuoYrCPpNEKnvrW7BccmRoUFDMMY/71gy","confirm_password":"$2b$10$qosR22DEe1ZzVQ2.n/VZQuoYrCPpNEKnvrW7BccmRoUFDMMY/71gy","password_reset_link":"","email_verification_code":"439631","is_email_verified":0}
+Time logged: (5:09:20 PM):-  Message: Login information"gatha@test.com"
+Time logged: (5:09:20 PM):-  Message: Login not successful! User not found.
+Time logged: (5:11:56 PM):-  Message: Login information"agatha@test.com"
+Time logged: (5:11:56 PM):-  Message: Login not successful! Incorrect password.
+Time logged: (5:19:08 PM):-  Message: Login information"agatha@test.com"
+Time logged: (5:19:09 PM):-  Message: Incorrect email or password.
+Time logged: (5:19:22 PM):-  Message: Login information"Agatha@test.com"
+Time logged: (5:19:22 PM):-  Message: Login not successful! User not found.
+Time logged: (5:28:56 PM):-  Message: Login information"Agatha@test.com"
+Time logged: (5:28:57 PM):-  Message: Error: Cannot read properties of null (reading 'email')
+Time logged: (5:30:02 PM):-  Message: Login information"agatha@test.com"
+Time logged: (5:30:03 PM):-  Message: Incorrect password.
+Time logged: (5:31:16 PM):-  Message: Login information"Agatha@test.com"
+Time logged: (5:31:16 PM):-  Message: User not found!
+Time logged: (6:45:51 PM):-  Message: Login information"Agatha@test.com"
+Time logged: (6:45:51 PM):-  Message: This email is not registered
+Time logged: (6:46:05 PM):-  Message: Login information"agatha@test.com"
+Time logged: (6:46:06 PM):-  Message: Login success "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJlbWFpbCI6ImFnYXRoYUB0ZXN0LmNvbSIsImlhdCI6MTcyODMyMzE2Nn0.BPJ9mpsWOQz5hXHU_yfJZQv475Anznk_4aqZbLtNlSw"

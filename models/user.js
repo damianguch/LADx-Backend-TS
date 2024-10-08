@@ -24,6 +24,16 @@ const userSchema = new Schema({
     required: true
   },
 
+  state: {
+    type: String,
+    required: true
+  },
+
+  phone: {
+    type: Number,
+    required: true
+  },
+
   password: {
     type: String,
     required: true
@@ -43,6 +53,11 @@ const userSchema = new Schema({
   },
 
   is_email_verified: Number,
+
+  roles: {
+    type: Number,
+    default: 0
+  },
 
   created_at: {
     type: Date,

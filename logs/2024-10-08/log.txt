@@ -1,0 +1,5 @@
+Time logged: (1:04:18 AM):-  Message: Login information"agatha@test.com"
+Time logged: (1:04:19 AM):-  Message: Login success "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJlbWFpbCI6ImFnYXRoYUB0ZXN0LmNvbSIsImlhdCI6MTcyODM0NTg1OX0.wr_1cwLFNnfTD0xH0zDeGQ3TfLV3nX1Lkm6pxiS2zx4"
+Time logged: (5:13:15 AM):-  Message: "Full name is required"
+Time logged: (5:14:18 AM):-  Message: "State is required"
+Time logged: (8:29:35 AM):-  Message: {"fullname":"Orlando Lasus","email":"damian_oguche@yahoo.com","phone":"222555888","country":"USA","state":"California","password":"$2b$10$sip8zy87uyEtkExT8kqr1.rsO8YLZjyEvHBCMO0Y6dLO7a3/7.iNK","confirm_password":"$2b$10$sip8zy87uyEtkExT8kqr1.rsO8YLZjyEvHBCMO0Y6dLO7a3/7.iNK","password_reset_link":"","email_verification_code":"$2b$10$BGNaH0B2xU9eD.B6XKQSj.qs/Of5zrZNFZe5rgNUBmLTKF0Yik.Qe","is_email_verified":0,"roles":0}
