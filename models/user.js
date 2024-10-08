@@ -52,7 +52,10 @@ const userSchema = new Schema({
     type: String
   },
 
-  is_email_verified: Number,
+  is_email_verified: {
+    type: Number,
+    default: 0
+  },
 
   roles: {
     type: Number,

@@ -3,3 +3,26 @@ Time logged: (1:04:19 AM):-  Message: Login success "eyJhbGciOiJIUzI1NiIsInR5cCI
 Time logged: (5:13:15 AM):-  Message: "Full name is required"
 Time logged: (5:14:18 AM):-  Message: "State is required"
 Time logged: (8:29:35 AM):-  Message: {"fullname":"Orlando Lasus","email":"damian_oguche@yahoo.com","phone":"222555888","country":"USA","state":"California","password":"$2b$10$sip8zy87uyEtkExT8kqr1.rsO8YLZjyEvHBCMO0Y6dLO7a3/7.iNK","confirm_password":"$2b$10$sip8zy87uyEtkExT8kqr1.rsO8YLZjyEvHBCMO0Y6dLO7a3/7.iNK","password_reset_link":"","email_verification_code":"$2b$10$BGNaH0B2xU9eD.B6XKQSj.qs/Of5zrZNFZe5rgNUBmLTKF0Yik.Qe","is_email_verified":0,"roles":0}
+Time logged: (11:09:16 AM):-  Message: {"code":"ETIMEDOUT","command":"CONN"}
+Time logged: (11:12:01 AM):-  Message: {"code":"ETIMEDOUT","command":"CONN"}
+Time logged: (11:21:20 AM):-  Message: {"code":"ETIMEDOUT","command":"CONN"}
+Time logged: (11:26:34 AM):-  Message: {"code":"ETIMEDOUT","command":"CONN"}
+Time logged: (12:02:58 PM):-  Message: {"code":"ETIMEDOUT","command":"CONN"}
+Time logged: (12:09:21 PM):-  Message: {}
+Time logged: (12:09:30 PM):-  Message: {}
+Time logged: (12:10:24 PM):-  Message: {}
+Time logged: (12:11:13 PM):-  Message: {}
+Time logged: (12:11:55 PM):-  Message: {}
+Time logged: (12:13:20 PM):-  Message: {}
+Time logged: (12:14:56 PM):-  Message: {}
+Time logged: (12:16:26 PM):-  Message: {}
+Time logged: (12:17:44 PM):-  Message: {}
+Time logged: (12:18:05 PM):-  Message: {}
+Time logged: (12:19:13 PM):-  Message: {}
+Time logged: (12:19:29 PM):-  Message: {}
+Time logged: (12:22:03 PM):-  Message: {}
+Time logged: (12:23:18 PM):-  Message: {}
+Time logged: (12:38:35 PM):-  Message: {}
+Time logged: (12:51:10 PM):-  Message: {"fullname":"Larry Oslo","email":"damian_oguche@yahoo.com","phone":"222555888","country":"Germany","state":"Berlin","password":"$2b$10$BdnkV.XLYkS9a1F7NEciH.eFeWG2u0zQS3OllsyuLv5vKquNw9fmy","confirm_password":"$2b$10$BdnkV.XLYkS9a1F7NEciH.eFeWG2u0zQS3OllsyuLv5vKquNw9fmy","password_reset_link":"","email_verification_code":"$2b$10$Phk77DV1x6MBCJ5GChi3o.F9YO1qwW48QbwIPd.Jri40rm1RTgiIG","is_email_verified":0,"roles":0}
+Time logged: (12:56:23 PM):-  Message: {"code":"ETIMEDOUT","command":"CONN"}
+Time logged: (1:10:24 PM):-  Message: {"fullname":"Larry Oslo","email":"damian_oguche@yahoo.com","phone":"222555888","country":"Germany","state":"Berlin","password":"$2b$10$U6GDjCrwdMCBZspSl7QDu.13oNiV1t/TVft9rF99dFj6diuFnqUZS","confirm_password":"$2b$10$U6GDjCrwdMCBZspSl7QDu.13oNiV1t/TVft9rF99dFj6diuFnqUZS","password_reset_link":"","email_verification_code":"$2b$10$uSLRSPCWVphq7kqnK06NkuFQ5Pl8Q95bpTPsC23QV/v2Kldq1pxG6","is_email_verified":0,"roles":0}

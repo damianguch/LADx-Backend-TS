@@ -2,17 +2,31 @@ const User = require('../models/user');
 const bcrypt = require('bcrypt');
 const { generateToken } = require('../utils/jwt');
 const LogFile = require('../models/LogFile');
-const jwt = require('jsonwebtoken');
-const axios = require('axios');
+const { EmailCode } = require('../utils/randomNumbers');
 const { createAppLog } = require('../utils/createLog');
 const { encryptPasswordWithBcrypt } = require('../utils/passwordEncrypt');
+const { sendOTPEmail } = require('../utils/emailService');
 
-// User Registration
-const SignUp = async (req, res) => {
+let otpStore = {}; // In-memory storage of OTPs
+let userInfo = {};
+
+// Request OTP On Signup
+const requestOTP = async (req, res) => {
+  const otp = await EmailCode(6); // generate 6 digit code
+  const hashedOTP = await bcrypt.hash(otp, 10); // Store hashed OTP for security
+  otpStore.email = hashedOTP; // Save OTP for verification later
+
   try {
     // get request body
-    const { fullname, email, country, state, password, confirm_password } =
-      req.body;
+    const {
+      fullname,
+      email,
+      country,
+      state,
+      phone,
+      password,
+      confirm_password
+    } = req.body;
 
     // data validation
     if (!fullname) {
@@ -30,6 +44,15 @@ const SignUp = async (req, res) => {
         status: 'E00',
         success: false,
         message: 'Email is required'
+      });
+    }
+
+    if (!phone) {
+      await createAppLog(JSON.stringify('Phone number is required')); // log error
+      return res.status(400).json({
+        status: 'E00',
+        success: false,
+        message: 'Phone number is required'
       });
     }
 
@@ -88,17 +111,56 @@ const SignUp = async (req, res) => {
       });
     }
 
-    const encrypt_password = await encryptPasswordWithBcrypt(password);
-
-    const userData = {
+    userInfo = {
       fullname,
       email,
+      phone,
       country,
       state,
+      password,
+      confirm_password
+    };
+
+    await sendOTPEmail(email, otp);
+    return res
+      .status(200)
+      .json({ message: 'OTP sent successfully', otp, userInfo });
+  } catch (error) {
+    createAppLog(JSON.stringify(error));
+    return res.status(500).json({ message: 'Error sending OTP', error });
+  }
+};
+
+// Verify OTP
+const verifyOTP = async (req, res) => {
+  const { otp } = req.body;
+
+  if (!otp) {
+    return res.status(400).json({ message: 'OTP is required' });
+  }
+
+  const storedOTP = otpStore['email'];
+
+  if (!storedOTP) {
+    return res.status(400).json({ message: 'OTP not found for this email' });
+  }
+
+  const isMatch = await bcrypt.compare(otp, storedOTP);
+
+  if (isMatch) {
+    const token = generateToken({ email: userInfo.email });
+    const encrypt_password = await encryptPasswordWithBcrypt(userInfo.password);
+
+    const userData = {
+      fullname: userInfo.fullname,
+      email: userInfo.email,
+      phone: userInfo.phone,
+      country: userInfo.country,
+      state: userInfo.state,
       password: encrypt_password,
       confirm_password: encrypt_password,
       password_reset_link: '',
-      email_verification_code: hashedOTP,
+      email_verification_code: storedOTP,
       is_email_verified: 0,
       roles: 0
     };
@@ -108,24 +170,139 @@ const SignUp = async (req, res) => {
     await User.init();
     await newUser.save();
 
+    // Remove OTP after successful verification
+    delete otpStore['email'];
+
     // log data
     await createAppLog(JSON.stringify(userData));
 
-    return res.status(200).json({
-      status: '00',
-      success: true,
-      message: 'Check the code sent to your email address and type below'
-    });
-  } catch (err) {
-    await createAppLog(JSON.stringify(err));
-    console.log(err);
-    res.status(200).json({
-      status: 'E00',
-      success: false,
-      message: 'Error'
-    });
+    return res
+      .status(200)
+      .json({ message: 'OTP verified successfully', token });
+  } else {
+    return res.status(400).json({ message: 'Invalid OTP' });
   }
 };
+
+// User Registration
+// const SignUp = async (req, res) => {
+//   try {
+//     // get request body
+//     const { fullname, email, country, state, password, confirm_password } =
+//       req.body;
+
+//     // data validation
+//     if (!fullname) {
+//       await createAppLog(JSON.stringify('Full name is required')); // log error
+//       return res.status(200).json({
+//         status: 'E00',
+//         success: false,
+//         message: 'Full name is required'
+//       });
+//     }
+
+//     if (!email) {
+//       await createAppLog(JSON.stringify('Email is required')); // log error
+//       return res.status(400).json({
+//         status: 'E00',
+//         success: false,
+//         message: 'Email is required'
+//       });
+//     }
+
+//     if (!country) {
+//       await createAppLog(JSON.stringify('Country is required')); // log error
+//       return res.status(400).json({
+//         status: 'E00',
+//         success: false,
+//         message: 'Country is required'
+//       });
+//     }
+
+//     if (!state) {
+//       await createAppLog(JSON.stringify('State is required')); // log error
+//       return res.status(400).json({
+//         status: 'E00',
+//         success: false,
+//         message: 'State is required'
+//       });
+//     }
+
+//     if (!password) {
+//       await createAppLog(JSON.stringify('Password is required')); // log error
+//       return res.status(400).json({
+//         status: 'E00',
+//         success: false,
+//         message: 'Password is required'
+//       });
+//     }
+
+//     if (!confirm_password) {
+//       await createAppLog(JSON.stringify('Confirm password is required')); // log error
+//       return res.status(400).json({
+//         status: 'E00',
+//         success: false,
+//         message: 'Confirm password is required'
+//       });
+//     }
+
+//     if (password != confirm_password) {
+//       await createAppLog(JSON.stringify('Password does not match!')); // log error
+//       return res.status(400).json({
+//         status: 'E00',
+//         success: false,
+//         message: 'Password does not match!'
+//       });
+//     }
+
+//     const existingUser = await User.findOne({ email });
+
+//     if (existingUser) {
+//       return res.status(400).json({
+//         status: 'E00',
+//         success: false,
+//         message: 'Email already registered'
+//       });
+//     }
+
+//     const encrypt_password = await encryptPasswordWithBcrypt(password);
+
+//     const userData = {
+//       fullname,
+//       email,
+//       country,
+//       state,
+//       password: encrypt_password,
+//       confirm_password: encrypt_password,
+//       password_reset_link: '',
+//       email_verification_code: hashedOTP,
+//       is_email_verified: 0,
+//       roles: 0
+//     };
+
+//     // Save the user to the database
+//     const newUser = new User(userData);
+//     await User.init();
+//     await newUser.save();
+
+//     // log data
+//     await createAppLog(JSON.stringify(userData));
+
+//     return res.status(200).json({
+//       status: '00',
+//       success: true,
+//       message: 'Check the code sent to your email address and type below'
+//     });
+//   } catch (err) {
+//     await createAppLog(JSON.stringify(err));
+//     console.log(err);
+//     res.status(200).json({
+//       status: 'E00',
+//       success: false,
+//       message: 'Error'
+//     });
+//   }
+// };
 
 // User Login
 const Login = async (req, res) => {
@@ -235,6 +412,8 @@ const Login = async (req, res) => {
 };
 
 module.exports = {
-  SignUp,
+  // SignUp,
+  requestOTP,
+  verifyOTP,
   Login
 };
