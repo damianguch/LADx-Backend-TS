@@ -52,3 +52,24 @@ Time logged: (9:08:47 AM):-  Message: {"success":true,"message":"OTP sent to you
 Time logged: (9:09:54 AM):-  Message: "OTP verified successfully!"
 Time logged: (9:17:53 AM):-  Message: Login information"agatha@test.com"
 Time logged: (9:17:53 AM):-  Message: Login success "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJlbWFpbCI6ImFnYXRoYUB0ZXN0LmNvbSIsImlhdCI6MTcyODQ2MTg3MywiZXhwIjoxNzI4NDY1NDczfQ.U2QLBSfj2IuuggypK6PipxrXjKjxUqXesP4vmzVt5HU"
+Time logged: (10:55:36 AM):-  Message: "OTP sent to your email"
+Time logged: (10:55:36 AM):-  Message: {"success":true,"message":"OTP sent to your email"}
+Time logged: (10:59:14 AM):-  Message: "OTP verified successfully!"
+Time logged: (11:00:29 AM):-  Message: "OTP sent to your email"
+Time logged: (11:00:29 AM):-  Message: {"success":true,"message":"OTP sent to your email"}
+Time logged: (11:02:05 AM):-  Message: "Invalid OTP"
+Time logged: (11:02:14 AM):-  Message: "OTP verified successfully!"
+Time logged: (11:31:02 AM):-  Message: "OTP sent to your email"
+Time logged: (11:31:02 AM):-  Message: {"error":"user is not defined"}
+Time logged: (11:31:02 AM):-  Message: "User created successfully"
+Time logged: (11:35:13 AM):-  Message: "OTP sent to your email"
+Time logged: (11:35:13 AM):-  Message: {"error":"user is not defined"}
+Time logged: (11:35:13 AM):-  Message: "User created successfully"
+Time logged: (2:38:56 PM):-  Message: "Email already registered"
+Time logged: (2:41:45 PM):-  Message: Login information"doguche@mail.com"
+Time logged: (2:41:46 PM):-  Message: Login success "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJlbWFpbCI6ImRvZ3VjaGVAbWFpbC5jb20iLCJpYXQiOjE3Mjg0ODEzMDYsImV4cCI6MTcyODQ4NDkwNn0.BVdI_tTR3Qopdc2qq9p4dRDtRbvGgsFtp-E2GkLBg6U"
+Time logged: (2:43:04 PM):-  Message: "OTP sent to your email"
+Time logged: (2:43:04 PM):-  Message: "User created successfully"
+Time logged: (2:43:04 PM):-  Message: {"error":"user is not defined"}
+Time logged: (2:45:49 PM):-  Message: "OTP sent to your email"
+Time logged: (2:45:49 PM):-  Message: "User created successfully"

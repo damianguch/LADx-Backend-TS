@@ -24,7 +24,7 @@ const sendOTPEmail = async (email, otp) => {
   try {
     await transporter.sendMail(mailOptions);
     await createAppLog(JSON.stringify('OTP sent to your email'));
-    return { success: true, message: 'OTP sent to your email' };
+    return { message: 'OTP sent to your email' };
   } catch (error) {
     await createAppLog(JSON.stringify('Error sending OTP'));
     throw new Error('Error sending OTP');

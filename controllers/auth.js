@@ -7,6 +7,7 @@ const { createAppLog } = require('../utils/createLog');
 const { encryptPasswordWithBcrypt } = require('../utils/passwordEncrypt');
 const { sendOTPEmail } = require('../utils/emailService');
 const { isEmail, escape } = require('validator');
+const { currentDate } = require('../utils/date');
 
 let otpStore = {}; // In-memory storage of OTPs
 let emailStore = {}; // Im-memory storage of email
@@ -139,7 +140,16 @@ const SignUp = async (req, res) => {
     await newUser.save();
 
     const result = await sendOTPEmail(email, otp);
-    await createAppLog(JSON.stringify(result));
+    await createAppLog(JSON.stringify('User created successfully'));
+
+    // Log the Sign Up activity
+    const log = new LogFile({
+      email: newUser.email,
+      ActivityName: 'New user created with credential: ' + newUser.email,
+      AddedOn: currentDate
+    });
+
+    await log.save();
 
     return res
       .status(201)
@@ -182,6 +192,16 @@ const verifyOTP = async (req, res) => {
 
       // log data
       await createAppLog(JSON.stringify('OTP verified successfully!'));
+
+      // Log the verification activity
+      const log = new LogFile({
+        email: user.email,
+        ActivityName: 'User Verified OTP',
+        AddedOn: currentDate
+      });
+
+      await log.save();
+
       return res.status(200).json({ message: 'OTP verified successfully!' });
     } else {
       await createAppLog(JSON.stringify('Invalid OTP'));
@@ -247,36 +267,11 @@ const Login = async (req, res) => {
     await createAppLog('Login success ' + JSON.stringify(token));
 
     // Log the login activity
-    const today = new Date();
-    const currentDate =
-      today.toISOString().slice(0, 10) +
-      ' ' +
-      today.toISOString().slice(11, 19) +
-      'Hrs';
-
     const log = new LogFile({
       email: user.email,
-      UserType: 1,
       ActivityName: 'Logged into the system with credential: ' + user.email,
       AddedOn: currentDate
     });
-
-    let user_status = '';
-    let userid = user.id;
-    //let userName = user.;
-    let toplevelId = null;
-    let userType = user.UserType;
-    let sponsorId = user.SponsorID;
-
-    if (userType == 1) {
-      toplevelId = user.id;
-    } else if (userType == 2) {
-      toplevelId = user.toplevelEmail;
-    } else if (userType == 3) {
-      toplevelId = user.toplevelEmail;
-    } else if (userType == 4) {
-      toplevelId = user.toplevelEmail;
-    }
 
     await log.save();
 
@@ -285,9 +280,7 @@ const Login = async (req, res) => {
       success: true,
       message: 'Login successful!',
       token: token,
-      email: user.email,
-      user_type: userType,
-      sponsorId: sponsorId
+      email: user.email
     });
   } catch (err) {
     await createAppLog('Error: ' + err.message);
