@@ -1,0 +1,18 @@
+Time logged: (2:00:25 AM):-  Message: {}
+Time logged: (2:07:33 AM):-  Message: {}
+Time logged: (2:57:35 AM):-  Message: {}
+Time logged: (3:00:01 AM):-  Message: {"errors":{"confirm_password":{"name":"ValidatorError","message":"Path `confirm_password` is required.","properties":{"message":"Path `confirm_password` is required.","type":"required","path":"confirm_password"},"kind":"required","path":"confirm_password"}},"_message":"User validation failed","name":"ValidationError","message":"User validation failed: confirm_password: Path `confirm_password` is required."}
+Time logged: (3:02:56 AM):-  Message: "Confirm password is required"
+Time logged: (3:17:33 AM):-  Message: {}
+Time logged: (3:25:00 AM):-  Message: {"errno":-3008,"code":"EDNS","syscall":"getaddrinfo","hostname":"sandbox.smtp.mailtrap.i","command":"CONN"}
+Time logged: (3:25:00 AM):-  Message: {}
+Time logged: (3:27:53 AM):-  Message: {"errno":-3008,"code":"EDNS","syscall":"getaddrinfo","hostname":"sandbox.smtp.mailtrap.i","command":"CONN"}
+Time logged: (3:27:53 AM):-  Message: {}
+Time logged: (3:34:55 AM):-  Message: {}
+Time logged: (3:36:52 AM):-  Message: "OTP sent to your email"
+Time logged: (3:36:52 AM):-  Message: {"success":true,"message":"OTP sent to your email"}
+Time logged: (3:42:14 AM):-  Message: "Email already registered"
+Time logged: (3:43:57 AM):-  Message: {"errno":-3008,"code":"EDNS","syscall":"getaddrinfo","hostname":"sandbox.smtp.mailtrap.i","command":"CONN"}
+Time logged: (3:43:57 AM):-  Message: {}
+Time logged: (3:45:10 AM):-  Message: "Error sending OTP"
+Time logged: (3:45:10 AM):-  Message: {}

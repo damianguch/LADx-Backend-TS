@@ -26,3 +26,19 @@ Time logged: (12:38:35 PM):-  Message: {}
 Time logged: (12:51:10 PM):-  Message: {"fullname":"Larry Oslo","email":"damian_oguche@yahoo.com","phone":"222555888","country":"Germany","state":"Berlin","password":"$2b$10$BdnkV.XLYkS9a1F7NEciH.eFeWG2u0zQS3OllsyuLv5vKquNw9fmy","confirm_password":"$2b$10$BdnkV.XLYkS9a1F7NEciH.eFeWG2u0zQS3OllsyuLv5vKquNw9fmy","password_reset_link":"","email_verification_code":"$2b$10$Phk77DV1x6MBCJ5GChi3o.F9YO1qwW48QbwIPd.Jri40rm1RTgiIG","is_email_verified":0,"roles":0}
 Time logged: (12:56:23 PM):-  Message: {"code":"ETIMEDOUT","command":"CONN"}
 Time logged: (1:10:24 PM):-  Message: {"fullname":"Larry Oslo","email":"damian_oguche@yahoo.com","phone":"222555888","country":"Germany","state":"Berlin","password":"$2b$10$U6GDjCrwdMCBZspSl7QDu.13oNiV1t/TVft9rF99dFj6diuFnqUZS","confirm_password":"$2b$10$U6GDjCrwdMCBZspSl7QDu.13oNiV1t/TVft9rF99dFj6diuFnqUZS","password_reset_link":"","email_verification_code":"$2b$10$uSLRSPCWVphq7kqnK06NkuFQ5Pl8Q95bpTPsC23QV/v2Kldq1pxG6","is_email_verified":0,"roles":0}
+Time logged: (1:28:16 PM):-  Message: {}
+Time logged: (1:28:27 PM):-  Message: {}
+Time logged: (1:30:58 PM):-  Message: {}
+Time logged: (1:32:02 PM):-  Message: {}
+Time logged: (1:34:14 PM):-  Message: {}
+Time logged: (1:35:22 PM):-  Message: {}
+Time logged: (1:37:23 PM):-  Message: {}
+Time logged: (1:41:27 PM):-  Message: {}
+Time logged: (1:43:44 PM):-  Message: {}
+Time logged: (1:52:09 PM):-  Message: {"code":"ETIMEDOUT","command":"CONN"}
+Time logged: (1:59:01 PM):-  Message: {}
+Time logged: (2:04:57 PM):-  Message: {}
+Time logged: (2:26:25 PM):-  Message: {}
+Time logged: (2:37:50 PM):-  Message: {}
+Time logged: (2:39:00 PM):-  Message: {}
+Time logged: (5:09:14 PM):-  Message: {}

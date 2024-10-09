@@ -39,10 +39,7 @@ const userSchema = new Schema({
     required: true
   },
 
-  confirm_password: {
-    type: String,
-    required: true
-  },
+  confirm_password: String,
 
   password_reset_link: {
     type: String

@@ -1,8 +1,9 @@
 const nodemailer = require('nodemailer');
+const { createAppLog } = require('./createLog');
 
 // Send OTP via Email
-const sendOTPEmail = (email, otp) => {
-  let transporter = nodemailer.createTransport({
+const sendOTPEmail = async (email, otp) => {
+  const transporter = nodemailer.createTransport({
     port: process.env.EMAIL_PORT,
     host: process.env.EMAIL_HOST,
     auth: {
@@ -19,7 +20,14 @@ const sendOTPEmail = (email, otp) => {
     text: `Your OTP code is ${otp}`
   };
 
-  return transporter.sendMail(mailOptions);
+  try {
+    await transporter.sendMail(mailOptions);
+    await createAppLog(JSON.stringify('OTP sent to your email'));
+    return { success: true, message: 'OTP sent to your email' };
+  } catch (error) {
+    await createAppLog(JSON.stringify('Error sending OTP'));
+    throw new Error('Error sending OTP');
+  }
 };
 
 module.exports = { sendOTPEmail };
