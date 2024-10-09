@@ -11,14 +11,13 @@ const { isEmail, escape } = require('validator');
 let otpStore = {}; // In-memory storage of OTPs
 let emailStore = {}; // Im-memory storage of email
 
-// Signup Route/Request OTP
+// SignUp/Request OTP Route
 const SignUp = async (req, res) => {
   // get request body
   const { fullname, email, country, state, phone, password, confirm_password } =
     req.body;
 
   // data validation
-
   if (!fullname) {
     await createAppLog(JSON.stringify('Full name is required')); // log error
     return res.status(400).json({

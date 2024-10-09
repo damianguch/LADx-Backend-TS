@@ -43,3 +43,12 @@ Time logged: (6:21:07 AM):-  Message: {"success":true,"message":"OTP sent to you
 Time logged: (6:22:05 AM):-  Message: "OTP verified successfully!"
 Time logged: (6:22:55 AM):-  Message: {"error":"read ECONNRESET"}
 Time logged: (6:23:11 AM):-  Message: "Email already registered"
+Time logged: (7:11:25 AM):-  Message: "Email already registered"
+Time logged: (8:39:20 AM):-  Message: "Email already registered"
+Time logged: (8:43:24 AM):-  Message: "Email already registered"
+Time logged: (9:06:47 AM):-  Message: "Email already registered"
+Time logged: (9:08:47 AM):-  Message: "OTP sent to your email"
+Time logged: (9:08:47 AM):-  Message: {"success":true,"message":"OTP sent to your email"}
+Time logged: (9:09:54 AM):-  Message: "OTP verified successfully!"
+Time logged: (9:17:53 AM):-  Message: Login information"agatha@test.com"
+Time logged: (9:17:53 AM):-  Message: Login success "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJlbWFpbCI6ImFnYXRoYUB0ZXN0LmNvbSIsImlhdCI6MTcyODQ2MTg3MywiZXhwIjoxNzI4NDY1NDczfQ.U2QLBSfj2IuuggypK6PipxrXjKjxUqXesP4vmzVt5HU"
