@@ -146,7 +146,7 @@ const SignUp = async (req, res) => {
       .status(201)
       .json({ message: 'User created successfully', result });
   } catch (error) {
-    createAppLog(JSON.stringify(error));
+    createAppLog(JSON.stringify({ error: error.message }));
     return res.status(500).json({ error: error.message });
   }
 };
