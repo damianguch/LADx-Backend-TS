@@ -13,6 +13,7 @@ const sendOTPEmail = async (email, otp) => {
     secure: false
   });
 
+  // Send OTP
   const mailOptions = {
     from: 'no-reply@ladX.com',
     to: email,

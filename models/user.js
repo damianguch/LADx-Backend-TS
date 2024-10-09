@@ -41,13 +41,9 @@ const userSchema = new Schema({
 
   confirm_password: String,
 
-  password_reset_link: {
-    type: String
-  },
+  password_reset_link: String,
 
-  email_verification_code: {
-    type: String
-  },
+  email_verification_code: String,
 
   is_email_verified: {
     type: Number,
