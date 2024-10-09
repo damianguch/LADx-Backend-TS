@@ -73,3 +73,7 @@ Time logged: (2:43:04 PM):-  Message: "User created successfully"
 Time logged: (2:43:04 PM):-  Message: {"error":"user is not defined"}
 Time logged: (2:45:49 PM):-  Message: "OTP sent to your email"
 Time logged: (2:45:49 PM):-  Message: "User created successfully"
+Time logged: (3:07:51 PM):-  Message: "OTP sent to your email"
+Time logged: (3:07:51 PM):-  Message: "User created successfully"
+Time logged: (3:08:16 PM):-  Message: "Invalid OTP"
+Time logged: (3:08:24 PM):-  Message: "OTP verified successfully!"

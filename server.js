@@ -60,6 +60,10 @@ const options = {
   cert: fs.readFileSync(cert)
 };
 
+app.get('/healthCheck', (req, res) => {
+  return res.status(200).json({ Message: 'APIs are working...' });
+});
+
 // Create the HTTPS server
 const httpsServer = https.createServer(options, app, (req, res) => {
   res.writeHead(200);
