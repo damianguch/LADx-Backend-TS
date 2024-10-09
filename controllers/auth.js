@@ -159,33 +159,38 @@ const verifyOTP = async (req, res) => {
     return res.status(400).json({ message: 'OTP is required' });
   }
 
-  const storedOTP = otpStore['email'];
-  const storedEmail = email['email'];
-
-  if (!storedOTP) {
-    return res.status(400).json({ message: 'OTP not found ' });
-  }
-
-  const user = await User.findOne({ storedEmail });
-
   try {
+    const storedOTP = otpStore['email'];
+    const storedEmail = emailStore['email'];
+
+    const user = await User.findOne({ email: storedEmail });
+    if (!user) {
+      return res.status(400).json({ message: 'User not found' });
+    }
+
+    if (!storedOTP) {
+      return res.status(400).json({ message: 'OTP not found ' });
+    }
+
     const isMatch = await bcrypt.compare(otp, storedOTP);
     if (isMatch) {
       user.is_email_verified = 1;
-      // Remove OTP after successful verification
+      await user.save();
+
+      // Remove OTP/email after successful verification
       delete otpStore['email'];
+      delete emailStore['email'];
 
       // log data
       await createAppLog(JSON.stringify('OTP verified successfully!'));
-
       return res.status(200).json({ message: 'OTP verified successfully!' });
     } else {
-      await createAppLog(JSON.stringify('Invalid OTO'));
+      await createAppLog(JSON.stringify('Invalid OTP'));
       return res.status(400).json({ message: 'Invalid OTP' });
     }
   } catch (error) {
     createAppLog(JSON.stringify('OTP Verification Error!'));
-    res.status(500).json({ message: 'Internal Server Error!' });
+    return res.status(500).json({ message: 'Internal Server Error!' });
   }
 };
 

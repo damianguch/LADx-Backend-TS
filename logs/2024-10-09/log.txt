@@ -16,3 +16,17 @@ Time logged: (3:43:57 AM):-  Message: {"errno":-3008,"code":"EDNS","syscall":"ge
 Time logged: (3:43:57 AM):-  Message: {}
 Time logged: (3:45:10 AM):-  Message: "Error sending OTP"
 Time logged: (3:45:10 AM):-  Message: {}
+Time logged: (5:00:44 AM):-  Message: "OTP sent to your email"
+Time logged: (5:00:44 AM):-  Message: {"success":true,"message":"OTP sent to your email"}
+Time logged: (5:04:03 AM):-  Message: "OTP sent to your email"
+Time logged: (5:04:03 AM):-  Message: {"success":true,"message":"OTP sent to your email"}
+Time logged: (5:04:38 AM):-  Message: "OTP Verification Error!"
+Time logged: (5:10:14 AM):-  Message: "OTP sent to your email"
+Time logged: (5:10:14 AM):-  Message: {"success":true,"message":"OTP sent to your email"}
+Time logged: (5:11:02 AM):-  Message: "OTP Verification Error!"
+Time logged: (5:20:54 AM):-  Message: "OTP sent to your email"
+Time logged: (5:20:54 AM):-  Message: {"success":true,"message":"OTP sent to your email"}
+Time logged: (5:21:29 AM):-  Message: "Invalid OTP"
+Time logged: (5:41:30 AM):-  Message: "OTP sent to your email"
+Time logged: (5:41:30 AM):-  Message: {"success":true,"message":"OTP sent to your email"}
+Time logged: (5:41:58 AM):-  Message: "OTP verified successfully!"
