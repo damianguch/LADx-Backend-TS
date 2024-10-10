@@ -12,13 +12,13 @@ const csrfProtection = csrf({
 });
 
 // Apply CSRF protection globally but exclude specific routes
-router.use((req, res, next) => {
-  if (req.method === 'GET' || req.path === '/login' || req.path === '/logout') {
-    return next(); // Skip CSRF protection for these routes
-  }
+// router.use((req, res, next) => {
+//   if (req.method === 'GET' || req.path === '/login' || req.path === '/logout') {
+//     return next(); // Skip CSRF protection for these routes
+//   }
 
-  csrfProtection(req, res, next); // Apply CSRF protection
-});
+//   csrfProtection(req, res, next); // Apply CSRF protection
+// });
 
 const { Login, SignUp, verifyOTP, Logout } = require('../controllers/auth');
 const { UpdateProfile } = require('../controllers/userProfile');

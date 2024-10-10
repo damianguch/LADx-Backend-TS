@@ -39,3 +39,23 @@ Time logged: (5:01:36 PM):-  Message: No token found!
 Time logged: (5:17:31 PM):-  Message: Login information"doguche@mail.com"
 Time logged: (5:17:31 PM):-  Message: User logged in successfully: "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJlbWFpbCI6ImRvZ3VjaGVAbWFpbC5jb20iLCJpYXQiOjE3Mjg1NzcwNTEsImV4cCI6MTcyODU4MDY1MX0.JwNnYhLZ-I5bYi46hwd3tBIoBobB6rSnJMDaF6jtLVg"
 Time logged: (5:24:21 PM):-  Message: User doguche@mail.com logged out!
+Time logged: (5:50:13 PM):-  Message: ReferenceError: currentDate is not defined
+Time logged: (5:51:21 PM):-  Message: CastError: Cast to ObjectId failed for value "6706543830437af5872e9c1" (type string) at path "_id" for model "User"
+Time logged: (5:53:22 PM):-  Message: Profile Updated Successfully!
+Time logged: (6:01:50 PM):-  Message: TypeError: Cannot read properties of undefined (reading 'fullname')
+Time logged: (6:03:10 PM):-  Message: Profile Updated Successfully!
+Time logged: (6:04:46 PM):-  Message: CastError: Cast to ObjectId failed for value "6706543830437af5872e9c1" (type string) at path "_id" for model "User"
+Time logged: (6:05:55 PM):-  Message: Profile Updated Successfully!
+Time logged: (6:12:23 PM):-  Message: CastError: Cast to ObjectId failed for value "6706543830437af5872e9c1" (type string) at path "_id" for model "User"
+    at SchemaObjectId.cast (/home/damian/LADx-Backend/node_modules/mongoose/lib/schema/objectId.js:250:11)
+    at SchemaType.applySetters (/home/damian/LADx-Backend/node_modules/mongoose/lib/schemaType.js:1236:12)
+    at SchemaType.castForQuery (/home/damian/LADx-Backend/node_modules/mongoose/lib/schemaType.js:1653:17)
+    at cast (/home/damian/LADx-Backend/node_modules/mongoose/lib/cast.js:389:32)
+    at Query.cast (/home/damian/LADx-Backend/node_modules/mongoose/lib/query.js:4868:12)
+    at Query._castConditions (/home/damian/LADx-Backend/node_modules/mongoose/lib/query.js:2265:10)
+    at model.Query._findOne (/home/damian/LADx-Backend/node_modules/mongoose/lib/query.js:2589:8)
+    at model.Query.exec (/home/damian/LADx-Backend/node_modules/mongoose/lib/query.js:4412:80)
+    at process.processTicksAndRejections (node:internal/process/task_queues:95:5)
+    at async UpdateProfile (/home/damian/LADx-Backend/controllers/userProfile.js:13:18)
+Time logged: (6:18:38 PM):-  Message: mongoose is not defined
+Time logged: (6:26:10 PM):-  Message: Profile Updated Successfully!
