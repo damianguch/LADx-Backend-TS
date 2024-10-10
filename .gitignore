@@ -2,3 +2,7 @@ node_modules
 .env
 valid.txt
 package-lock.json
+checks.js
+SSL/certificate.pem
+SSL/certrequest.csr
+SSL/privatekey.pem

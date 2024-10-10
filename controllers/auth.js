@@ -1,5 +1,6 @@
 const User = require('../models/user');
 const bcrypt = require('bcrypt');
+const jwt = require('jsonwebtoken');
 const { generateToken } = require('../utils/jwt');
 const LogFile = require('../models/LogFile');
 const { EmailCode } = require('../utils/randomNumbers');
@@ -8,6 +9,7 @@ const { encryptPasswordWithBcrypt } = require('../utils/passwordEncrypt');
 const { sendOTPEmail } = require('../utils/emailService');
 const { isEmail, escape } = require('validator');
 const { currentDate } = require('../utils/date');
+const crypto = require('crypto');
 
 let otpStore = {}; // In-memory storage of OTPs
 let emailStore = {}; // Im-memory storage of email
@@ -151,9 +153,11 @@ const SignUp = async (req, res) => {
 
     await log.save();
 
-    return res
-      .status(201)
-      .json({ message: 'User created successfully', result });
+    return res.status(201).json({
+      message: 'User created successfully',
+      result,
+      csrfToken: req.csrfToken()
+    });
   } catch (error) {
     createAppLog(JSON.stringify({ error: error.message }));
     return res.status(500).json({ error: error.message });
@@ -221,24 +225,24 @@ const Login = async (req, res) => {
     await createAppLog('Login information' + JSON.stringify(email));
 
     if (!email) {
-      await createAppLog('Email cannot be empty!');
+      await createAppLog('Email Required!');
       return res.status(400).json({
         status: 'E00',
         success: false,
-        message: 'Email cannot be empty!'
+        message: 'Email Required!'
       });
     }
 
     if (!password) {
-      await createAppLog('Password cannot be empty!');
+      await createAppLog('Password Required!');
       return res.status(400).json({
         status: 'E00',
         success: false,
-        message: 'Password cannot be empty!'
+        message: 'Password Required!'
       });
     }
 
-    // Verify user login information
+    // Verify user login info(Find user by email)
     const user = await User.findOne({ email });
 
     if (!user) {
@@ -255,16 +259,17 @@ const Login = async (req, res) => {
 
     if (!isPasswordValid && user.email) {
       await createAppLog('Wrong password.');
-      return res.status(401).json({
+      return res.status(400).json({
         status: 'E00',
         success: false,
         message: 'Wrong password.'
       });
     }
 
-    // Generate a JWT token with the user payload
+    // Generate JWT token with the user payload
     const token = generateToken({ email: user.email });
-    await createAppLog('Login success ' + JSON.stringify(token));
+
+    await createAppLog('User logged in successfully: ' + JSON.stringify(token));
 
     // Log the login activity
     const log = new LogFile({
@@ -275,16 +280,33 @@ const Login = async (req, res) => {
 
     await log.save();
 
-    return res.status(200).json({
-      status: '200',
-      success: true,
-      message: 'Login successful!',
-      token: token,
-      email: user.email
-    });
+    // Store token in HTTP-only, secure cookie
+    return (
+      res
+        .cookie('token', token, {
+          httpOnly: true, // Prevent JavaScript access
+          secure: process.env.NODE_ENV === 'production', // Only send cookie over HTTPS in production
+          sameSite: 'Strict', // Prevent CSRF attacks
+          maxAge: 60 * 60 * 1000 // Cookie expiration time (1 hour)
+        })
+
+        //Generate and send CSRF token
+        .cookie('csrfToken', req.csrfToken(), {
+          httpOnly: false, // CSRF token must be accessible by client-side scripts
+          secure: true, // use true in production
+          sameSite: 'Strict'
+        })
+        .status(200)
+        .json({
+          status: '200',
+          success: true,
+          message: 'Login successful!',
+          // token: token,
+          email: user.email
+        })
+    );
   } catch (err) {
     await createAppLog('Error: ' + err.message);
-    console.log(err);
     return res.status(500).json({
       status: 'E00',
       success: false,
@@ -293,8 +315,34 @@ const Login = async (req, res) => {
   }
 };
 
+// User Logout
+const Logout = async (req, res) => {
+  const token = req.cookies.token;
+  if (!token) return res.status(401).json({ message: 'No token provided' });
+
+  const SECRET_KEY = process.env.JWT_SECRET_KEY;
+  const decoded = jwt.verify(token, SECRET_KEY);
+
+  // Log the logout activity
+  const log = new LogFile({
+    email: decoded.email,
+    ActivityName: `User ${decoded.email} Logged out the system`,
+    AddedOn: currentDate
+  });
+
+  await log.save();
+
+  await createAppLog(`User ${decoded.email} logged out!`);
+  return res
+    .clearCookie('token')
+    .clearCookie('csrfToken')
+
+    .json({ message: 'User Logged out' });
+};
+
 module.exports = {
   SignUp,
   verifyOTP,
-  Login
+  Login,
+  Logout
 };

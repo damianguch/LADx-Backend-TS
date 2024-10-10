@@ -1,11 +1,11 @@
 const jwt = require('jsonwebtoken');
 
-// Replace this with a strong secret key in production
-const jwtSecretKey = process.env.JWT_SECRET_KEY;
+// Ensure a strong secret key in production
+const SECRET_KEY = process.env.JWT_SECRET_KEY;
 
 // Function to generate a JWT token
 function generateToken(payload) {
-  return jwt.sign(payload, jwtSecretKey, { expiresIn: '1h' });
+  return jwt.sign(payload, SECRET_KEY, { expiresIn: '1h' });
 }
 
 // Middleware function to verify JWT tokens
@@ -17,7 +17,7 @@ function verifyToken(req, res, next) {
   }
 
   let tokenArr = token.split(' ');
-  //console.log(tokenArr[1]);
+
   jwt.verify(tokenArr[1], jwtSecretKey, (err) => {
     if (err) {
       return res.status(403).json({ message: 'Failed to authenticate token' });
@@ -27,4 +27,18 @@ function verifyToken(req, res, next) {
   });
 }
 
-module.exports = { generateToken, verifyToken };
+// Middleware to check JWT token in cookie
+const verifyTokenFromCookie = (req, res, next) => {
+  const token = req.cookies.token;
+  if (!token) return res.status(401).json({ message: 'No token provided' });
+
+  try {
+    const decoded = jwt.verify(token, SECRET_KEY);
+    req.user = decoded; // Attach user info to the request
+    next();
+  } catch (error) {
+    res.status(400).json({ message: 'Invalid token' });
+  }
+};
+
+module.exports = { generateToken, verifyToken, verifyTokenFromCookie };
