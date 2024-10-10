@@ -257,7 +257,7 @@ const Login = async (req, res) => {
     // Compare hashed password
     const isPasswordValid = await bcrypt.compare(password, user.password);
 
-    if (!isPasswordValid && user.email) {
+    if (!isPasswordValid) {
       await createAppLog('Wrong password.');
       return res.status(400).json({
         status: 'E00',
@@ -267,7 +267,16 @@ const Login = async (req, res) => {
     }
 
     // Generate JWT token with the user payload
-    const token = generateToken({ email: user.email });
+    try {
+      token = generateToken({ email: user.email });
+    } catch (err) {
+      await createAppLog('Error generating token: ' + err.message);
+      return res.status(500).json({
+        status: 'E00',
+        success: false,
+        message: 'Failed to generate token.'
+      });
+    }
 
     await createAppLog('User logged in successfully: ' + JSON.stringify(token));
 
@@ -281,30 +290,20 @@ const Login = async (req, res) => {
     await log.save();
 
     // Store token in HTTP-only, secure cookie
-    return (
-      res
-        .cookie('token', token, {
-          httpOnly: true, // Prevent JavaScript access
-          secure: process.env.NODE_ENV === 'production', // Only send cookie over HTTPS in production
-          sameSite: 'Strict', // Prevent CSRF attacks
-          maxAge: 60 * 60 * 1000 // Cookie expiration time (1 hour)
-        })
-
-        //Generate and send CSRF token
-        .cookie('csrfToken', req.csrfToken(), {
-          httpOnly: false, // CSRF token must be accessible by client-side scripts
-          secure: true, // use true in production
-          sameSite: 'Strict'
-        })
-        .status(200)
-        .json({
-          status: '200',
-          success: true,
-          message: 'Login successful!',
-          // token: token,
-          email: user.email
-        })
-    );
+    return res
+      .cookie('token', token, {
+        httpOnly: true, // Prevent JavaScript access
+        secure: process.env.NODE_ENV === 'production' ? true : false, // Only send cookie over HTTPS in production
+        sameSite: 'Strict', // Prevent CSRF attacks
+        maxAge: 60 * 60 * 1000 // Cookie expiration time (1 hour)
+      })
+      .json({
+        status: '200',
+        success: true,
+        message: 'Login successful!',
+        // token: token,
+        email: user.email
+      });
   } catch (err) {
     await createAppLog('Error: ' + err.message);
     return res.status(500).json({
@@ -315,10 +314,14 @@ const Login = async (req, res) => {
   }
 };
 
-// User Logout
+// User Logout Route
 const Logout = async (req, res) => {
   const token = req.cookies.token;
-  if (!token) return res.status(401).json({ message: 'No token provided' });
+
+  if (!token) {
+    await createAppLog(`No token found!`);
+    return res.status(401).json({ message: 'No token provided' });
+  }
 
   const SECRET_KEY = process.env.JWT_SECRET_KEY;
   const decoded = jwt.verify(token, SECRET_KEY);
@@ -326,18 +329,14 @@ const Logout = async (req, res) => {
   // Log the logout activity
   const log = new LogFile({
     email: decoded.email,
-    ActivityName: `User ${decoded.email} Logged out the system`,
+    ActivityName: `User ${decoded.email} Logged out of the system`,
     AddedOn: currentDate
   });
 
   await log.save();
 
   await createAppLog(`User ${decoded.email} logged out!`);
-  return res
-    .clearCookie('token')
-    .clearCookie('csrfToken')
-
-    .json({ message: 'User Logged out' });
+  return res.clearCookie('token').json({ message: 'User Logged out' });
 };
 
 module.exports = {

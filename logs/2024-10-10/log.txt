@@ -1,3 +1,41 @@
 Time logged: (2:43:57 PM):-  Message: Login information"doguche@mail.com"
 Time logged: (2:43:58 PM):-  Message: Login success "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJlbWFpbCI6ImRvZ3VjaGVAbWFpbC5jb20iLCJpYXQiOjE3Mjg1Njc4MzgsImV4cCI6MTcyODU3MTQzOH0.8Hce7PBUuKsM90UaSQ-hFJXZzCN295pyFcYHDPopydQ"
 Time logged: (3:06:51 PM):-  Message: User doguche@mail.com logged out!
+Time logged: (3:45:19 PM):-  Message: Login information"doguche@mail.com"
+Time logged: (3:45:19 PM):-  Message: User logged in successfully: "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJlbWFpbCI6ImRvZ3VjaGVAbWFpbC5jb20iLCJpYXQiOjE3Mjg1NzE1MTksImV4cCI6MTcyODU3NTExOX0.tIRR2pkWQbCspaYkTfCXEJJXjrLt1n2OqxUUEtZJ9dA"
+Time logged: (3:45:19 PM):-  Message: Error: req.csrfToken is not a function
+Time logged: (3:46:08 PM):-  Message: Login information"doguche@mail.com"
+Time logged: (3:46:08 PM):-  Message: User logged in successfully: "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJlbWFpbCI6ImRvZ3VjaGVAbWFpbC5jb20iLCJpYXQiOjE3Mjg1NzE1NjgsImV4cCI6MTcyODU3NTE2OH0.Mr0y9AILXai00vc8SB7VT_-ukR89kTezNeO3eTNmDs0"
+Time logged: (3:46:08 PM):-  Message: Error: req.csrfToken is not a function
+Time logged: (3:46:36 PM):-  Message: Login information"doguche@mail.com"
+Time logged: (3:46:36 PM):-  Message: User logged in successfully: "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJlbWFpbCI6ImRvZ3VjaGVAbWFpbC5jb20iLCJpYXQiOjE3Mjg1NzE1OTYsImV4cCI6MTcyODU3NTE5Nn0.g41SCVuyTMxDIVj5ylxe4EqNf_Ul9NwVIhyUXUP1prc"
+Time logged: (3:46:36 PM):-  Message: Error: req.csrfToken is not a function
+Time logged: (3:48:50 PM):-  Message: Login information"doguche@mail.com"
+Time logged: (3:48:56 PM):-  Message: User logged in successfully: "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJlbWFpbCI6ImRvZ3VjaGVAbWFpbC5jb20iLCJpYXQiOjE3Mjg1NzE3MzYsImV4cCI6MTcyODU3NTMzNn0.SGrTVPmNq7od2RHS_fe1OVHXtDc00QdIPSBATui2PWA"
+Time logged: (3:48:56 PM):-  Message: Error: req.csrfToken is not a function
+Time logged: (3:49:33 PM):-  Message: Login information"doguche@mail.com"
+Time logged: (3:49:34 PM):-  Message: User logged in successfully: "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJlbWFpbCI6ImRvZ3VjaGVAbWFpbC5jb20iLCJpYXQiOjE3Mjg1NzE3NzQsImV4cCI6MTcyODU3NTM3NH0.og9nwZY8KRXAFG6z6SSECB4mIt5YlBq6mEr9GY-A58k"
+Time logged: (3:49:35 PM):-  Message: Error: req.csrfToken is not a function
+Time logged: (3:51:55 PM):-  Message: Login information"doguche@mail.com"
+Time logged: (3:51:55 PM):-  Message: User logged in successfully: "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJlbWFpbCI6ImRvZ3VjaGVAbWFpbC5jb20iLCJpYXQiOjE3Mjg1NzE5MTUsImV4cCI6MTcyODU3NTUxNX0.SKjzhlKFC4XOTx3RvGUszSzUHU7x4Llh4h4L5KgQPUA"
+Time logged: (3:51:55 PM):-  Message: Error: req.csrfToken is not a function
+Time logged: (3:53:10 PM):-  Message: Login information"doguche@mail.com"
+Time logged: (3:53:10 PM):-  Message: User logged in successfully: "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJlbWFpbCI6ImRvZ3VjaGVAbWFpbC5jb20iLCJpYXQiOjE3Mjg1NzE5OTAsImV4cCI6MTcyODU3NTU5MH0.m26TL5CH_-uvk9VLeY9bAhJP61siD1NzPggUD7pAW6k"
+Time logged: (3:53:10 PM):-  Message: Error: req.csrfToken is not a function
+Time logged: (3:54:01 PM):-  Message: User doguche@mail.com logged out!
+Time logged: (3:54:09 PM):-  Message: Login information"doguche@mail.com"
+Time logged: (3:54:09 PM):-  Message: User logged in successfully: "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJlbWFpbCI6ImRvZ3VjaGVAbWFpbC5jb20iLCJpYXQiOjE3Mjg1NzIwNDksImV4cCI6MTcyODU3NTY0OX0.d8kkWD0syu1MwDuK40ggW_eFTL9zlmwkOyWQbMoAsn0"
+Time logged: (3:54:10 PM):-  Message: Error: req.csrfToken is not a function
+Time logged: (3:55:20 PM):-  Message: Login information"doguche@mail.com"
+Time logged: (3:55:22 PM):-  Message: User logged in successfully: "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJlbWFpbCI6ImRvZ3VjaGVAbWFpbC5jb20iLCJpYXQiOjE3Mjg1NzIxMjIsImV4cCI6MTcyODU3NTcyMn0.n1uDK1klwgUUzQ3dCCJ3FQJJi4x3x1WHDFH-mUmmtAM"
+Time logged: (3:55:23 PM):-  Message: Error: req.csrfToken is not a function
+Time logged: (4:13:24 PM):-  Message: Login information"doguche@mail.com"
+Time logged: (4:13:24 PM):-  Message: User logged in successfully: "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJlbWFpbCI6ImRvZ3VjaGVAbWFpbC5jb20iLCJpYXQiOjE3Mjg1NzMyMDQsImV4cCI6MTcyODU3NjgwNH0.O_SeJRpDb_xhb5YahXvDA_7Kw2DtNg0RV3CEWwYkfCg"
+Time logged: (4:13:24 PM):-  Message: Error: req.csrfToken is not a function
+Time logged: (4:54:08 PM):-  Message: Login information"doguche@mail.com"
+Time logged: (4:54:08 PM):-  Message: User logged in successfully: "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJlbWFpbCI6ImRvZ3VjaGVAbWFpbC5jb20iLCJpYXQiOjE3Mjg1NzU2NDgsImV4cCI6MTcyODU3OTI0OH0.ngi8EZQsl0R2aS1JbDBnqm-kProjbv4clX4Zi376CD4"
+Time logged: (4:59:12 PM):-  Message: User doguche@mail.com logged out!
+Time logged: (5:01:36 PM):-  Message: No token found!
+Time logged: (5:17:31 PM):-  Message: Login information"doguche@mail.com"
+Time logged: (5:17:31 PM):-  Message: User logged in successfully: "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJlbWFpbCI6ImRvZ3VjaGVAbWFpbC5jb20iLCJpYXQiOjE3Mjg1NzcwNTEsImV4cCI6MTcyODU4MDY1MX0.JwNnYhLZ-I5bYi46hwd3tBIoBobB6rSnJMDaF6jtLVg"
+Time logged: (5:24:21 PM):-  Message: User doguche@mail.com logged out!

@@ -7,7 +7,6 @@ const path = require('path');
 const helmet = require('helmet');
 const rateLimit = require('express-rate-limit');
 const cors = require('cors');
-const csrf = require('csurf');
 const cookieParser = require('cookie-parser');
 const morgan = require('morgan');
 const app = express();
@@ -41,16 +40,6 @@ const corsOptions = {
   allowedHeaders: ['Authorization', 'Content-Type']
 };
 app.use(cors(corsOptions));
-
-// Middleware for CSRF protection
-// const csrfProtection = csrf({ cookie: { httpOnly: true, secure: true } });
-// app.use(csrfProtection);
-// app.use(function (req, res, next) {
-//   var token = req.csrfToken();
-//   res.cookie('XSRF-TOKEN', token);
-//   res.locals.csrfToken = token;
-//   next();
-// });
 
 // Log App activities on console
 app.use(morgan('common'));
