@@ -10,7 +10,7 @@ const UpdateProfile = async (req, res) => {
   const { fullname, country, state } = req.body;
 
   try {
-    // Validate if id is a valid ObjectId
+    // Check if id is a valid ObjectId
     if (!mongoose.Types.ObjectId.isValid(id)) {
       await createAppLog('Invalid user ID format');
       return res.status(400).json({
@@ -21,14 +21,17 @@ const UpdateProfile = async (req, res) => {
     }
 
     // fetch user info by id
-    const user = await User.findOne({ _id: id });
+    // const user = await User.findOne({ _id: id });
+
+    // Automatically casts id to an ObjectId
+    const user = await User.findById(id);
 
     if (!user) {
-      await createAppLog('User profile not found');
+      await createAppLog('User profile not found!');
       return res.status(400).json({
         status: 'E00',
         success: false,
-        message: 'User profile not found'
+        message: 'User profile not found!'
       });
     }
 
