@@ -7,6 +7,8 @@ const mongoose = require('mongoose');
 //Update Profile with Image Upload
 const UpdateProfile = async (req, res) => {
   const { id } = req.params;
+
+  // const id = '6706543830437af5872e9c1b';
   const { fullname, country, state } = req.body;
 
   try {
@@ -48,9 +50,10 @@ const UpdateProfile = async (req, res) => {
 
     // Log Profile Update activity
     const logProfileUpdate = new LogFile({
-      fullname,
-      activityName: `Profile updated by user: ${user.fullname}`,
-      addedOn: currentDate
+      fullname: user.fullname,
+      email: user.email,
+      ActivityName: `Profile updated by user: ${user.fullname}`,
+      AddedOn: currentDate
     });
 
     await logProfileUpdate.save();

@@ -48,23 +48,23 @@ const upload = multer({
 
 //Update Profile Photo
 const UpdateProfilePhoto = async (req, res) => {
-  // const token = req.cookies.token;
+  const token = req.cookies.token;
 
-  // if (!token) {
-  //   await createAppLog(`Unauthorized! Please login`);
-  //   return res.status(401).json({ message: 'Unauthorized. Please login' });
-  // }
+  if (!token) {
+    await createAppLog(`Unauthorized! Please login`);
+    return res.status(401).json({ message: 'Unauthorized. Please login' });
+  }
 
-  // const SECRET_KEY = process.env.JWT_SECRET_KEY;
-  // const decoded = jwt.verify(token, SECRET_KEY);
-  // const id = decoded.id;
+  const SECRET_KEY = process.env.JWT_SECRET_KEY;
+  const decoded = jwt.verify(token, SECRET_KEY);
+  const id = decoded.id;
 
   const profilePic = req.file; // Get uploaded file from multer
 
   console.log(profilePic);
 
   try {
-    const id = '6706543830437af5872e9c1b';
+    // const id = '6706543830437af5872e9c1b';
     // Check if id is a valid ObjectId
     if (!mongoose.Types.ObjectId.isValid(id)) {
       await createAppLog('Invalid user ID format');
@@ -105,9 +105,10 @@ const UpdateProfilePhoto = async (req, res) => {
 
     // Log Profile Photo Update activity
     const logProfilePhotoUpdate = new LogFile({
+      email: user.email,
       fullname: user.fullname,
-      activityName: `Profile Photo updated by user: ${user.fullname}`,
-      addedOn: currentDate
+      ActivityName: `Profile Photo updated by user: ${user.fullname}`,
+      AddedOn: currentDate
     });
 
     await logProfilePhotoUpdate.save();

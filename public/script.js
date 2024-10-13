@@ -1,16 +1,16 @@
 const updateProfile = async () => {
   // Get values from form input fields
-  const fullname = document.getElementById('fullname').value;
-  const country = document.getElementById('country').value;
-  const state = document.getElementById('state').value;
+  const fullname = document.getElementById('fullname');
+  const country = document.getElementById('country');
+  const state = document.getElementById('state');
 
   // Create a new FormData object
   const formData = new FormData();
 
   // Append form data from the input fields
-  formData.append('fullname', fullname);
-  formData.append('country', country);
-  formData.append('state', state);
+  formData.append('fullname', fullname.value);
+  formData.append('country', country.value);
+  formData.append('state', state.value);
 
   console.log(formData);
 
@@ -30,9 +30,9 @@ const updateProfile = async () => {
       console.log('Profile updated successfully', result);
 
       // Clear input fields and file input
-      document.getElementById('fullname').value = '';
-      document.getElementById('country').value = '';
-      document.getElementById('state').value = '';
+      fullname.value = '';
+      country.value = '';
+      state.value = '';
     }
   } catch (error) {
     console.error('Error updating profile', error);

@@ -146,6 +146,7 @@ const SignUp = async (req, res) => {
 
     // Log the Sign Up activity
     const log = new LogFile({
+      fullname: newUser.fullname,
       email: newUser.email,
       ActivityName: 'New user created with credential: ' + newUser.email,
       AddedOn: currentDate

@@ -23,7 +23,7 @@ const UpdateProfilePhoto = async () => {
 
     if (res.ok) {
       const result = await res.json();
-      console.log('Profile updated successfully', result);
+      console.log('Profile Photo updated successfully', result);
 
       // Update the profile picture on the page
       document.getElementById('profilePic').src =
