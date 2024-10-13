@@ -36,3 +36,10 @@ Time logged: (9:15:22 AM):-  Message: Profile Photo Updated Successfully!
 Time logged: (9:19:52 AM):-  Message: Profile Photo Updated Successfully!
 Time logged: (9:28:03 AM):-  Message: Profile Updated Successfully!
 Time logged: (9:30:31 AM):-  Message: Profile Photo Updated Successfully!
+Time logged: (9:51:56 AM):-  Message: Profile Updated Successfully!
+Time logged: (9:57:18 AM):-  Message: Unauthorized! Please login
+Time logged: (9:59:14 AM):-  Message: id is not defined
+Time logged: (10:15:06 AM):-  Message: Profile Photo Updated Successfully!
+Time logged: (10:21:37 AM):-  Message: Login information"kwame@test.com"
+Time logged: (10:21:38 AM):-  Message: User logged in successfully: "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJlbWFpbCI6Imt3YW1lQHRlc3QuY29tIiwiaWQiOiI2NzA2NTMxMzMwNDM3YWY1ODcyZTljMTYiLCJpYXQiOjE3Mjg4MTEyOTgsImV4cCI6MTcyODgxNDg5OH0.UxVxvTVe4AZpMC_LqRuhiIs3YkHO3P4B0zbZ9DLV3fs"
+Time logged: (10:23:51 AM):-  Message: Profile Photo Updated Successfully!

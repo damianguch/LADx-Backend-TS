@@ -65,6 +65,8 @@ const UpdateProfilePhoto = async (req, res) => {
 
   try {
     // const id = '6706543830437af5872e9c1b';
+    // const { id } = req.params;
+
     // Check if id is a valid ObjectId
     if (!mongoose.Types.ObjectId.isValid(id)) {
       await createAppLog('Invalid user ID format');
