@@ -15,7 +15,7 @@
       integrity="sha384-EVSTQN3/azprG1Anm3QDgpJLIm9Nao0Yz1ztcQTwFspd3yD65VohhpuuCOmLASjC"
       crossorigin="anonymous" />
 
-    <title>Profile Update</title>
+    <title>Profile Photo Upload</title>
     <style>
       @import url('https://fonts.googleapis.com/css2?family=Poppins:ital,wght@0,100;0,200;0,300;0,400;0,500;0,600;0,700;1,100;1,200;1,300;1,400;1,500;1,600&display=swap');
 
@@ -39,36 +39,25 @@
         justify-content: center;
       ">
       <form id="formUpload" enctype="multipart/form-data">
-        <h1>Profile Update</h1>
-        <label for="fullname">Fullname</label>
-        <input
-          style="width: 100%; height: 35px"
-          type="text"
-          name="fullname"
-          id="fullname"
-          class="form-control" />
+        <div class="profileImage">
+          <!-- Profile Picture -->
+          <img
+            style="border-radius: 50%"
+            id="profilePic"
+            alt="Profile Picture"
+            height="110px"
+            width="110px" />
+          <br />
+          <label for="profilePicInput"><b>Update Profile Photo:</b> </label>
+          <input type="file" name="profilePic" id="profilePicInput" />
+        </div>
 
-        <label for="country">Country</label>
-        <input
-          style="width: 100%; height: 35px"
-          type="text"
-          name="country"
-          id="country"
-          class="form-control" />
-        <label for="state">State</label>
-        <input
-          style="width: 100%; height: 35px"
-          type="text"
-          name="state"
-          id="state"
-          class="form-control" />
-
-        <button type="submit" class="btn btn-primary" style="width: 100%">
+        <button type="submit" class="btn btn-primary" style="width: 50%">
           Update
         </button>
       </form>
     </div>
 
-    <script src="./script.js"></script>
+    <script src="./profilePic.js"></script>
   </body>
 </html>

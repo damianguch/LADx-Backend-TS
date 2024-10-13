@@ -23,7 +23,6 @@ const csrfProtection = csrf({
 //   csrfProtection(req, res, next); // Apply CSRF protection
 // });
 
-// router.post('/signup', SignUp);
 router.post('/signup', SignUp);
 router.post('/verify-otp', verifyOTP);
 router.put('/profilePic/:id', upload.single('profilePic'), UpdateProfilePhoto);
