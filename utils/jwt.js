@@ -8,6 +8,22 @@ function generateToken(payload) {
   return jwt.sign(payload, SECRET_KEY, { expiresIn: '1h' });
 }
 
+// Authentication middleware
+const authenticateJWT = (req, res, next) => {
+  // Check header or cookie for token
+  const token = req.headers.authorization?.split(' ')[1] || req.cookies.token;
+
+  if (token) {
+    jwt.verify(token, process.env.JWT_SECRET_KEY, (err, user) => {
+      if (err) return res.status(403).json({ message: 'Invalid token' });
+      req.user = user;
+      next();
+    });
+  } else {
+    res.status(401).json({ message: 'Authorization token required' });
+  }
+};
+
 // Middleware function to verify JWT tokens
 function verifyToken(req, res, next) {
   const token = req.header('Authorization');
@@ -41,4 +57,9 @@ const verifyTokenFromCookie = (req, res, next) => {
   }
 };
 
-module.exports = { generateToken, verifyToken, verifyTokenFromCookie };
+module.exports = {
+  generateToken,
+  verifyToken,
+  verifyTokenFromCookie,
+  authenticateJWT
+};
