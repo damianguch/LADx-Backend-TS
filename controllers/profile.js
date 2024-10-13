@@ -1,57 +1,13 @@
 const LogFile = require('../models/LogFile');
-const multer = require('multer');
 const User = require('../models/user');
 const { createAppLog } = require('../utils/createLog');
 const { currentDate } = require('../utils/date');
 const mongoose = require('mongoose');
-const path = require('path');
-const fs = require('fs');
-
-// Ensure the uploads/profile-pics directory exists
-const profilePicDir = 'uploads/profile-pics';
-if (!fs.existsSync(profilePicDir)) {
-  // Create directory if it doesn't exist
-  fs.mkdirSync(profilePicDir, { recursive: true });
-}
-
-/*
- * Configure multer to use the diskStorage engine to store
- * uploaded files on the server's disk.
- */
-const storage = multer.diskStorage({
-  destination: (req, file, cb) => {
-    cb(null, 'uploads'); // Specify upload directory
-  },
-  filename: (req, file, cb) => {
-    cb(null, `${Date.now()}-${file.originalname}`); // Generate a unique filename
-  }
-});
-
-// Initialize Multer with the storage configuration
-const upload = multer({
-  storage,
-  fileFilter: (req, file, cb) => {
-    const filetypes = /jpeg|jpg|png/; // Supported image formats
-    const extname = filetypes.test(
-      path.extname(file.originalname).toLowerCase()
-    );
-    const mimetype = filetypes.test(file.mimetype);
-
-    if (mimetype && extname) {
-      return cb(null, true);
-    } else {
-      cb(new Error('Only images (jpeg, jpg, png) are allowed!'));
-    }
-  }
-});
 
 //Update Profile with Image Upload
 const UpdateProfile = async (req, res) => {
   const { id } = req.params;
   const { fullname, country, state } = req.body;
-  const profilePic = req.file; // Get uploaded file from multer
-
-  console.log(profilePic);
 
   try {
     // Check if id is a valid ObjectId
@@ -86,18 +42,11 @@ const UpdateProfile = async (req, res) => {
       state
     };
 
-    // If profile picture is uploaded, save the path to the database
-    if (!profilePic) {
-      return res.status(400).json({ message: 'No file uploaded' });
-    }
-
-    userProfile.profilePic = `uploads/${profilePic.filename}`;
-
     console.log(userProfile);
 
-    await User.findByIdAndUpdate(id, { $set: userProfile });
+    await User.findByIdAndUpdate(id, { $set: userProfile }, { new: true });
 
-    // Save log activity
+    // Log Profile Update activity
     const logProfileUpdate = new LogFile({
       fullname,
       activityName: `Profile updated by user: ${user.fullname}`,
@@ -124,8 +73,5 @@ const UpdateProfile = async (req, res) => {
 };
 
 module.exports = {
-  UpdateProfile: [
-    upload.single('profilePic'), // Expecting `profilePic` from form-data
-    UpdateProfile
-  ]
+  UpdateProfile
 };

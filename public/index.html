@@ -1,0 +1,87 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+
+    <link rel="preconnect" href="https://fonts.googleapis.com" />
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+    <link
+      href="https://fonts.googleapis.com/css2?family=Poppins:ital,wght@0,100;0,200;0,300;0,400;0,500;0,600;0,700;1,100;1,200;1,300;1,400;1,500;1,600&display=swap"
+      rel="stylesheet" />
+    <link
+      href="https://cdn.jsdelivr.net/npm/bootstrap@5.0.2/dist/css/bootstrap.min.css"
+      rel="stylesheet"
+      integrity="sha384-EVSTQN3/azprG1Anm3QDgpJLIm9Nao0Yz1ztcQTwFspd3yD65VohhpuuCOmLASjC"
+      crossorigin="anonymous" />
+
+    <title>File Upload</title>
+    <style>
+      @import url('https://fonts.googleapis.com/css2?family=Poppins:ital,wght@0,100;0,200;0,300;0,400;0,500;0,600;0,700;1,100;1,200;1,300;1,400;1,500;1,600&display=swap');
+
+      body {
+        font-family: 'Poppins', sans-serif;
+      }
+
+      input {
+        margin-bottom: 20px;
+      }
+    </style>
+  </head>
+  <body>
+    <div
+      class="container"
+      style="
+        width: 90%;
+        margin: auto;
+        padding: 5em 0;
+        display: flex;
+        justify-content: center;
+      ">
+      <form id="formUpload" enctype="multipart/form-data">
+        <div class="profileImage">
+          <!-- Profile Picture -->
+          <img
+            style="border-radius: 50%"
+            id="profilePic"
+            alt="Profile Picture"
+            height="110px"
+            width="110px" />
+          <br />
+          <label for="profilePicInput">Update Profile Photo: </label>
+          <input type="file" name="profilePic" id="profilePicInput" />
+        </div>
+
+        <h1>Profile Update</h1>
+        <label for="fullname">Fullname</label>
+        <input
+          style="width: 100%; height: 35px"
+          type="text"
+          name="fullname"
+          id="fullname"
+          class="form-control" />
+
+        <label for="country">Country</label>
+        <input
+          style="width: 100%; height: 35px"
+          type="text"
+          name="country"
+          id="country"
+          class="form-control" />
+        <label for="state">State</label>
+        <input
+          style="width: 100%; height: 35px"
+          type="text"
+          name="state"
+          id="state"
+          class="form-control" />
+
+        <button type="submit" class="btn btn-primary" style="width: 100%">
+          Submit
+        </button>
+      </form>
+    </div>
+
+    <script src="./script.js"></script>
+  </body>
+</html>

@@ -5,9 +5,10 @@ const { createAppLog } = require('../utils/createLog');
 const { currentDate } = require('../utils/date');
 const mongoose = require('mongoose');
 const path = require('path');
+const jwt = require('jsonwebtoken');
 const fs = require('fs');
 
-// Ensure the uploads/profile-pics directory exists
+// Ensure the uploads directory exists
 const profilePicDir = 'uploads/profile-pics';
 if (!fs.existsSync(profilePicDir)) {
   // Create directory if it doesn't exist
@@ -45,10 +46,19 @@ const upload = multer({
   }
 });
 
-//Update Profile with Image Upload
-const UpdateProfile = async (req, res) => {
-  const { id } = req.params;
-  const { fullname, country, state } = req.body;
+//Update Profile Photo
+const UpdateProfilePhoto = async (req, res) => {
+  const token = req.cookies.token;
+
+  if (!token) {
+    await createAppLog(`Unauthorized! Please login`);
+    return res.status(401).json({ message: 'Unauthorized. Please login' });
+  }
+
+  const SECRET_KEY = process.env.JWT_SECRET_KEY;
+  const decoded = jwt.verify(token, SECRET_KEY);
+  const id = decoded.id;
+
   const profilePic = req.file; // Get uploaded file from multer
 
   console.log(profilePic);
@@ -64,11 +74,8 @@ const UpdateProfile = async (req, res) => {
       });
     }
 
-    // fetch user info by id
-    // const user = await User.findOne({ _id: id });
-
     // Automatically casts id to an ObjectId
-    const user = await User.findById(id);
+    // const user = await User.findById(id);
 
     if (!user) {
       await createAppLog('User profile not found!');
@@ -80,11 +87,7 @@ const UpdateProfile = async (req, res) => {
     }
 
     // Build the user profile update object
-    const userProfile = {
-      fullname,
-      country,
-      state
-    };
+    const userProfile = {};
 
     // If profile picture is uploaded, save the path to the database
     if (!profilePic) {
@@ -97,20 +100,20 @@ const UpdateProfile = async (req, res) => {
 
     await User.findByIdAndUpdate(id, { $set: userProfile });
 
-    // Save log activity
-    const logProfileUpdate = new LogFile({
+    // Log Profile Photo Update activity
+    const logProfilePhotoUpdate = new LogFile({
       fullname,
-      activityName: `Profile updated by user: ${user.fullname}`,
+      activityName: `Profile Photo updated by user: ${user.fullname}`,
       addedOn: currentDate
     });
 
-    await logProfileUpdate.save();
+    await logProfilePhotoUpdate.save();
 
-    await createAppLog('Profile Updated Successfully!');
+    await createAppLog('Profile Photo Updated Successfully!');
     return res.status(200).json({
       status: '00',
       success: true,
-      message: 'Profile Updated Successfully!',
+      message: 'Profile Photo Updated Successfully!',
       data: userProfile
     });
   } catch (err) {
@@ -124,8 +127,6 @@ const UpdateProfile = async (req, res) => {
 };
 
 module.exports = {
-  UpdateProfile: [
-    upload.single('profilePic'), // Expecting `profilePic` from form-data
-    UpdateProfile
-  ]
+  UpdateProfilePhoto,
+  upload
 };

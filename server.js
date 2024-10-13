@@ -54,6 +54,18 @@ app.use(express.urlencoded({ extended: true }));
 // Serve static files from the 'public' folder
 app.use(express.static(path.join(__dirname, 'public')));
 
+// Serve static files from the 'uploads' folder
+// app.use('/uploads', express.static(path.join(__dirname, 'uploads')));
+
+app.use('/uploads', (req, res, next) => {
+  const ext = path.extname(req.url);
+  if (['.jpg', '.jpeg', '.png', '.gif'].includes(ext)) {
+    express.static(path.join(__dirname, 'uploads'))(req, res, next);
+  } else {
+    res.status(403).send('Access denied');
+  }
+});
+
 // Routes Declarations
 app.use('/api/v1', servicesRoutes);
 

@@ -268,7 +268,7 @@ const Login = async (req, res) => {
 
     // Generate JWT token with the user payload
     try {
-      token = generateToken({ email: user.email });
+      token = generateToken({ email: user.email, id: user.id });
     } catch (err) {
       await createAppLog('Error generating token: ' + err.message);
       return res.status(500).json({
@@ -314,7 +314,7 @@ const Login = async (req, res) => {
   }
 };
 
-// User Logout Route
+// User Logout
 const Logout = async (req, res) => {
   const token = req.cookies.token;
 

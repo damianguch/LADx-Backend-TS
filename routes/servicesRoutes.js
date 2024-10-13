@@ -1,6 +1,9 @@
 const express = require('express');
 const csrf = require('csurf');
 const router = express.Router();
+const { Login, SignUp, verifyOTP, Logout } = require('../controllers/auth');
+const { UpdateProfilePhoto, upload } = require('../controllers/profilePic');
+const { UpdateProfile } = require('../controllers/profile');
 
 // Middleware for CSRF protection
 const csrfProtection = csrf({
@@ -20,13 +23,11 @@ const csrfProtection = csrf({
 //   csrfProtection(req, res, next); // Apply CSRF protection
 // });
 
-const { Login, SignUp, verifyOTP, Logout } = require('../controllers/auth');
-const { UpdateProfile } = require('../controllers/userProfile');
-
 // router.post('/signup', SignUp);
 router.post('/signup', SignUp);
 router.post('/verify-otp', verifyOTP);
-router.put('/users/:id', UpdateProfile);
+router.put('/profilePic/:id', upload.single('profilePic'), UpdateProfilePhoto);
+router.put('/profile/:id', upload.none(), UpdateProfile);
 router.post('/login', Login);
 router.post('/logout', Logout);
 
