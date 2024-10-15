@@ -7,7 +7,7 @@ const updateProfile = async () => {
   // Create a new FormData object
   const formData = new FormData();
 
-  // Append form data from the input fields
+  // Append form fields to FormData
   formData.append('fullname', fullname.value);
   formData.append('country', country.value);
   formData.append('state', state.value);
@@ -16,8 +16,9 @@ const updateProfile = async () => {
 
   try {
     const userId = '6706543830437af5872e9c1b';
+    const baseURL = 'https://localhost:1337';
     const res = await fetch(
-      `https://localhost:1337/api/v1/profile/${userId}`,
+      `${baseURL}/api/v1/profile/${userId}`,
 
       {
         method: 'PUT',
@@ -41,6 +42,8 @@ const updateProfile = async () => {
 
 // Capture form submission and invoke updateProfile on submit
 const formUpload = document.getElementById('formUpload');
+
+// Add event listener for form submission
 formUpload.addEventListener('submit', (e) => {
   e.preventDefault();
   updateProfile();

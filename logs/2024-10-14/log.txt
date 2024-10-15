@@ -1,0 +1,92 @@
+Time logged: (3:14:33 PM):-  Message: Login information"kwame@test.com"
+Time logged: (3:14:34 PM):-  Message: User logged in successfully: "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJlbWFpbCI6Imt3YW1lQHRlc3QuY29tIiwiaWQiOiI2NzA2NTMxMzMwNDM3YWY1ODcyZTljMTYiLCJpYXQiOjE3Mjg5MTUyNzQsImV4cCI6MTcyODkxODg3NH0.MIMo7eYhBND176OxzOGgmkvkipeCTuOxHqmyWbxQkgA"
+Time logged: (3:58:27 PM):-  Message: Profile Photo Updated Successfully!
+Time logged: (3:58:27 PM):-  Message: userProfile is not defined
+Time logged: (4:34:41 PM):-  Message: Login informationundefined
+Time logged: (4:34:41 PM):-  Message: Email Required!
+Time logged: (4:37:45 PM):-  Message: Login informationundefined
+Time logged: (4:37:45 PM):-  Message: Email Required!
+Time logged: (4:41:18 PM):-  Message: Email Required!
+Time logged: (4:41:18 PM):-  Message: Login informationundefined
+Time logged: (4:41:45 PM):-  Message: Login informationundefined
+Time logged: (4:41:45 PM):-  Message: Email Required!
+Time logged: (4:42:16 PM):-  Message: Login informationundefined
+Time logged: (4:42:16 PM):-  Message: Email Required!
+Time logged: (4:44:13 PM):-  Message: Login informationundefined
+Time logged: (4:44:13 PM):-  Message: Email Required!
+Time logged: (4:45:07 PM):-  Message: Login informationundefined
+Time logged: (4:45:07 PM):-  Message: Email Required!
+Time logged: (4:45:41 PM):-  Message: Login informationundefined
+Time logged: (4:45:41 PM):-  Message: Email Required!
+Time logged: (4:53:42 PM):-  Message: Login informationundefined
+Time logged: (4:53:42 PM):-  Message: Email Required!
+Time logged: (4:56:55 PM):-  Message: Login informationundefined
+Time logged: (4:56:55 PM):-  Message: Email Required!
+Time logged: (5:06:21 PM):-  Message: Login informationundefined
+Time logged: (5:06:21 PM):-  Message: Email Required!
+Time logged: (5:11:11 PM):-  Message: Login informationundefined
+Time logged: (5:11:11 PM):-  Message: Email Required!
+Time logged: (5:12:31 PM):-  Message: Login informationundefined
+Time logged: (5:12:31 PM):-  Message: Email Required!
+Time logged: (5:12:41 PM):-  Message: Login informationundefined
+Time logged: (5:12:41 PM):-  Message: Email Required!
+Time logged: (5:13:39 PM):-  Message: Login informationundefined
+Time logged: (5:13:39 PM):-  Message: Email Required!
+Time logged: (5:14:01 PM):-  Message: Login informationundefined
+Time logged: (5:14:01 PM):-  Message: Email Required!
+Time logged: (5:14:32 PM):-  Message: Login informationundefined
+Time logged: (5:14:32 PM):-  Message: Email Required!
+Time logged: (5:16:13 PM):-  Message: No token found!
+Time logged: (5:16:21 PM):-  Message: Login information"kwame@test.com"
+Time logged: (5:16:21 PM):-  Message: User logged in successfully
+Time logged: (5:16:30 PM):-  Message: User kwame@test.com logged out!
+Time logged: (5:16:47 PM):-  Message: Login informationundefined
+Time logged: (5:16:47 PM):-  Message: Email Required!
+Time logged: (5:20:35 PM):-  Message: Login informationundefined
+Time logged: (5:20:35 PM):-  Message: Email Required!
+Time logged: (5:20:56 PM):-  Message: Login informationundefined
+Time logged: (5:20:56 PM):-  Message: Email Required!
+Time logged: (5:26:50 PM):-  Message: Email Required!
+Time logged: (5:26:50 PM):-  Message: Login informationundefined
+Time logged: (5:28:16 PM):-  Message: Login informationundefined
+Time logged: (5:28:16 PM):-  Message: Email Required!
+Time logged: (5:35:23 PM):-  Message: Login informationundefined
+Time logged: (5:35:23 PM):-  Message: Email Required!
+Time logged: (5:36:27 PM):-  Message: Login informationundefined
+Time logged: (5:36:27 PM):-  Message: Email Required!
+Time logged: (5:56:18 PM):-  Message: Login information"kwame@test.com"
+Time logged: (5:56:18 PM):-  Message: Password Required!
+Time logged: (5:58:53 PM):-  Message: Login information"kwame@test.com"
+Time logged: (5:58:53 PM):-  Message: Wrong password.
+Time logged: (5:59:16 PM):-  Message: Login information"kwame@t5est.com"
+Time logged: (5:59:18 PM):-  Message: This email is not registered
+Time logged: (5:59:55 PM):-  Message: Login information"kwame@test.com"
+Time logged: (5:59:55 PM):-  Message: User logged in successfully
+Time logged: (6:01:21 PM):-  Message: Login information"kwame@test.com"
+Time logged: (6:01:21 PM):-  Message: Password Required!
+Time logged: (6:01:26 PM):-  Message: Login information"kwame@test.com"
+Time logged: (6:01:27 PM):-  Message: User logged in successfully
+Time logged: (6:04:00 PM):-  Message: Login information"kwame@test.com"
+Time logged: (6:04:00 PM):-  Message: User logged in successfully
+Time logged: (6:04:56 PM):-  Message: Profile Photo Updated Successfully!
+Time logged: (6:07:53 PM):-  Message: Profile Photo Updated Successfully!
+Time logged: (6:21:55 PM):-  Message: Profile Photo Updated Successfully!
+Time logged: (6:32:43 PM):-  Message: Profile Photo Updated Successfully!
+Time logged: (6:45:15 PM):-  Message: Profile Photo Updated Successfully!
+Time logged: (7:01:33 PM):-  Message: Profile Photo Updated Successfully!
+Time logged: (7:05:00 PM):-  Message: Login information"kwame@test.com"
+Time logged: (7:05:01 PM):-  Message: User logged in successfully
+Time logged: (7:05:15 PM):-  Message: Profile Photo Updated Successfully!
+Time logged: (7:13:20 PM):-  Message: Profile Photo Updated Successfully!
+Time logged: (7:21:55 PM):-  Message: Profile Photo Updated Successfully!
+Time logged: (7:25:32 PM):-  Message: Profile Photo Updated Successfully!
+Time logged: (7:35:34 PM):-  Message: Profile Photo Updated Successfully!
+Time logged: (7:51:48 PM):-  Message: Profile Photo Updated Successfully!
+Time logged: (8:07:47 PM):-  Message: Login information"kwame@test.com"
+Time logged: (8:07:47 PM):-  Message: User logged in successfully
+Time logged: (8:07:55 PM):-  Message: Profile Photo Updated Successfully!
+Time logged: (8:09:33 PM):-  Message: Profile Photo Updated Successfully!
+Time logged: (8:11:59 PM):-  Message: Profile Photo Updated Successfully!
+Time logged: (8:14:07 PM):-  Message: Profile Photo Updated Successfully!
+Time logged: (8:16:44 PM):-  Message: Profile Photo Updated Successfully!
+Time logged: (8:21:38 PM):-  Message: Profile Photo Updated Successfully!

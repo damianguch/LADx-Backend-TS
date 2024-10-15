@@ -1,4 +1,6 @@
 const UpdateProfilePhoto = async () => {
+  const profilePic = document.getElementById('profilePic');
+
   // Append the profile picture file if selected
   const fileInput = document.getElementById('profilePicInput');
 
@@ -11,9 +13,11 @@ const UpdateProfilePhoto = async () => {
   }
 
   try {
-    const userId = '6706543830437af5872e9c1b';
+    const userId = '6706531330437af5872e9c16';
+    const baseUrl = 'https://localhost:1337';
+
     const res = await fetch(
-      `https://localhost:1337/api/v1/profilePic/${userId}`,
+      `${baseUrl}/api/v1/users/${userId}/profilePic`,
 
       {
         method: 'PUT',
@@ -23,13 +27,11 @@ const UpdateProfilePhoto = async () => {
 
     if (res.ok) {
       const result = await res.json();
-      console.log('Profile Photo updated successfully', result);
+      console.log(result);
 
       // Update the profile picture on the page
-      document.getElementById('profilePic').src =
-        '../' + result.data.profilePic;
-
-      console.log(document.getElementById('profilePic'));
+      // profilePic.src = '../' + result.profilePhoto.profilePic;
+      profilePic.src = result.profilePhoto.profilePic;
 
       // Clear the file input after submission
       fileInput.value = '';

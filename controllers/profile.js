@@ -4,6 +4,13 @@ const { createAppLog } = require('../utils/createLog');
 const { currentDate } = require('../utils/date');
 const mongoose = require('mongoose');
 
+/**
+ * Controller: Profile controller
+ * Description: This controller contains the functions for profile update.
+ * Author: Damian Oguche
+ * Date: 12-10-2024
+ */
+
 //Update Profile with Image Upload
 const UpdateProfile = async (req, res) => {
   const { id } = req.params;

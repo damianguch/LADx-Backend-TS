@@ -11,6 +11,13 @@ const { isEmail, escape } = require('validator');
 const { currentDate } = require('../utils/date');
 const crypto = require('crypto');
 
+/**
+ * Controller: User controller
+ * Description: This controller contains all the functions for user activities
+ * Author: Damian Oguche
+ * Date: 06-10-2024
+ */
+
 let otpStore = {}; // In-memory storage of OTPs
 let emailStore = {}; // Im-memory storage of email
 
@@ -279,7 +286,7 @@ const Login = async (req, res) => {
       });
     }
 
-    await createAppLog('User logged in successfully: ' + JSON.stringify(token));
+    await createAppLog('User logged in successfully');
 
     // Log the login activity
     const log = new LogFile({

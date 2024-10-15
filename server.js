@@ -23,6 +23,15 @@ app.use(
   })
 );
 
+app.use(
+  helmet.contentSecurityPolicy({
+    useDefaults: true,
+    directives: {
+      'img-src': ["'self'", 'https: data:']
+    }
+  })
+);
+
 app.use(cookieParser());
 
 const limiter = rateLimit({
@@ -35,7 +44,7 @@ app.use('/api/v1', limiter);
 
 // CORS middleware(to handle cross-origin requests.)
 const corsOptions = {
-  origin: '',
+  origin: ['https://res.cloudinary.com'],
   methods: ['GET', 'POST'],
   allowedHeaders: ['Authorization', 'Content-Type']
 };
@@ -46,9 +55,12 @@ app.use(morgan('common'));
 
 const servicesRoutes = require('./routes/servicesRoutes');
 
-// Middleware to parse the request body (JSON and URL-encoded)
-// The request body is parsed before the routes access it
+/** The request body is parsed before the routes access it */
+
+// Middleware to parse the request body as JSON data
 app.use(express.json());
+
+//For parsing application/x-www-form-urlencoded data
 app.use(express.urlencoded({ extended: true }));
 
 // Serve static files from the 'public' folder
@@ -87,7 +99,7 @@ const credentials = {
 // Start the HTTPS server
 const httpsServer = https.createServer(credentials, app, (req, res) => {
   res.writeHead(200);
-  res.setHeader('Content-Type', 'application/json');
+  // res.setHeader('Content-Type', 'application/json');
 });
 
 httpsServer.listen(PORT, () => {

@@ -1,57 +1,24 @@
-const LogFile = require('../models/LogFile');
 const multer = require('multer');
+const { CloudinaryStorage } = require('multer-storage-cloudinary');
+const cloudinary = require('../utils/cloudinaryConfig');
+const LogFile = require('../models/LogFile');
 const User = require('../models/user');
+const jwt = require('jsonwebtoken');
 const { createAppLog } = require('../utils/createLog');
 const { currentDate } = require('../utils/date');
 const mongoose = require('mongoose');
-const path = require('path');
-const jwt = require('jsonwebtoken');
-const fs = require('fs');
 
-/**
- * Controller: Profile Photo controller
- * Description: This controller contains the functions for profile photo update.
- * Author: Damian Oguche
- * Date: 12-10-2024
- */
-
-// Ensure the uploads directory exists
-const profilePicDir = 'uploads/profile-pics';
-if (!fs.existsSync(profilePicDir)) {
-  // Create directory if it doesn't exist
-  fs.mkdirSync(profilePicDir, { recursive: true });
-}
-
-/*
- * Configure multer to use the diskStorage engine to store
- * uploaded files on the server's disk.
- */
-const storage = multer.diskStorage({
-  destination: (req, file, cb) => {
-    cb(null, 'uploads'); // Specify upload directory
-  },
-  filename: (req, file, cb) => {
-    cb(null, `${Date.now()}-${file.originalname}`); // Generate a unique filename
+// Configure Cloudinary storage for Multer
+const storage = new CloudinaryStorage({
+  cloudinary: cloudinary,
+  params: {
+    folder: 'profile-pics', // Folder name in Cloudinary
+    allowed_formats: ['jpg', 'png', 'jpeg'],
+    transformation: { width: 150, height: 150, crop: 'limit', quality: 'auto' } // Resize image if needed
   }
 });
 
-// Initialize Multer with the storage configuration
-const upload = multer({
-  storage,
-  fileFilter: (req, file, cb) => {
-    const filetypes = /jpeg|jpg|png/; // Supported image formats
-    const extname = filetypes.test(
-      path.extname(file.originalname).toLowerCase()
-    );
-    const mimetype = filetypes.test(file.mimetype);
-
-    if (mimetype && extname) {
-      return cb(null, true);
-    } else {
-      cb(new Error('Only images (jpeg, jpg, png) are allowed!'));
-    }
-  }
-});
+const upload = multer({ storage: storage });
 
 //Update Profile Photo
 const UpdateProfilePhoto = async (req, res) => {
@@ -107,12 +74,13 @@ const UpdateProfilePhoto = async (req, res) => {
     if (!profilePic)
       return res.status(400).json({ message: 'No file uploaded' });
 
-    // If profile picture is uploaded, save the path(Image Url) to the database
-    profilePhoto.profilePic = `uploads/${profilePic.filename}`;
+    // Get the new Cloudinary image URL
+    profilePhoto.profilePic = req.file.path; // Cloudinary URL
 
-    // Delete the old profile picture file if it exists
-    if (oldProfilePic && fs.existsSync(`.${oldProfilePic}`)) {
-      fs.unlinkSync(`.${oldProfilePic}`); // Delete the old file
+    // If there is an old profile picture, delete it from Cloudinary
+    if (user.profilePic) {
+      const publicId = user.profilePic.split('/').pop().split('.')[0]; // Extract public ID from URL
+      await cloudinary.uploader.destroy(`profile-pics/${publicId}`);
     }
 
     console.log(profilePhoto);
@@ -135,7 +103,7 @@ const UpdateProfilePhoto = async (req, res) => {
       status: '00',
       success: true,
       message: 'Profile Photo Updated Successfully!',
-      data: userProfile
+      profilePhoto
     });
   } catch (err) {
     await createAppLog(err.message);

@@ -43,3 +43,7 @@ Time logged: (10:15:06 AM):-  Message: Profile Photo Updated Successfully!
 Time logged: (10:21:37 AM):-  Message: Login information"kwame@test.com"
 Time logged: (10:21:38 AM):-  Message: User logged in successfully: "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJlbWFpbCI6Imt3YW1lQHRlc3QuY29tIiwiaWQiOiI2NzA2NTMxMzMwNDM3YWY1ODcyZTljMTYiLCJpYXQiOjE3Mjg4MTEyOTgsImV4cCI6MTcyODgxNDg5OH0.UxVxvTVe4AZpMC_LqRuhiIs3YkHO3P4B0zbZ9DLV3fs"
 Time logged: (10:23:51 AM):-  Message: Profile Photo Updated Successfully!
+Time logged: (11:25:13 AM):-  Message: No token found!
+Time logged: (11:27:29 AM):-  Message: Login information"kwame@test.com"
+Time logged: (11:27:30 AM):-  Message: User logged in successfully: "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJlbWFpbCI6Imt3YW1lQHRlc3QuY29tIiwiaWQiOiI2NzA2NTMxMzMwNDM3YWY1ODcyZTljMTYiLCJpYXQiOjE3Mjg4MTUyNTAsImV4cCI6MTcyODgxODg1MH0.-i9eHOk9VvB4kd4ZpoMy8wXMP2WApv6qMQvDg7NkMlo"
+Time logged: (11:27:45 AM):-  Message: Profile Updated Successfully!
