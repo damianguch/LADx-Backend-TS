@@ -5,6 +5,8 @@ const { Login, SignUp, verifyOTP, Logout } = require('../controllers/auth');
 const { UpdateProfilePhoto, upload } = require('../controllers/profilePhoto');
 const { UpdateProfile } = require('../controllers/profile');
 const { authenticateJWT } = require('../utils/jwt');
+const { ForgotPassword } = require('../controllers/forgotPassword');
+const { GetProfilePhoto } = require('../controllers/getProfilePhoto');
 
 // Middleware for CSRF protection
 const csrfProtection = csrf({
@@ -16,13 +18,13 @@ const csrfProtection = csrf({
 });
 
 // Apply CSRF protection globally but exclude specific routes
-router.use((req, res, next) => {
-  if (req.method === 'GET' || req.path === '/login' || req.path === '/logout') {
-    return next(); // Skip CSRF protection for these routes
-  }
+// router.use((req, res, next) => {
+//   if (req.method === 'GET' || req.path === '/login' || req.path === '/logout') {
+//     return next(); // Skip CSRF protection for these routes
+//   }
 
-  csrfProtection(req, res, next); // Apply CSRF protection
-});
+//   csrfProtection(req, res, next); // Apply CSRF protection
+// });
 
 router.post('/signup', SignUp);
 router.post('/verify-otp', verifyOTP);
@@ -40,5 +42,7 @@ router.put('/users/:id/profile', authenticateJWT, upload.none(), UpdateProfile);
 //Use multer to handle multipart/form-data requests.
 router.post('/login', upload.none(), Login);
 router.post('/logout', Logout);
+router.post('/forgot-password', ForgotPassword);
+router.get('/users/:id/profilePhoto', GetProfilePhoto);
 
 module.exports = router;

@@ -8,13 +8,21 @@ const { createAppLog } = require('../utils/createLog');
 const { currentDate } = require('../utils/date');
 const mongoose = require('mongoose');
 
+/**
+ * Controller: Profile Photo controller
+ * Description: Controller contains functions for profile photo update.
+ * Author: Damian Oguche
+ * Date: 14-10-2024
+ */
+
 // Configure Cloudinary storage for Multer
 const storage = new CloudinaryStorage({
   cloudinary: cloudinary,
   params: {
     folder: 'profile-pics', // Folder name in Cloudinary
     allowed_formats: ['jpg', 'png', 'jpeg'],
-    transformation: { width: 150, height: 150, crop: 'limit', quality: 'auto' } // Resize image if needed
+    // Resize image if needed
+    transformation: { width: 150, height: 150, crop: 'limit', quality: 'auto' }
   }
 });
 
@@ -34,13 +42,11 @@ const UpdateProfilePhoto = async (req, res) => {
   const id = decoded.id;
 
   const profilePic = req.file; // Get uploaded file from multer
+  if (!profilePic) return res.status(400).json({ message: 'No file uploaded' });
 
   console.log(profilePic);
 
   try {
-    // const id = '6706543830437af5872e9c1b';
-    // const { id } = req.params;
-
     // Check if id is a valid ObjectId
     if (!mongoose.Types.ObjectId.isValid(id)) {
       await createAppLog('Invalid user ID format');
@@ -54,8 +60,6 @@ const UpdateProfilePhoto = async (req, res) => {
     // Automatically casts id to an ObjectId
     const user = await User.findById(id);
 
-    console.log(user);
-
     if (!user) {
       await createAppLog('User profile not found!');
       return res.status(400).json({
@@ -65,23 +69,27 @@ const UpdateProfilePhoto = async (req, res) => {
       });
     }
 
-    // Retrieve old profile picture path before updating the profile
-    const oldProfilePic = user.profilePic;
+    // If there is an old profile picture, delete it from Cloudinary using the stored publicId
+    if (user.profilePicPublicId) {
+      const result = await cloudinary.uploader.destroy(user.profilePicPublicId);
+      console.log(`Deleted old image:`, result);
+    }
 
     // Build the user profile photo update object
     const profilePhoto = {};
 
-    if (!profilePic)
-      return res.status(400).json({ message: 'No file uploaded' });
-
     // Get the new Cloudinary image URL
-    profilePhoto.profilePic = req.file.path; // Cloudinary URL
+    profilePhoto.profilePicUrl = req.file.path; // Cloudinary URL
 
-    // If there is an old profile picture, delete it from Cloudinary
-    if (user.profilePic) {
-      const publicId = user.profilePic.split('/').pop().split('.')[0]; // Extract public ID from URL
-      await cloudinary.uploader.destroy(`profile-pics/${publicId}`);
-    }
+    // Get the publicId
+    profilePhoto.profilePicPublicId = req.file.filename; // Cloudinary publicId
+
+    // // If there is an old profile picture, delete it from Cloudinary
+    // if (user.profilePic) {
+    //   // Extract public ID from URL
+    //   const publicId = user.profilePic.split('/').pop().split('.')[0];
+    //   await cloudinary.uploader.destroy(`profile-pics/${publicId}`);
+    // }
 
     console.log(profilePhoto);
 

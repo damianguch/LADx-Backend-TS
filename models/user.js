@@ -42,7 +42,8 @@ const userSchema = new Schema({
   confirm_password: String,
   password_reset_link: String,
   email_verification_code: String,
-  profilePic: String,
+  profilePicUrl: String,
+  profilePicPublicId: String,
 
   is_email_verified: {
     type: Number,

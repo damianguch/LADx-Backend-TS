@@ -10,7 +10,7 @@ const fs = require('fs');
 
 /**
  * Controller: Profile Photo controller
- * Description: This controller contains the functions for profile photo update.
+ * Description: Controller contains functions for profile photo update.
  * Author: Damian Oguche
  * Date: 12-10-2024
  */

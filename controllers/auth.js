@@ -344,7 +344,10 @@ const Logout = async (req, res) => {
   await log.save();
 
   await createAppLog(`User ${decoded.email} logged out!`);
-  return res.clearCookie('token').json({ message: 'User Logged out' });
+  return res
+    .clearCookie('token')
+    .clearCookie('csrfToken')
+    .json({ message: 'User Logged out' });
 };
 
 module.exports = {
