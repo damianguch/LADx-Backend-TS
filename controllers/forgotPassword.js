@@ -45,6 +45,7 @@ const ForgotPassword = async (req, res) => {
 
 // POST: Reset password
 const ResetPassword = async (req, res) => {
+  // The frontend page parses the token and email from the URL.
   const { token, email, newPassword } = req.body;
 
   try {
@@ -76,7 +77,7 @@ const ResetPassword = async (req, res) => {
     // Optional: Send confirmation email to user
     const mailOptions = {
       to: email,
-      from: 'no-reply@example.com',
+      from: 'no-reply@ladx.africa',
       subject: 'Password Reset Successful',
       text: `Your password has been successfully reset.`
     };
