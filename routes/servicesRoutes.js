@@ -5,7 +5,10 @@ const { Login, SignUp, verifyOTP, Logout } = require('../controllers/auth');
 const { UpdateProfilePhoto, upload } = require('../controllers/profilePhoto');
 const { UpdateProfile } = require('../controllers/profile');
 const { authenticateJWT } = require('../utils/jwt');
-const { ForgotPassword } = require('../controllers/forgotPassword');
+const {
+  ForgotPassword,
+  ResetPassword
+} = require('../controllers/forgotPassword');
 const { GetProfilePhoto } = require('../controllers/getProfilePhoto');
 
 // Middleware for CSRF protection
@@ -31,18 +34,21 @@ router.post('/verify-otp', verifyOTP);
 
 //Handling Image Upload in Request
 router.put(
-  '/users/:id/profilePic',
+  '/users/:id/profilePhoto',
   authenticateJWT,
   upload.single('profilePic'),
   UpdateProfilePhoto
 );
 
+//Use multer to handle multipart/form-data requests.
 router.put('/users/:id/profile', authenticateJWT, upload.none(), UpdateProfile);
 
 //Use multer to handle multipart/form-data requests.
 router.post('/login', upload.none(), Login);
+
 router.post('/logout', Logout);
 router.post('/forgot-password', ForgotPassword);
+router.post('/reset-password', ResetPassword);
 router.get('/users/:id/profilePhoto', GetProfilePhoto);
 
 module.exports = router;

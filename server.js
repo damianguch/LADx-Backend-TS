@@ -39,6 +39,16 @@ const limiter = rateLimit({
   max: 100 // limit each IP to 100 requests per windowMs
 });
 
+const resetLimiter = rateLimit({
+  windowMs: 15 * 60 * 1000, // 15 minutes
+  max: 5, // Limit each IP to 5 requests per window
+  message:
+    'Too many password reset requests from this IP, please try again after 15 minutes.'
+});
+
+// Apply rate limit to password reset
+app.use('/api/v1/forgot-password', resetLimiter);
+
 // Apply rate limit to all requests
 app.use('/api/v1', limiter);
 
@@ -54,8 +64,6 @@ app.use(cors(corsOptions));
 app.use(morgan('common'));
 
 const servicesRoutes = require('./routes/servicesRoutes');
-
-/** The request body is parsed before the routes access it */
 
 // Middleware to parse the request body as JSON data
 app.use(express.json());

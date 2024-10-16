@@ -1,3 +1,4 @@
+// Function to Update Profile photo
 const UpdateProfilePhoto = async () => {
   const profilePic = document.getElementById('profilePic');
 
@@ -21,7 +22,7 @@ const UpdateProfilePhoto = async () => {
     const baseUrl = 'https://localhost:1337';
 
     const res = await fetch(
-      `${baseUrl}/api/v1/users/${userId}/profilePic`,
+      `${baseUrl}/api/v1/users/${userId}/profilePhoto`,
 
       {
         method: 'PUT',

@@ -1,3 +1,10 @@
+/**********************************************************************
+ * Controller: Profile Photo controller
+ * Description: Controller contains functions for profile photo update.
+ * Author: Damian Oguche
+ * Date: 14-10-2024
+ ***********************************************************************/
+
 const multer = require('multer');
 const { CloudinaryStorage } = require('multer-storage-cloudinary');
 const cloudinary = require('../utils/cloudinaryConfig');
@@ -7,13 +14,6 @@ const jwt = require('jsonwebtoken');
 const { createAppLog } = require('../utils/createLog');
 const { currentDate } = require('../utils/date');
 const mongoose = require('mongoose');
-
-/**
- * Controller: Profile Photo controller
- * Description: Controller contains functions for profile photo update.
- * Author: Damian Oguche
- * Date: 14-10-2024
- */
 
 // Configure Cloudinary storage for Multer
 const storage = new CloudinaryStorage({
@@ -28,7 +28,7 @@ const storage = new CloudinaryStorage({
 
 const upload = multer({ storage: storage });
 
-//Update Profile Photo
+// PUT: Update Profile Photo
 const UpdateProfilePhoto = async (req, res) => {
   const token = req.cookies.token;
 
@@ -78,18 +78,11 @@ const UpdateProfilePhoto = async (req, res) => {
     // Build the user profile photo update object
     const profilePhoto = {};
 
-    // Get the new Cloudinary image URL
+    // Get the new cloudinary image URL
     profilePhoto.profilePicUrl = req.file.path; // Cloudinary URL
 
     // Get the publicId
     profilePhoto.profilePicPublicId = req.file.filename; // Cloudinary publicId
-
-    // // If there is an old profile picture, delete it from Cloudinary
-    // if (user.profilePic) {
-    //   // Extract public ID from URL
-    //   const publicId = user.profilePic.split('/').pop().split('.')[0];
-    //   await cloudinary.uploader.destroy(`profile-pics/${publicId}`);
-    // }
 
     console.log(profilePhoto);
 

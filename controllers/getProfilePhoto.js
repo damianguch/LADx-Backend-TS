@@ -1,9 +1,17 @@
+/*******************************************
+ * Controller: Profile Photo controller
+ * Description: Controller contains functions for profile
+                photo update.
+ * Author: Damian Oguche
+ * Date: 14-10-2024
+ ********************************************/
+
 const User = require('../models/user');
 const jwt = require('jsonwebtoken');
 const { createAppLog } = require('../utils/createLog');
 const mongoose = require('mongoose');
 
-// Get Profile Photo
+// GET: Retrieve Profile Photo
 const GetProfilePhoto = async (req, res) => {
   const token = req.cookies.token;
 

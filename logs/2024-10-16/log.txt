@@ -1,0 +1,7 @@
+Time logged: (7:30:39 AM):-  Message: "Password reset link sent to your email"
+Time logged: (7:34:16 AM):-  Message: "Password reset link sent to your email"
+Time logged: (7:42:34 AM):-  Message: "Password reset link sent to your email"
+Time logged: (8:00:13 AM):-  Message: "Password reset link sent to your email"
+Time logged: (8:47:04 AM):-  Message: "Invalid login: 535 5.7.8 Authentication failed"
+Time logged: (8:48:28 AM):-  Message: "Invalid login: 535 5.7.8 Authentication failed"
+Time logged: (8:51:27 AM):-  Message: "Invalid login: 535 5.7.8 Authentication failed"

@@ -111,3 +111,17 @@ Time logged: (4:02:12 PM):-  Message: Profile Photo Updated Successfully!
 Time logged: (4:02:32 PM):-  Message: Profile Photo Retrieved Successfully!
 Time logged: (4:02:40 PM):-  Message: Profile Photo Retrieved Successfully!
 Time logged: (4:03:30 PM):-  Message: Profile Photo Retrieved Successfully!
+Time logged: (4:12:56 PM):-  Message: Profile Photo Retrieved Successfully!
+Time logged: (4:14:50 PM):-  Message: Profile Photo Updated Successfully!
+Time logged: (4:15:00 PM):-  Message: Profile Photo Retrieved Successfully!
+Time logged: (4:15:02 PM):-  Message: Profile Photo Retrieved Successfully!
+Time logged: (4:15:05 PM):-  Message: Profile Photo Retrieved Successfully!
+Time logged: (4:15:08 PM):-  Message: Profile Photo Retrieved Successfully!
+Time logged: (4:15:10 PM):-  Message: Profile Photo Retrieved Successfully!
+Time logged: (4:15:26 PM):-  Message: Profile Photo Updated Successfully!
+Time logged: (4:15:29 PM):-  Message: Profile Photo Retrieved Successfully!
+Time logged: (4:15:30 PM):-  Message: Profile Photo Retrieved Successfully!
+Time logged: (5:52:51 PM):-  Message: Login information"kwame@test.com"
+Time logged: (5:52:55 PM):-  Message: User logged in successfully
+Time logged: (5:53:08 PM):-  Message: Profile Photo Updated Successfully!
+Time logged: (5:53:18 PM):-  Message: Profile Photo Retrieved Successfully!
