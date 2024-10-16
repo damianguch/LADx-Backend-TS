@@ -1,3 +1,10 @@
+/*************************************************************************
+ * Controller: User Authentication Controller
+ * Description: Controller contains functions for all user authentictions.
+ * Author: Damian Oguche
+ * Date: 02-10-2024
+ **************************************************************************/
+
 const User = require('../models/user');
 const bcrypt = require('bcrypt');
 const jwt = require('jsonwebtoken');

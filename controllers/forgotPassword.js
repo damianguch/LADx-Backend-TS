@@ -1,10 +1,10 @@
-/*******************************************
+/*************************************************************************
  * Controller: Forgot Password controller
- * Description: Controller contains functions for password
-               reset and email notification.
+ * Description: Controller contains functions for password reset and email
+ *              notification.
  * Author: Damian Oguche
  * Date: 16-10-2024
- ********************************************/
+ **************************************************************************/
 
 const crypto = require('crypto');
 const User = require('../models/user'); // Mongoose User model
@@ -14,6 +14,10 @@ const { passwordResetEmail } = require('../utils/emailService');
 // POST: Request password reset
 const ForgotPassword = async (req, res) => {
   const { email } = req.body;
+
+  if (!email) {
+    return res.status(400).json({ message: 'Please enter a valid email' });
+  }
 
   try {
     // Find user by email
@@ -47,6 +51,9 @@ const ForgotPassword = async (req, res) => {
 const ResetPassword = async (req, res) => {
   // The frontend page parses the token and email from the URL.
   const { token, email, newPassword } = req.body;
+
+  if (!token || !email || !newPassword)
+    return res.status(400).json({ message: 'No credentials provided!' });
 
   try {
     // Hash the token
