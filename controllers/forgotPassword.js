@@ -9,7 +9,12 @@
 const crypto = require('crypto');
 const User = require('../models/user'); // Mongoose User model
 const bcrypt = require('bcrypt');
-const { passwordResetEmail } = require('../utils/emailService');
+const {
+  passwordResetEmail,
+  ConfirmPasswordResetEmail
+} = require('../utils/emailService');
+const { createAppLog } = require('../utils/createLog');
+const { encryptPasswordWithBcrypt } = require('../utils/passwordEncrypt');
 
 // POST: Request password reset
 const ForgotPassword = async (req, res) => {
@@ -28,15 +33,20 @@ const ForgotPassword = async (req, res) => {
 
     // Generate reset token
     const resetToken = crypto.randomBytes(32).toString('hex');
-    const hashedToken = await bcrypt.hash(resetToken, 12);
+
+    // ForgotPassword - Hash token with SHA-256
+    const hashedToken = crypto
+      .createHash('sha256')
+      .update(resetToken)
+      .digest('hex');
 
     // Set token and expiration on user object
     user.resetPasswordToken = hashedToken;
-    user.resetPasswordExpires = Date.now() + 15 * 60 * 1000; // 15 minutes expiration
+    user.resetPasswordExpires = Date.now() + 60 * 60 * 1000; // 1 hr expiration
     await user.save();
 
     // Send reset link via email
-    const resetUrl = `${process.env.FRONTEND_URL}/reset-password?token=${resetToken}&email=${email}`;
+    const resetUrl = `${process.env.FRONTEND_URL}?token=${resetToken}&email=${email}`;
 
     console.log(resetUrl);
 
@@ -50,13 +60,13 @@ const ForgotPassword = async (req, res) => {
 // POST: Reset password
 const ResetPassword = async (req, res) => {
   // The frontend page parses the token and email from the URL.
-  const { token, email, newPassword } = req.body;
+  const { token, email, password } = req.body;
 
-  if (!token || !email || !newPassword)
+  if (!token || !email || !password)
     return res.status(400).json({ message: 'No credentials provided!' });
 
   try {
-    // Hash the token
+    // ResetPassword - Hash the token with SHA-256 before comparison
     const hashedToken = crypto.createHash('sha256').update(token).digest('hex');
 
     // Find the user with the hashed token and check expiration
@@ -71,7 +81,7 @@ const ResetPassword = async (req, res) => {
     }
 
     // Hash new password
-    const hashedPassword = await bcrypt.hash(newPassword, 12);
+    const hashedPassword = await encryptPasswordWithBcrypt(password);
 
     // Update user's password and remove the reset token
     user.password = hashedPassword;
@@ -79,18 +89,12 @@ const ResetPassword = async (req, res) => {
     user.resetPasswordExpires = undefined;
     await user.save();
 
-    res.status(200).json({ message: 'Password has been reset successfully.' });
-
-    // Optional: Send confirmation email to user
-    const mailOptions = {
-      to: email,
-      from: 'no-reply@ladx.africa',
-      subject: 'Password Reset Successful',
-      text: `Your password has been successfully reset.`
-    };
-
-    await transporter.sendMail(mailOptions);
+    // Send confirmation email to user
+    // await ConfirmPasswordResetEmail(email);
+    await createAppLog('Password reset successful!');
+    res.status(200).json({ message: 'Password reset successful!' });
   } catch (error) {
+    await createAppLog({ message: error.message });
     res.status(500).json({ message: 'Server error, please try again later.' });
   }
 };
