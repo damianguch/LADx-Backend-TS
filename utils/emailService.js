@@ -1,63 +1,44 @@
-const nodemailer = require('nodemailer');
+const { SESClient, SendEmailCommand } = require('@aws-sdk/client-ses');
 const { createAppLog } = require('./createLog');
 
-const transporter = nodemailer.createTransport({
-  port: process.env.EMAIL_PORT,
-  host: process.env.EMAIL_HOST,
-  auth: {
-    user: process.env.EMAIL_USER,
-    pass: process.env.EMAIL_PASS
+const SES_Config = {
+  credentials: {
+    accessKey: process.env.AWS_ACCESS_KEY,
+    secretKey: process.env.AWS_SECRET_KEY
   },
-  secure: false
-});
-
-// Send OTP via Email
-const sendOTPEmail = async (email, otp) => {
-  // Send OTP
-  const mailOptions = {
-    from: 'no-reply@ladX.africa',
-    to: email,
-    subject: 'Your OTP Code',
-    text: `Your OTP code is ${otp}`
-  };
-
-  try {
-    await transporter.sendMail(mailOptions);
-    await createAppLog(JSON.stringify('OTP sent to your email'));
-    return { message: 'OTP sent to your email' };
-  } catch (error) {
-    await createAppLog(JSON.stringify('Error sending OTP'));
-    throw new Error('Error sending OTP');
-  }
+  region: process.env.AWS_REGION
 };
 
-// Send Password Reset via Email
-const passwordResetEmail = async (email, resetUrl) => {
-  // Send Reset link
-  const sender = 'no-reply@ladx.africa';
-  const recipient = email;
+const client = new SESClient(SES_Config);
 
-  const mailOptions = {
-    from: sender,
-    to: recipient,
-    subject: 'Your Password Reset Request',
-    text: `Your password reset link is ${resetUrl}`
+const sendOTPEmail = async (email, otp) => {
+  const params = {
+    Source: 'ladxofficial@gmail.com',
+    Destination: {
+      ToAddresses: [email]
+    },
+
+    Message: {
+      Body: {
+        Text: {
+          Data: `Your OTP code is ${otp}`
+        }
+      },
+      Subject: {
+        Data: 'Your OTP Code'
+      }
+    }
   };
 
   try {
-    let result = await transporter.sendMail(mailOptions);
-    if (result) {
-      await createAppLog(
-        JSON.stringify('Password reset link sent to your email')
-      );
-    }
-    throw new Error('Error sending link');
+    const command = new SendEmailCommand(params);
+    const response = await client.send(command);
+    createAppLog('OTP sent successfully:', response);
   } catch (error) {
-    await createAppLog(JSON.stringify(error.message));
+    console.error('Error sending email:', error);
   }
 };
 
 module.exports = {
-  sendOTPEmail,
-  passwordResetEmail
+  sendOTPEmail
 };
