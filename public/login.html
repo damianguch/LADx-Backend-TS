@@ -20,8 +20,8 @@
   <body>
     <div class="container bg-white w-50">
       <div class="row mt-5 d-flex justify-content-center">
-        <form id="formUpload" class="w-75">
-          <h1>Login</h1>
+        <form id="loginForm" class="w-75">
+          <h1 class="text-center">Login</h1>
           <div class="form-group">
             <label for="fullname">Email</label>
             <input type="text" name="email" id="email" class="form-control" />
@@ -42,6 +42,9 @@
           </p>
 
           <button type="submit" class="btn btn-primary w-100">Submit</button>
+          <div
+            id="errorMessage"
+            class="mb-4 mt-4 text-center text-danger h5"></div>
         </form>
       </div>
     </div>
@@ -76,16 +79,16 @@
                 name="email"
                 id="forgot-email"
                 class="form-control" />
+              <div class="modal-footer">
+                <button
+                  type="button"
+                  class="btn btn-secondary"
+                  data-dismiss="modal">
+                  Close
+                </button>
+                <button type="submit" class="btn btn-primary">Submit</button>
+              </div>
             </form>
-          </div>
-          <div class="modal-footer">
-            <button
-              type="button"
-              class="btn btn-secondary"
-              data-dismiss="modal">
-              Close
-            </button>
-            <button type="submit" class="btn btn-primary">Submit</button>
           </div>
         </div>
       </div>

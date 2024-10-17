@@ -14,6 +14,12 @@ const app = express();
 // Use Helmet for various security headers
 app.use(helmet());
 
+app.use(
+  helmet({
+    contentTypeOptions: false // Disables 'X-Content-Type-Options: nosniff'
+  })
+);
+
 // Enforce HTTPS using Helmet HSTS middleware
 app.use(
   helmet.hsts({
@@ -29,7 +35,7 @@ app.use(
     directives: {
       'img-src': ["'self'", 'https: data:'],
       'script-src': ["'self'", 'https: data'],
-      'style-src': ["'self'", 'https: data']
+      'style-src': ["'self'", 'https:']
     }
   })
 );
@@ -49,14 +55,13 @@ const resetLimiter = rateLimit({
 });
 
 // Apply rate limit to password reset
-app.use('/api/v1/forgot-password', resetLimiter);
+// app.use('/api/v1/forgot-password', resetLimiter);
 
 // Apply rate limit to all requests
 app.use('/api/v1', limiter);
 
 // CORS middleware(to handle cross-origin requests.)
 const corsOptions = {
-  origin: ['https://res.cloudinary.com'],
   methods: ['GET', 'POST'],
   allowedHeaders: ['Authorization', 'Content-Type']
 };
@@ -75,6 +80,16 @@ app.use(express.urlencoded({ extended: true }));
 
 // Serve static files from the 'public' folder
 app.use(express.static(path.join(__dirname, 'public')));
+
+app.use(
+  express.static('public', {
+    setHeaders: (res, path) => {
+      if (path.endsWith('.js')) {
+        res.setHeader('Content-Type', 'application/javascript');
+      }
+    }
+  })
+);
 
 // Serve static files from the 'uploads' folder
 // app.use('/uploads', express.static(path.join(__dirname, 'uploads')));
@@ -109,7 +124,7 @@ const credentials = {
 // Start the HTTPS server
 const httpsServer = https.createServer(credentials, app, (req, res) => {
   res.writeHead(200);
-  // res.setHeader('Content-Type', 'application/json');
+  res.setHeader('Content-Type', 'application/javascript');
 });
 
 httpsServer.listen(PORT, () => {

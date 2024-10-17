@@ -1,0 +1,205 @@
+Time logged: (1:30:02 AM):-  Message: Login information""
+Time logged: (1:30:02 AM):-  Message: Email Required!
+Time logged: (2:06:22 AM):-  Message: Login information"damianguch@yahoo.com"
+Time logged: (2:06:22 AM):-  Message: Wrong password.
+Time logged: (2:12:13 AM):-  Message: Login information"damianguch@yahoo.com"
+Time logged: (2:12:13 AM):-  Message: Wrong password.
+Time logged: (2:20:25 AM):-  Message: Password Required!
+Time logged: (2:20:25 AM):-  Message: Login information"damianguch@yahoo.com"
+Time logged: (2:21:08 AM):-  Message: "getaddrinfo ENOTFOUND sandbox.smtp.mailtrap."
+Time logged: (2:22:36 AM):-  Message: "getaddrinfo ENOTFOUND sandbox.smtp.mailtrap."
+Time logged: (2:22:43 AM):-  Message: "getaddrinfo ENOTFOUND sandbox.smtp.mailtrap."
+Time logged: (2:22:54 AM):-  Message: Login information"damianguch@yahoo.com"
+Time logged: (2:22:54 AM):-  Message: Password Required!
+Time logged: (2:23:12 AM):-  Message: "getaddrinfo ENOTFOUND sandbox.smtp.mailtrap."
+Time logged: (2:44:45 AM):-  Message: Login information"damianguch@yahoo.com"
+Time logged: (2:44:45 AM):-  Message: Password Required!
+Time logged: (2:44:51 AM):-  Message: "getaddrinfo ENOTFOUND sandbox.smtp.mailtrap."
+Time logged: (2:47:18 AM):-  Message: Login information"damianguch@yahoo.com"
+Time logged: (2:47:18 AM):-  Message: Password Required!
+Time logged: (2:47:22 AM):-  Message: "getaddrinfo ENOTFOUND sandbox.smtp.mailtrap."
+Time logged: (2:55:14 AM):-  Message: Password Required!
+Time logged: (2:55:14 AM):-  Message: Login information"damianguch@yahoo.com"
+Time logged: (2:55:18 AM):-  Message: "getaddrinfo ENOTFOUND sandbox.smtp.mailtrap."
+Time logged: (3:10:27 AM):-  Message: Login information"damianguch@yahoo.com"
+Time logged: (3:10:27 AM):-  Message: Password Required!
+Time logged: (3:10:32 AM):-  Message: "getaddrinfo ENOTFOUND sandbox.smtp.mailtrap."
+Time logged: (3:48:10 AM):-  Message: "getaddrinfo ENOTFOUND sandbox.smtp.mailtrap."
+Time logged: (4:49:10 AM):-  Message: "getaddrinfo ENOTFOUND sandbox.smtp.mailtrap."
+Time logged: (5:29:48 AM):-  Message: "getaddrinfo ENOTFOUND sandbox.smtp.mailtrap."
+Time logged: (9:15:39 AM):-  Message: Login information"kwame@test.com"
+Time logged: (9:15:39 AM):-  Message: Password Required!
+Time logged: (9:15:58 AM):-  Message: "getaddrinfo ENOTFOUND sandbox.smtp.mailtrap."
+Time logged: (11:43:10 AM):-  Message: Login information"damianguch@yahoo.com"
+Time logged: (11:43:10 AM):-  Message: Password Required!
+Time logged: (11:43:45 AM):-  Message: "getaddrinfo ENOTFOUND sandbox.smtp.mailtrap."
+Time logged: (12:17:27 PM):-  Message: "getaddrinfo ENOTFOUND sandbox.smtp.mailtrap."
+Time logged: (1:52:30 PM):-  Message: Login information"damianguch@yahoo.com"
+Time logged: (1:52:30 PM):-  Message: Password Required!
+Time logged: (1:52:35 PM):-  Message: "getaddrinfo ENOTFOUND sandbox.smtp.mailtrap."
+Time logged: (1:59:44 PM):-  Message: Login information"damianguch@yahoo.com"
+Time logged: (1:59:44 PM):-  Message: Wrong password.
+Time logged: (1:59:53 PM):-  Message: "getaddrinfo ENOTFOUND sandbox.smtp.mailtrap."
+Time logged: (2:15:00 PM):-  Message: "getaddrinfo ENOTFOUND sandbox.smtp.mailtrap."
+Time logged: (2:35:18 PM):-  Message: Password Required!
+Time logged: (2:35:18 PM):-  Message: Login information"damianguch@yahoo.com"
+Time logged: (2:35:23 PM):-  Message: Login information"damianguch@yahoo.com"
+Time logged: (2:35:23 PM):-  Message: Wrong password.
+Time logged: (2:44:15 PM):-  Message: Login information"damianguch@yahoo.com"
+Time logged: (2:44:15 PM):-  Message: Password Required!
+Time logged: (3:12:37 PM):-  Message: "getaddrinfo ENOTFOUND sandbox.smtp.mailtrap."
+Time logged: (3:27:22 PM):-  Message: Login information"damianguch@yahoo.com"
+Time logged: (3:27:22 PM):-  Message: Password Required!
+Time logged: (3:27:26 PM):-  Message: "getaddrinfo ENOTFOUND sandbox.smtp.mailtrap."
+Time logged: (3:58:10 PM):-  Message: Login information"damianguch@yahoo.com"
+Time logged: (3:58:11 PM):-  Message: Wrong password.
+Time logged: (3:58:42 PM):-  Message: "getaddrinfo ENOTFOUND sandbox.smtp.mailtrap."
+Time logged: (3:59:13 PM):-  Message: Login information"damianguch@yahoo.com"
+Time logged: (3:59:13 PM):-  Message: Wrong password.
+Time logged: (4:00:34 PM):-  Message: "getaddrinfo ENOTFOUND sandbox.smtp.mailtrap."
+Time logged: (4:00:34 PM):-  Message: [object Object]
+Time logged: (4:06:43 PM):-  Message: Login information"damianguch@yahoo.com"
+Time logged: (4:06:43 PM):-  Message: Wrong password.
+Time logged: (4:06:51 PM):-  Message: "getaddrinfo ENOTFOUND sandbox.smtp.mailtrap."
+Time logged: (4:07:26 PM):-  Message: "getaddrinfo ENOTFOUND sandbox.smtp.mailtrap."
+Time logged: (4:07:26 PM):-  Message: Password reset successful!
+Time logged: (4:08:26 PM):-  Message: Login information"damianguch@yahoo.com"
+Time logged: (4:08:27 PM):-  Message: Wrong password.
+Time logged: (4:08:37 PM):-  Message: Login information"damianguch@yahoo.com"
+Time logged: (4:08:50 PM):-  Message: Wrong password.
+Time logged: (4:10:18 PM):-  Message: Login information"damianguch@yahoo.com"
+Time logged: (4:10:18 PM):-  Message: Wrong password.
+Time logged: (4:10:36 PM):-  Message: Login information"damianguch@yahoo.com"
+Time logged: (4:10:36 PM):-  Message: Wrong password.
+Time logged: (4:10:42 PM):-  Message: Login information"damianguch@yahoo.com"
+Time logged: (4:10:43 PM):-  Message: Wrong password.
+Time logged: (4:15:19 PM):-  Message: Login information"damianguch@yahoo.com"
+Time logged: (4:15:19 PM):-  Message: Wrong password.
+Time logged: (4:16:19 PM):-  Message: Login information"jcaeser@mail.com"
+Time logged: (4:16:19 PM):-  Message: User logged in successfully
+Time logged: (4:16:49 PM):-  Message: Login information"jcaeser@mail.com"
+Time logged: (4:16:50 PM):-  Message: User logged in successfully
+Time logged: (4:20:08 PM):-  Message: Login information"jcaeser@mail.com"
+Time logged: (4:20:08 PM):-  Message: User logged in successfully
+Time logged: (4:20:27 PM):-  Message: Login information"jcaeser@mail.com"
+Time logged: (4:20:27 PM):-  Message: Wrong password.
+Time logged: (4:21:06 PM):-  Message: Login information"jcaeser@mail.com"
+Time logged: (4:21:07 PM):-  Message: Wrong password.
+Time logged: (4:22:07 PM):-  Message: Login information"jcaeser@mail.com"
+Time logged: (4:22:07 PM):-  Message: User logged in successfully
+Time logged: (4:24:34 PM):-  Message: Login information"jcaeser@mail.com"
+Time logged: (4:24:44 PM):-  Message: Error: Operation `users.findOne()` buffering timed out after 10000ms
+Time logged: (4:24:53 PM):-  Message: Login information"jcaeser@mail.com"
+Time logged: (4:25:03 PM):-  Message: Error: Operation `users.findOne()` buffering timed out after 10000ms
+Time logged: (4:25:40 PM):-  Message: Login information"jcaeser@mail.com"
+Time logged: (4:25:40 PM):-  Message: User logged in successfully
+Time logged: (4:30:58 PM):-  Message: Login information"damianguch@yahoo.com"
+Time logged: (4:30:59 PM):-  Message: Wrong password.
+Time logged: (4:32:49 PM):-  Message: Login information""
+Time logged: (4:32:49 PM):-  Message: Email Required!
+Time logged: (4:36:02 PM):-  Message: Email Required!
+Time logged: (4:36:02 PM):-  Message: Login information""
+Time logged: (4:36:30 PM):-  Message: Login information"damianguch@yahoo.com"
+Time logged: (4:36:30 PM):-  Message: Password Required!
+Time logged: (4:42:07 PM):-  Message: Login information"damianguch@yahoo.com"
+Time logged: (4:42:07 PM):-  Message: Password Required!
+Time logged: (4:42:21 PM):-  Message: Login information"kwame@test.com"
+Time logged: (4:42:21 PM):-  Message: This email is not registered
+Time logged: (4:42:35 PM):-  Message: Login information"kwame@test.com"
+Time logged: (4:42:35 PM):-  Message: Password Required!
+Time logged: (4:43:06 PM):-  Message: Login information"kwame@test.com"
+Time logged: (4:43:06 PM):-  Message: This email is not registered
+Time logged: (4:43:24 PM):-  Message: Login information"kwame@test.com"
+Time logged: (4:43:24 PM):-  Message: This email is not registered
+Time logged: (4:44:14 PM):-  Message: Login information"kwame@test.com"
+Time logged: (4:44:14 PM):-  Message: This email is not registered
+Time logged: (4:45:09 PM):-  Message: Login information"damianguch@yahoo.com"
+Time logged: (4:45:10 PM):-  Message: Wrong password.
+Time logged: (4:45:18 PM):-  Message: Login information"damianguch@yahoo.com"
+Time logged: (4:45:18 PM):-  Message: Password Required!
+Time logged: (4:45:31 PM):-  Message: Login information"damianguch@yahoo.co"
+Time logged: (4:45:32 PM):-  Message: This email is not registered
+Time logged: (4:46:30 PM):-  Message: User jcaeser@mail.com logged out!
+Time logged: (4:46:57 PM):-  Message: Login information"damianguch@yahoo.com"
+Time logged: (4:46:57 PM):-  Message: Wrong password.
+Time logged: (4:47:29 PM):-  Message: Login information"damianguch@yahoo.com"
+Time logged: (4:47:30 PM):-  Message: Wrong password.
+Time logged: (4:47:49 PM):-  Message: Login information"jcaeser@mail.com"
+Time logged: (4:47:50 PM):-  Message: User logged in successfully
+Time logged: (4:48:49 PM):-  Message: Login information"damianguch@yahoo.com"
+Time logged: (4:48:49 PM):-  Message: Password Required!
+Time logged: (4:50:41 PM):-  Message: Login information"damianguch@yahoo.com"
+Time logged: (4:50:41 PM):-  Message: Password Required!
+Time logged: (4:51:51 PM):-  Message: Login information"damianguch@yahoo.com"
+Time logged: (4:51:52 PM):-  Message: Wrong password.
+Time logged: (4:53:10 PM):-  Message: Login information"damianguch@yahoo.co"
+Time logged: (4:53:10 PM):-  Message: This email is not registered
+Time logged: (5:16:54 PM):-  Message: Login information""
+Time logged: (5:16:54 PM):-  Message: Email Required!
+Time logged: (5:20:13 PM):-  Message: Login information"kwame@test.com"
+Time logged: (5:20:13 PM):-  Message: Password Required!
+Time logged: (5:20:57 PM):-  Message: Login information"kwame@test.com"
+Time logged: (5:20:57 PM):-  Message: This email is not registered
+Time logged: (5:23:57 PM):-  Message: Login information"kwame@test.com"
+Time logged: (5:23:57 PM):-  Message: Password Required!
+Time logged: (5:25:35 PM):-  Message: Login information"kwame@test.com"
+Time logged: (5:25:35 PM):-  Message: Password Required!
+Time logged: (5:25:41 PM):-  Message: Login information"kwame@test.com"
+Time logged: (5:25:42 PM):-  Message: This email is not registered
+Time logged: (5:28:27 PM):-  Message: Login information"kwame@test.com"
+Time logged: (5:28:27 PM):-  Message: Password Required!
+Time logged: (5:28:51 PM):-  Message: Login information""
+Time logged: (5:28:51 PM):-  Message: Email Required!
+Time logged: (5:30:08 PM):-  Message: Login information""
+Time logged: (5:30:08 PM):-  Message: Email Required!
+Time logged: (5:30:23 PM):-  Message: Login information""
+Time logged: (5:30:23 PM):-  Message: Email Required!
+Time logged: (5:30:39 PM):-  Message: Login information""
+Time logged: (5:30:39 PM):-  Message: Email Required!
+Time logged: (5:30:54 PM):-  Message: Login information""
+Time logged: (5:30:54 PM):-  Message: Email Required!
+Time logged: (5:31:02 PM):-  Message: Email Required!
+Time logged: (5:31:02 PM):-  Message: Login information""
+Time logged: (5:31:13 PM):-  Message: Login information"kwame@test.com"
+Time logged: (5:31:14 PM):-  Message: This email is not registered
+Time logged: (5:31:48 PM):-  Message: Login information"jcaeser@mail.com"
+Time logged: (5:31:48 PM):-  Message: User logged in successfully
+Time logged: (5:33:00 PM):-  Message: Login information"damianguch@yahoo.com"
+Time logged: (5:33:00 PM):-  Message: Password Required!
+Time logged: (5:33:07 PM):-  Message: Login information"damianguch@yahoo.com"
+Time logged: (5:33:08 PM):-  Message: Wrong password.
+Time logged: (5:33:18 PM):-  Message: Login information"damianguch@yahoo.com"
+Time logged: (5:33:18 PM):-  Message: Wrong password.
+Time logged: (5:33:37 PM):-  Message: "Error sending link"
+Time logged: (5:33:37 PM):-  Message: "Password reset link sent to your email"
+Time logged: (5:34:35 PM):-  Message: "Password reset Successfull"
+Time logged: (5:34:35 PM):-  Message: "Password Reset Error"
+Time logged: (5:34:35 PM):-  Message: Password reset successful!
+Time logged: (5:35:36 PM):-  Message: Login information"damianguch@yahoo.com"
+Time logged: (5:35:37 PM):-  Message: Wrong password.
+Time logged: (5:36:19 PM):-  Message: Login information"damianguch@yahoo.com"
+Time logged: (5:36:20 PM):-  Message: Wrong password.
+Time logged: (5:38:40 PM):-  Message: Login information"damianguch@yahoo.com"
+Time logged: (5:38:41 PM):-  Message: Wrong password.
+Time logged: (5:40:25 PM):-  Message: Login information"jcaeser@mail.com"
+Time logged: (5:40:25 PM):-  Message: Wrong password.
+Time logged: (5:40:46 PM):-  Message: Login information"jcaeser@mail.com"
+Time logged: (5:40:46 PM):-  Message: Wrong password.
+Time logged: (5:41:01 PM):-  Message: Login information"jcaeser@mail.com"
+Time logged: (5:41:01 PM):-  Message: User logged in successfully
+Time logged: (5:43:40 PM):-  Message: "Password reset link sent to your email"
+Time logged: (5:43:40 PM):-  Message: "Error sending link"
+Time logged: (5:50:42 PM):-  Message: "Password reset Successfull"
+Time logged: (5:50:42 PM):-  Message: Password reset successful!
+Time logged: (5:50:42 PM):-  Message: "Password Reset Error"
+Time logged: (6:05:29 PM):-  Message: Login information"damianguch@yahoo.com"
+Time logged: (6:05:30 PM):-  Message: Wrong password.
+Time logged: (6:05:52 PM):-  Message: Login information"damianguch@yahoo.com"
+Time logged: (6:05:53 PM):-  Message: Wrong password.
+Time logged: (6:06:16 PM):-  Message: Login information"damianguch@yahoo.com"
+Time logged: (6:06:17 PM):-  Message: Wrong password.
+Time logged: (6:06:36 PM):-  Message: "Password reset link sent to your email"
+Time logged: (6:06:36 PM):-  Message: "Error sending link"
+Time logged: (6:07:57 PM):-  Message: Password reset successful!
+Time logged: (6:08:55 PM):-  Message: Login information"damianguch@yahoo.com"
+Time logged: (6:08:55 PM):-  Message: Wrong password.
