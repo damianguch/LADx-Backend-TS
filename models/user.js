@@ -40,7 +40,6 @@ const userSchema = new Schema(
       required: true
     },
     confirm_password: String,
-    password_reset_link: String,
     email_verification_code: String,
     profilePicUrl: String,
     profilePicPublicId: String,

@@ -137,7 +137,6 @@ const SignUp = async (req, res) => {
       country,
       state,
       password: encrypt_password,
-      password_reset_link: '',
       email_verification_code: hashedOTP,
       is_email_verified: 0,
       roles: 0
