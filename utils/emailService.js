@@ -34,11 +34,75 @@ const sendOTPEmail = async (email, otp) => {
     const command = new SendEmailCommand(params);
     const response = await client.send(command);
     createAppLog('OTP sent successfully:', response);
+    return response;
+  } catch (error) {
+    console.error('Error sending OTP:', error.message);
+    createAppLog(JSON.stringify('Error sending OTP:' + error.message));
+  }
+};
+
+const passwordResetEmail = async (email, resetUrl) => {
+  const params = {
+    Source: 'ladxofficial@gmail.com',
+    Destination: {
+      ToAddresses: [email]
+    },
+
+    Message: {
+      Body: {
+        Text: {
+          Data: `Your password reset link is ${resetUrl}`
+        }
+      },
+      Subject: {
+        Data: 'Your Password Reset Request'
+      }
+    }
+  };
+
+  try {
+    const command = new SendEmailCommand(params);
+    const response = await client.send(command);
+    createAppLog('Password Reset link sent successfully:', response);
   } catch (error) {
     console.error('Error sending email:', error);
   }
 };
 
+// Send Reset confirmation email to user
+const ConfirmPasswordResetEmail = async (email) => {
+  const params = {
+    Source: 'ladxofficial@gmail.com',
+    Destination: {
+      ToAddresses: [email]
+    },
+
+    Message: {
+      Body: {
+        Text: {
+          Data: `Your password reset was successful!.`
+        }
+      },
+      Subject: {
+        Data: 'Password Reset Successful'
+      }
+    }
+  };
+
+  try {
+    const command = new SendEmailCommand(params);
+    const res = await client.send(command);
+
+    console.log(res);
+    await createAppLog(JSON.stringify('Password reset Successfull'));
+  } catch (error) {
+    await createAppLog(JSON.stringify(error.message));
+    return console.log(error.message);
+  }
+};
+
 module.exports = {
-  sendOTPEmail
+  sendOTPEmail,
+  passwordResetEmail,
+  ConfirmPasswordResetEmail
 };

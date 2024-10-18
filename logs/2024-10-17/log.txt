@@ -203,3 +203,25 @@ Time logged: (6:06:36 PM):-  Message: "Error sending link"
 Time logged: (6:07:57 PM):-  Message: Password reset successful!
 Time logged: (6:08:55 PM):-  Message: Login information"damianguch@yahoo.com"
 Time logged: (6:08:55 PM):-  Message: Wrong password.
+Time logged: (9:41:42 PM):-  Message: Login information"kwame@test.com"
+Time logged: (9:41:42 PM):-  Message: This email is not registered
+Time logged: (9:42:19 PM):-  Message: Login information"kwame@test.com"
+Time logged: (9:42:20 PM):-  Message: This email is not registered
+Time logged: (9:42:56 PM):-  Message: Login information"damianguch@yahoo.com"
+Time logged: (9:42:56 PM):-  Message: Wrong password.
+Time logged: (10:03:05 PM):-  Message: "User created successfully"
+Time logged: (10:03:05 PM):-  Message: {"error":"req.csrfToken is not a function"}
+Time logged: (10:06:00 PM):-  Message: "Email already registered"
+Time logged: (10:10:13 PM):-  Message: "User created successfully"
+Time logged: (10:26:46 PM):-  Message: "User created successfully"
+Time logged: (10:33:54 PM):-  Message: "Email already registered"
+Time logged: (10:40:09 PM):-  Message: "User created successfully"
+Time logged: (10:51:11 PM):-  Message: "Error sending email:"
+Time logged: (10:51:11 PM):-  Message: "User created successfully"
+Time logged: (10:54:55 PM):-  Message: "Error sending OTP:"
+Time logged: (10:54:55 PM):-  Message: "User created successfully"
+Time logged: (10:56:46 PM):-  Message: "Error sending OTP:"
+Time logged: (10:56:46 PM):-  Message: "User created successfully"
+Time logged: (11:01:04 PM):-  Message: "Email already registered"
+Time logged: (11:01:32 PM):-  Message: "Error sending OTP:Resolved credential object is not valid"
+Time logged: (11:01:32 PM):-  Message: "User created successfully"

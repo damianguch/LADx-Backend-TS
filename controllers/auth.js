@@ -162,13 +162,12 @@ const SignUp = async (req, res) => {
     await log.save();
 
     return res.status(201).json({
-      message: 'User created successfully',
-      result,
-      csrfToken: req.csrfToken()
+      OTP: result,
+      message: 'User created successfully'
     });
   } catch (error) {
-    createAppLog(JSON.stringify({ error: error.message }));
-    return res.status(500).json({ error: error.message });
+    createAppLog(JSON.stringify({ Error: error.message }));
+    return res.status(500).json({ Error: error.message });
   }
 };
 

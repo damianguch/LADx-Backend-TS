@@ -1,5 +1,4 @@
 const mongoose = require('mongoose');
-const bcrypt = require('bcrypt');
 const { Schema } = mongoose;
 
 // userSchema outlines the structure of the documents to be stored
@@ -65,15 +64,6 @@ const userSchema = new Schema(
   },
   { timestamps: true }
 );
-
-// Add a pre-save hook to hash the password if it has been modified
-userSchema.pre('save', async function (next) {
-  if (!this.isModified('password')) {
-    return next();
-  }
-  this.password = await bcrypt.hash(this.password, 12);
-  next();
-});
 
 const User = mongoose.model('User', userSchema);
 module.exports = User;
