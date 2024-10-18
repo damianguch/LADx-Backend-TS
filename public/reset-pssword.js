@@ -36,7 +36,7 @@ document.addEventListener('DOMContentLoaded', function () {
     // Send request to reset password
     try {
       const res = await fetch('https://localhost:1337/api/v1/reset-password', {
-        method: 'POST',
+        method: 'PUT',
         headers: {
           'Content-Type': 'application/json'
         },

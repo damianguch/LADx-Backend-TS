@@ -48,7 +48,7 @@ router.post('/login', upload.none(), Login);
 
 router.post('/logout', Logout);
 router.post('/forgot-password', ForgotPassword);
-router.post('/reset-password', ResetPassword);
+router.put('/reset-password', ResetPassword);
 router.get('/users/:id/profilePhoto', GetProfilePhoto);
 
 module.exports = router;

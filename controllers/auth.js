@@ -21,7 +21,7 @@ const crypto = require('crypto');
 let otpStore = {}; // In-memory storage of OTPs
 let emailStore = {}; // Im-memory storage of email
 
-// SignUp/Request OTP Route
+// SignUp-Request OTP Route
 const SignUp = async (req, res) => {
   // get request body
   const { fullname, email, country, state, phone, password, confirm_password } =

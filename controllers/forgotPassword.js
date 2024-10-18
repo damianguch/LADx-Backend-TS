@@ -53,11 +53,12 @@ const ForgotPassword = async (req, res) => {
     await passwordResetEmail(email, resetUrl);
     res.status(200).json({ message: 'Reset link sent successfully!' });
   } catch (error) {
+    createAppLog(JSON.stringify({ Error: error.message }));
     res.status(500).json({ Error: error.message });
   }
 };
 
-// POST: Reset password
+// PUT: Reset password
 const ResetPassword = async (req, res) => {
   // The frontend page parses the token and email from the URL.
   const { token, email, password } = req.body;
@@ -90,7 +91,7 @@ const ResetPassword = async (req, res) => {
     await user.save();
 
     // Send confirmation email to user
-    // await ConfirmPasswordResetEmail(email);
+    await ConfirmPasswordResetEmail(email);
     await createAppLog('Password reset successful!');
     res.status(200).json({ message: 'Password reset successful!' });
   } catch (error) {
