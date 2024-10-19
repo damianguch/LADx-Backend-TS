@@ -1,3 +1,10 @@
+/**********************************************************************
+ * Controller: Profile Photo controller
+ * Description: Controller contains functions for profile photo update.
+ * Author: Damian Oguche
+ * Date: 12-10-2024
+ **********************************************************************/
+
 const LogFile = require('../models/LogFile');
 const multer = require('multer');
 const User = require('../models/user');
@@ -7,13 +14,6 @@ const mongoose = require('mongoose');
 const path = require('path');
 const jwt = require('jsonwebtoken');
 const fs = require('fs');
-
-/**
- * Controller: Profile Photo controller
- * Description: Controller contains functions for profile photo update.
- * Author: Damian Oguche
- * Date: 12-10-2024
- */
 
 // Ensure the uploads directory exists
 const profilePicDir = 'uploads/profile-pics';
@@ -53,7 +53,7 @@ const upload = multer({
   }
 });
 
-//Update Profile Photo
+// Update Profile Photo
 const UpdateProfilePhoto = async (req, res) => {
   const token = req.cookies.token;
 
@@ -71,9 +71,6 @@ const UpdateProfilePhoto = async (req, res) => {
   console.log(profilePic);
 
   try {
-    // const id = '6706543830437af5872e9c1b';
-    // const { id } = req.params;
-
     // Check if id is a valid ObjectId
     if (!mongoose.Types.ObjectId.isValid(id)) {
       await createAppLog('Invalid user ID format');

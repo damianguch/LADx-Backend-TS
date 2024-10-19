@@ -1,2 +1,34 @@
 Time logged: (5:56:06 AM):-  Message: Login information"kwame@test.com"
 Time logged: (5:56:07 AM):-  Message: This email is not registered
+Time logged: (10:35:27 AM):-  Message: "Email already registered"
+Time logged: (11:08:32 AM):-  Message: "Error sending OTP:Resolved credential object is not valid"
+Time logged: (11:08:32 AM):-  Message: "User created successfully"
+Time logged: (1:28:07 PM):-  Message: Login information"damianguch@yahoo.com"
+Time logged: (1:28:08 PM):-  Message: User logged in successfully
+Time logged: (1:30:12 PM):-  Message: Login information"damianguch@yahoo.com"
+Time logged: (1:30:12 PM):-  Message: Password Required!
+Time logged: (1:30:26 PM):-  Message: Login information"damianguch@yahoo.com"
+Time logged: (1:30:26 PM):-  Message: Wrong password.
+Time logged: (1:32:02 PM):-  Message: "Resolved credential object is not valid"
+Time logged: (1:32:02 PM):-  Message: Password reset successful!
+Time logged: (1:33:07 PM):-  Message: Login information"damianguch@yahoo.com"
+Time logged: (1:33:08 PM):-  Message: Wrong password.
+Time logged: (1:33:17 PM):-  Message: Login information"damianguch@yahoo.com"
+Time logged: (1:33:18 PM):-  Message: User logged in successfully
+Time logged: (6:47:53 PM):-  Message: Login information"jcaeser@mail.com"
+Time logged: (6:47:54 PM):-  Message: Wrong password.
+Time logged: (6:48:00 PM):-  Message: Login information"jcaeser@mail.com"
+Time logged: (6:48:01 PM):-  Message: User logged in successfully
+Time logged: (6:48:36 PM):-  Message: Login information"jcaeser@mail.com"
+Time logged: (6:48:36 PM):-  Message: User logged in successfully
+Time logged: (6:48:57 PM):-  Message: Login information"jcaeser@mail.com"
+Time logged: (6:48:58 PM):-  Message: Wrong password.
+Time logged: (9:16:33 PM):-  Message: "Error sending reset link:Resolved credential object is not valid"
+Time logged: (9:17:11 PM):-  Message: "Resolved credential object is not valid"
+Time logged: (9:17:11 PM):-  Message: Password reset successful!
+Time logged: (9:17:27 PM):-  Message: Login information"jcaeser@mail.com"
+Time logged: (9:17:27 PM):-  Message: Password Required!
+Time logged: (9:17:41 PM):-  Message: Login information"jcaeser@mail.com"
+Time logged: (9:17:42 PM):-  Message: Wrong password.
+Time logged: (9:17:55 PM):-  Message: Login information"jcaeser@mail.com"
+Time logged: (9:17:56 PM):-  Message: User logged in successfully

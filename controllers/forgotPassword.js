@@ -16,7 +16,7 @@ const {
 const { createAppLog } = require('../utils/createLog');
 const { encryptPasswordWithBcrypt } = require('../utils/passwordEncrypt');
 
-// POST: Request password reset
+// POST: Request Password Reset
 const ForgotPassword = async (req, res) => {
   const { email } = req.body;
 

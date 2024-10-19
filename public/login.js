@@ -33,7 +33,8 @@ const Login = async () => {
   formData.append('password', password.value);
 
   try {
-    const baseURL = 'https://localhost:1337';
+    // const baseURL = 'https://localhost:1337';
+    const baseURL = 'https://ladx-backend-h9fg.onrender.com/';
 
     const res = await fetch(
       `${baseURL}/api/v1/login`,
@@ -49,7 +50,7 @@ const Login = async () => {
 
     // Handle different response cases
     if (res.status === 400) {
-      // Handle bad request (missing email/password)
+      // Handle bad request (Missing email/password)
       showError(result.message);
     } else if (res.status === 401) {
       // Wrong email or password
@@ -79,7 +80,7 @@ loginForm.addEventListener('submit', (e) => {
   Login();
 });
 
-// POST: Fotgot Password
+// POST: Fotgot Password Request
 const ForgotPassword = async () => {
   const email = $('#forgot-email').val();
   const baseURL = 'https://localhost:1337';
@@ -88,9 +89,9 @@ const ForgotPassword = async () => {
   const res = await fetch(`${baseURL}/api/v1/forgot-password`, {
     method: 'POST',
     headers: {
-      'Content-Type': 'application/json' // JSON payloads
+      'Content-Type': 'application/json'
     },
-    body: JSON.stringify({ email }) // Send email as JSON
+    body: JSON.stringify({ email })
   });
 
   const result = await res.json();

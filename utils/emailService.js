@@ -11,6 +11,7 @@ const SES_Config = {
 
 const client = new SESClient(SES_Config);
 
+// Send OTP Email
 const sendOTPEmail = async (email, otp) => {
   const params = {
     Source: 'ladxofficial@gmail.com',
@@ -31,8 +32,10 @@ const sendOTPEmail = async (email, otp) => {
   };
 
   try {
+    // Send the created object to the AWS server
     const command = new SendEmailCommand(params);
     const response = await client.send(command);
+
     createAppLog('OTP sent successfully:', response);
     return response;
   } catch (error) {
@@ -41,6 +44,7 @@ const sendOTPEmail = async (email, otp) => {
   }
 };
 
+//Send Password Reset Email
 const passwordResetEmail = async (email, resetUrl) => {
   const params = {
     Source: 'ladxofficial@gmail.com',
@@ -65,7 +69,8 @@ const passwordResetEmail = async (email, resetUrl) => {
     const response = await client.send(command);
     createAppLog('Password Reset link sent successfully:', response);
   } catch (error) {
-    console.error('Error sending email:', error);
+    console.error('Error sending reset link:', error.message);
+    createAppLog(JSON.stringify('Error sending reset link:' + error.message));
   }
 };
 

@@ -69,7 +69,8 @@ const UpdateProfilePhoto = async (req, res) => {
       });
     }
 
-    // If there is an old profile picture, delete it from Cloudinary using the stored publicId
+    // If there is an old profile picture, delete it from Cloudinary using
+    // the stored publicId
     if (user.profilePicPublicId) {
       const result = await cloudinary.uploader.destroy(user.profilePicPublicId);
       console.log(`Deleted old image:`, result);
