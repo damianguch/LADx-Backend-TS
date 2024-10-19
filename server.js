@@ -55,7 +55,7 @@ const resetLimiter = rateLimit({
 });
 
 // Apply rate limit to password reset
-// app.use('/api/v1/forgot-password', resetLimiter);
+app.use('/api/v1/forgot-password', resetLimiter);
 
 // Apply rate limit to all requests
 app.use('/api/v1', limiter);
@@ -105,6 +105,10 @@ app.use('/uploads', (req, res, next) => {
 
 // Routes Declarations
 app.use('/api/v1', servicesRoutes);
+
+if (process.env.NODE_ENV === 'production') {
+  app.use(express.static('build'));
+}
 
 const PORT = process.env.PORT || 5000;
 
