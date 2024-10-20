@@ -4,7 +4,7 @@ const router = express.Router();
 const { Login, SignUp, verifyOTP, Logout } = require('../controllers/auth');
 const { UpdateProfilePhoto, upload } = require('../controllers/profilePhoto');
 const { UpdateProfile, GetUserProfile } = require('../controllers/profile');
-const { authenticateJWT, verifyTokenFromCookie } = require('../utils/jwt');
+const { verifyTokenFromCookie } = require('../utils/jwt');
 const {
   ForgotPassword,
   ResetPassword

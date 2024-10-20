@@ -56,7 +56,6 @@ const UpdateProfile = async (req, res) => {
 
   try {
     // fetch user info by id
-    // const user = await User.findOne({ _id: id });
 
     // Automatically casts id to an ObjectId
     const user = await User.findById(id);

@@ -1,10 +1,9 @@
-/*******************************************
+/**********************************************************************
  * Controller: Profile Photo controller
- * Description: Controller contains functions for profile
-                photo update.
+ * Description: Controller contains functions for profile photo update.
  * Author: Damian Oguche
  * Date: 14-10-2024
- ********************************************/
+ **********************************************************************/
 
 const User = require('../models/user');
 const { createAppLog } = require('../utils/createLog');
@@ -16,8 +15,6 @@ const GetProfilePhoto = async (req, res) => {
   try {
     // Automatically casts id to an ObjectId
     const user = await User.findById(id);
-
-    console.log(user);
 
     if (!user || !user.profilePicUrl) {
       await createAppLog('User profile photo not found!');

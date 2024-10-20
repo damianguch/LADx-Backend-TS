@@ -33,8 +33,6 @@ const UpdateProfilePhoto = async (req, res) => {
   const profilePic = req.file; // Get uploaded file from multer
   if (!profilePic) return res.status(400).json({ message: 'No file uploaded' });
 
-  console.log(profilePic);
-
   try {
     // Automatically casts id to an ObjectId
     const user = await User.findById(id);
@@ -63,8 +61,6 @@ const UpdateProfilePhoto = async (req, res) => {
 
     // Get the publicId
     profilePhoto.profilePicPublicId = req.file.filename; // Cloudinary publicId
-
-    console.log(profilePhoto);
 
     // Update user profile photo in database
     await User.findByIdAndUpdate(id, { $set: profilePhoto });
