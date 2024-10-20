@@ -51,7 +51,18 @@ const verifyTokenFromCookie = (req, res, next) => {
 
   try {
     const decoded = jwt.verify(token, process.env.JWT_SECRET_KEY);
-    req.id = decoded.id; // Attach user info to the request
+    const id = decoded.id;
+
+    // Check if id is a valid ObjectId
+    if (!mongoose.Types.ObjectId.isValid(id)) {
+      return res.status(400).json({
+        status: 'E00',
+        success: false,
+        message: 'Invalid user ID format'
+      });
+    }
+
+    req.id = id; // Attach user info to the request
     next();
   } catch (error) {
     res.status(403).json({ message: 'Forbidden!' });
