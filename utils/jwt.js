@@ -54,8 +54,6 @@ const verifyTokenFromCookie = (req, res, next) => {
     const decoded = jwt.verify(token, process.env.JWT_SECRET_KEY);
     const id = decoded.id;
 
-    console.log(id);
-
     // Check if id is a valid ObjectId
     if (!mongoose.Types.ObjectId.isValid(id)) {
       return res.status(400).json({

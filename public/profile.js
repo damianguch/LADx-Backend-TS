@@ -12,11 +12,9 @@ const updateProfile = async () => {
   formData.append('country', country.value);
   formData.append('state', state.value);
 
-  console.log(formData);
-
   try {
-    // const userId = '6706543830437af5872e9c1b';
     const baseURL = 'https://localhost:1337';
+    // const baseURL = 'https://ladx-backend-h9fg.onrender.com';
     const res = await fetch(
       `${baseURL}/api/v1/users/profile`,
 
@@ -29,7 +27,8 @@ const updateProfile = async () => {
 
     if (res.ok) {
       const result = await res.json();
-      console.log('Profile updated successfully', result);
+      console.log(result.message);
+      console.log(result.data);
 
       // Clear input fields and file input
       fullname.value = '';

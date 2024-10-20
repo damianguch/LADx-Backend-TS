@@ -9,3 +9,34 @@ Time logged: (6:59:57 AM):-  Message: Login information"damianguch@yahoo.com"
 Time logged: (6:59:58 AM):-  Message: User logged in successfully
 Time logged: (7:05:24 AM):-  Message: Operation `users.findOne()` buffering timed out after 10000ms
 Time logged: (7:06:24 AM):-  Message: Profile Updated Successfully!
+Time logged: (10:24:02 AM):-  Message: Login information"damianguch@yahoo.com"
+Time logged: (10:24:03 AM):-  Message: User logged in successfully
+Time logged: (10:34:50 AM):-  Message: Profile Retrieved Successfully!
+Time logged: (10:38:41 AM):-  Message: Profile Updated Successfully!
+Time logged: (10:39:52 AM):-  Message: Profile Updated Successfully!
+Time logged: (10:43:45 AM):-  Message: Login information"damianguch@yahoo.com"
+Time logged: (10:43:45 AM):-  Message: User logged in successfully
+Time logged: (10:47:07 AM):-  Message: Login information""
+Time logged: (10:47:07 AM):-  Message: Email Required!
+Time logged: (10:52:23 AM):-  Message: Login information"damianguch@yahoo.com"
+Time logged: (10:52:24 AM):-  Message: User logged in successfully
+Time logged: (11:03:29 AM):-  Message: Profile Updated Successfully!
+Time logged: (11:09:09 AM):-  Message: Profile Updated Successfully!
+Time logged: (12:04:40 PM):-  Message: Login information"damianguch@yahoo.com"
+Time logged: (12:04:40 PM):-  Message: User logged in successfully
+Time logged: (12:05:06 PM):-  Message: Login information"damianguch@yahoo.com"
+Time logged: (12:05:07 PM):-  Message: User logged in successfully
+Time logged: (12:06:48 PM):-  Message: Login information"damianguch@yahoo.com"
+Time logged: (12:06:49 PM):-  Message: User logged in successfully
+Time logged: (12:11:05 PM):-  Message: Profile Updated Successfully!
+Time logged: (12:12:42 PM):-  Message: Profile Updated Successfully!
+Time logged: (12:21:52 PM):-  Message: Profile Updated Successfully!
+Time logged: (12:29:24 PM):-  Message: Profile Updated Successfully!
+Time logged: (12:32:13 PM):-  Message: Login information"damianguch@yahoo.com"
+Time logged: (12:32:14 PM):-  Message: User logged in successfully
+Time logged: (12:37:29 PM):-  Message: Login information"damianguch@yahoo.com"
+Time logged: (12:37:30 PM):-  Message: User logged in successfully
+Time logged: (12:38:46 PM):-  Message: Login information"damianguch@yahoo.com"
+Time logged: (12:38:47 PM):-  Message: User logged in successfully
+Time logged: (12:40:56 PM):-  Message: Login information"damianguch@yahoo.com"
+Time logged: (12:40:57 PM):-  Message: User logged in successfully
