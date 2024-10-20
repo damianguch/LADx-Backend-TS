@@ -1,0 +1,5 @@
+Time logged: (2:51:34 AM):-  Message: Login information"kwame@test.com"
+Time logged: (2:51:35 AM):-  Message: This email is not registered
+Time logged: (2:52:28 AM):-  Message: Login information"damianguch@yahoo.com"
+Time logged: (2:52:28 AM):-  Message: User logged in successfully
+Time logged: (2:52:52 AM):-  Message: Profile Retrieved Successfully!

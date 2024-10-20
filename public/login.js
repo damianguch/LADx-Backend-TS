@@ -34,7 +34,7 @@ const Login = async () => {
 
   try {
     // const baseURL = 'https://localhost:1337';
-    const baseURL = 'https://ladx-backend-h9fg.onrender.com/';
+    const baseURL = 'https://ladx-backend-h9fg.onrender.com';
 
     const res = await fetch(
       `${baseURL}/api/v1/login`,

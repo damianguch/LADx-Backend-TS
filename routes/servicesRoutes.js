@@ -3,7 +3,7 @@ const csrf = require('csurf');
 const router = express.Router();
 const { Login, SignUp, verifyOTP, Logout } = require('../controllers/auth');
 const { UpdateProfilePhoto, upload } = require('../controllers/profilePhoto');
-const { UpdateProfile } = require('../controllers/profile');
+const { UpdateProfile, GetUserProfile } = require('../controllers/profile');
 const { authenticateJWT } = require('../utils/jwt');
 const {
   ForgotPassword,
@@ -32,7 +32,7 @@ const csrfProtection = csrf({
 router.post('/signup', SignUp);
 router.post('/verify-otp', verifyOTP);
 
-//Handling Image Upload in Request
+// Handling Image Upload in Request
 router.put(
   '/users/:id/profilePhoto',
   authenticateJWT,
@@ -40,7 +40,10 @@ router.put(
   UpdateProfilePhoto
 );
 
-//Use multer to handle multipart/form-data requests.
+// Get User profile
+router.get('/users/:id/profile', authenticateJWT, GetUserProfile);
+
+// Use multer to handle multipart/form-data requests.
 router.put('/users/:id/profile', authenticateJWT, upload.none(), UpdateProfile);
 
 //Use multer to handle multipart/form-data requests.
