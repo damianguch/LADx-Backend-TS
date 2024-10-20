@@ -15,14 +15,15 @@ const updateProfile = async () => {
   console.log(formData);
 
   try {
-    const userId = '6706543830437af5872e9c1b';
+    // const userId = '6706543830437af5872e9c1b';
     const baseURL = 'https://localhost:1337';
     const res = await fetch(
-      `${baseURL}/api/v1/profile/${userId}`,
+      `${baseURL}/api/v1/users/profile`,
 
       {
         method: 'PUT',
-        body: formData
+        body: formData,
+        credentials: 'include'
       }
     );
 

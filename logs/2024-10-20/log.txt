@@ -3,3 +3,9 @@ Time logged: (2:51:35 AM):-  Message: This email is not registered
 Time logged: (2:52:28 AM):-  Message: Login information"damianguch@yahoo.com"
 Time logged: (2:52:28 AM):-  Message: User logged in successfully
 Time logged: (2:52:52 AM):-  Message: Profile Retrieved Successfully!
+Time logged: (5:56:40 AM):-  Message: Login information"damianguch@yahoo.com"
+Time logged: (5:56:41 AM):-  Message: User logged in successfully
+Time logged: (6:59:57 AM):-  Message: Login information"damianguch@yahoo.com"
+Time logged: (6:59:58 AM):-  Message: User logged in successfully
+Time logged: (7:05:24 AM):-  Message: Operation `users.findOne()` buffering timed out after 10000ms
+Time logged: (7:06:24 AM):-  Message: Profile Updated Successfully!
