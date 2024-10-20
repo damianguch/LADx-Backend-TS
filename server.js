@@ -62,9 +62,11 @@ app.use('/api/v1', limiter);
 
 // CORS middleware(to handle cross-origin requests.)
 const corsOptions = {
+  origin: true,
   methods: ['GET', 'POST'],
   allowedHeaders: ['Authorization', 'Content-Type']
 };
+
 app.use(cors(corsOptions));
 
 // Log App activities on console
