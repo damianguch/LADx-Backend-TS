@@ -46,14 +46,14 @@ function verifyToken(req, res, next) {
 // Middleware to check JWT token in cookie
 const verifyTokenFromCookie = (req, res, next) => {
   const token = req.cookies.token;
-  if (!token) return res.status(401).json({ message: 'No token provided' });
+  if (!token) return res.status(401).json({ message: 'Unauthorized Please login!' });
 
   try {
-    const decoded = jwt.verify(token, SECRET_KEY);
-    req.user = decoded; // Attach user info to the request
+    const decoded = jwt.verify(token, process.env.JWT_SECRET_KEY);
+    req.id = decoded.id; // Attach user info to the request
     next();
   } catch (error) {
-    res.status(400).json({ message: 'Invalid token' });
+    res.status(403).json({ message: 'Forbidden!' });
   }
 };
 
