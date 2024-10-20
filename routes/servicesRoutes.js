@@ -4,7 +4,7 @@ const router = express.Router();
 const { Login, SignUp, verifyOTP, Logout } = require('../controllers/auth');
 const { UpdateProfilePhoto, upload } = require('../controllers/profilePhoto');
 const { UpdateProfile, GetUserProfile } = require('../controllers/profile');
-const { authenticateJWT } = require('../utils/jwt');
+const { authenticateJWT, verifyTokenFromCookie } = require('../utils/jwt');
 const {
   ForgotPassword,
   ResetPassword
@@ -44,7 +44,12 @@ router.put(
 router.get('/users/:id/profile', authenticateJWT, GetUserProfile);
 
 // Use multer to handle multipart/form-data requests.
-router.put('/users/:id/profile', authenticateJWT, upload.none(), UpdateProfile);
+router.put(
+  '/users/profile',
+  verifyTokenFromCookie,
+  upload.none(),
+  UpdateProfile
+);
 
 //Use multer to handle multipart/form-data requests.
 router.post('/login', upload.none(), Login);

@@ -73,10 +73,17 @@ const GetUserProfile = async (req, res) => {
 
 //Update Profile
 const UpdateProfile = async (req, res) => {
-  const { id } = req.params;
+  const id = req.id;
+  // const token = req.cookies.token;
 
-  // const id = '6706543830437af5872e9c1b';
-  const { fullname, country, state } = req.body;
+  // if (!token) {
+  //   await createAppLog(`Unauthorized! Please log in`);
+  //   return res.status(401).json({ message: 'Unauthorized Please log in' });
+  // }
+
+  //  // Verify the token and extract the user ID
+  //  const decoded = jwt.verify(token, process.env.JWT_SECRET_KEY);
+  //  const id = decoded.id;
 
   try {
     // Check if id is a valid ObjectId
@@ -103,6 +110,8 @@ const UpdateProfile = async (req, res) => {
         message: 'User profile not found!'
       });
     }
+
+    const { fullname, country, state } = req.body;
 
     // Build the user profile update object
     const userProfile = {
