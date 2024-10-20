@@ -46,7 +46,8 @@ function verifyToken(req, res, next) {
 // Middleware to check JWT token in cookie
 const verifyTokenFromCookie = (req, res, next) => {
   const token = req.cookies.token;
-  if (!token) return res.status(401).json({ message: 'Unauthorized Please login!' });
+  if (!token)
+    return res.status(401).json({ message: 'Unauthorized Please login!' });
 
   try {
     const decoded = jwt.verify(token, process.env.JWT_SECRET_KEY);
