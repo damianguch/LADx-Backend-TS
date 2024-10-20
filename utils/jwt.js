@@ -1,4 +1,5 @@
 const jwt = require('jsonwebtoken');
+const mongoose = require('mongoose');
 
 // Ensure a strong secret key in production
 const SECRET_KEY = process.env.JWT_SECRET_KEY;
@@ -52,6 +53,8 @@ const verifyTokenFromCookie = (req, res, next) => {
   try {
     const decoded = jwt.verify(token, process.env.JWT_SECRET_KEY);
     const id = decoded.id;
+
+    console.log(id);
 
     // Check if id is a valid ObjectId
     if (!mongoose.Types.ObjectId.isValid(id)) {

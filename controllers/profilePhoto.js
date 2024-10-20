@@ -10,10 +10,8 @@ const { CloudinaryStorage } = require('multer-storage-cloudinary');
 const cloudinary = require('../utils/cloudinaryConfig');
 const LogFile = require('../models/LogFile');
 const User = require('../models/user');
-const jwt = require('jsonwebtoken');
 const { createAppLog } = require('../utils/createLog');
 const { currentDate } = require('../utils/date');
-const mongoose = require('mongoose');
 
 // Configure Cloudinary storage for Multer
 const storage = new CloudinaryStorage({
@@ -30,16 +28,7 @@ const upload = multer({ storage: storage });
 
 // PUT: Update Profile Photo
 const UpdateProfilePhoto = async (req, res) => {
-  const token = req.cookies.token;
-
-  if (!token) {
-    await createAppLog(`Unauthorized! Please login`);
-    return res.status(401).json({ message: 'Unauthorized. Please login' });
-  }
-
-  const SECRET_KEY = process.env.JWT_SECRET_KEY;
-  const decoded = jwt.verify(token, SECRET_KEY);
-  const id = decoded.id;
+  const id = req.id;
 
   const profilePic = req.file; // Get uploaded file from multer
   if (!profilePic) return res.status(400).json({ message: 'No file uploaded' });
@@ -47,16 +36,6 @@ const UpdateProfilePhoto = async (req, res) => {
   console.log(profilePic);
 
   try {
-    // Check if id is a valid ObjectId
-    if (!mongoose.Types.ObjectId.isValid(id)) {
-      await createAppLog('Invalid user ID format');
-      return res.status(400).json({
-        status: 'E00',
-        success: false,
-        message: 'Invalid user ID format'
-      });
-    }
-
     // Automatically casts id to an ObjectId
     const user = await User.findById(id);
 

@@ -34,8 +34,8 @@ router.post('/verify-otp', verifyOTP);
 
 // Handling Image Upload in Request
 router.put(
-  '/users/:id/profilePhoto',
-  authenticateJWT,
+  '/users/profilePhoto',
+  verifyTokenFromCookie,
   upload.single('profilePic'),
   UpdateProfilePhoto
 );
@@ -57,6 +57,6 @@ router.post('/login', upload.none(), Login);
 router.post('/logout', Logout);
 router.post('/forgot-password', ForgotPassword);
 router.put('/reset-password', ResetPassword);
-router.get('/users/:id/profilePhoto', GetProfilePhoto);
+router.get('/users/profilePhoto', verifyTokenFromCookie, GetProfilePhoto);
 
 module.exports = router;

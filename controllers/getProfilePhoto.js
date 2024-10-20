@@ -7,34 +7,13 @@
  ********************************************/
 
 const User = require('../models/user');
-const jwt = require('jsonwebtoken');
 const { createAppLog } = require('../utils/createLog');
-const mongoose = require('mongoose');
 
 // GET: Retrieve Profile Photo
 const GetProfilePhoto = async (req, res) => {
-  const token = req.cookies.token;
-
-  if (!token) {
-    await createAppLog(`Unauthorized! Please login`);
-    return res.status(401).json({ message: 'Unauthorized. Please login' });
-  }
-
-  const SECRET_KEY = process.env.JWT_SECRET_KEY;
-  const decoded = jwt.verify(token, SECRET_KEY);
-  const id = decoded.id;
+  const id = req.id;
 
   try {
-    // Check if id is a valid ObjectId
-    if (!mongoose.Types.ObjectId.isValid(id)) {
-      await createAppLog('Invalid user ID format');
-      return res.status(400).json({
-        status: 'E00',
-        success: false,
-        message: 'Invalid user ID format'
-      });
-    }
-
     // Automatically casts id to an ObjectId
     const user = await User.findById(id);
 
