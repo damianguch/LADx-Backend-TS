@@ -110,7 +110,7 @@ if (process.env.NODE_ENV === 'production') {
   app.use(express.static('build'));
 }
 
-const PORT = process.env.PORT || 5000;
+const PORT = process.env.PORT || 1337;
 
 // Path to SSL key and certificate files
 const privatekey = fs.readFileSync(
