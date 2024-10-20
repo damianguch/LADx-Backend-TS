@@ -41,7 +41,7 @@ router.put(
 );
 
 // Get User profile
-router.get('/users/:id/profile', authenticateJWT, GetUserProfile);
+router.get('/users/profile', verifyTokenFromCookie, GetUserProfile);
 
 // Use multer to handle multipart/form-data requests.
 router.put(
