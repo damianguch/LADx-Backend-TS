@@ -102,6 +102,8 @@ const SignUp = async (req, res) => {
 
     // Store temp user in memory
     // otpStore.set(`${email}_tempUser`, tempUser);
+
+    // Store temp user In-Memory Store(Redis)
     req.session.tempUser = tempUser;
 
     return res.status(200).json({ message: 'OTP sent to your email' });
@@ -146,6 +148,8 @@ const verifyOTP = async (req, res) => {
 
     // Fetch temp user data from otpStore
     // const tempUser = otpStore.get(`${email}_tempUser`);
+
+    // Fetch tempUser data from session in-memory storage(Redis)
     const tempUser = req.session.tempUser;
     if (!tempUser) {
       return res.status(400).json({ message: 'User not found' });
