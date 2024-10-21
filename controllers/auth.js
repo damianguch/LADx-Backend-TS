@@ -101,7 +101,8 @@ const SignUp = async (req, res) => {
     // await sendOTPEmail(email, otp);
 
     // Store temp user in memory
-    otpStore.set(`${email}_tempUser`, tempUser);
+    // otpStore.set(`${email}_tempUser`, tempUser);
+    req.session.tempUser = tempUser;
 
     return res.status(200).json({ message: 'OTP sent to your email' });
   } catch (error) {
@@ -114,7 +115,7 @@ const SignUp = async (req, res) => {
 
 // OTP Verification Route
 const verifyOTP = async (req, res) => {
-  const { otp } = req.body; // Get from request
+  const { otp } = req.body; // Get otp from request body
   const email = req.session.email; // Retrieve email from session
 
   if (!otp || !email) {
@@ -143,8 +144,9 @@ const verifyOTP = async (req, res) => {
       return res.status(400).json({ message: 'Invalid OTP' });
     }
 
-    // Fetch temp user data from optStore
-    const tempUser = otpStore.get(`${email}_tempUser`);
+    // Fetch temp user data from otpStore
+    // const tempUser = otpStore.get(`${email}_tempUser`);
+    const tempUser = req.session.tempUser;
     if (!tempUser) {
       return res.status(400).json({ message: 'User not found' });
     }
