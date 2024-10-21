@@ -5,3 +5,4 @@ Time logged: (8:59:09 AM):-  Message: {"Error":"email is not defined"}
 Time logged: (9:00:26 AM):-  Message: {"Error":"email is not defined"}
 Time logged: (9:04:31 AM):-  Message: {"Error":"email is not defined"}
 Time logged: (10:25:28 AM):-  Message: "User created successfully"
+Time logged: (12:53:06 PM):-  Message: "OTP verified, User created successfully"

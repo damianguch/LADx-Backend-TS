@@ -117,21 +117,11 @@ const verifyOTP = async (req, res) => {
   const { otp } = req.body; // Get from request
   const email = req.session.email; // Retrieve email from session
 
-  console.log(otpStore);
-  console.log(email);
-
   if (!otp || !email) {
     return res.status(400).json({ message: 'OTP or email not found' });
   }
 
   try {
-    // Fetch stored OTP and temp user from the map
-    // const storedOTPData = otpStore.get(email);
-    // const tempUser = otpStore.get(`${email}_tempUser`);
-    // if (!storedOTPData || !tempUser) {
-    //   return res.status(400).json({ message: 'OTP not found or expired' });
-    // }
-
     // Fetch stored OTP from session
     const storedOTPData = req.session.otpData;
 
@@ -153,7 +143,7 @@ const verifyOTP = async (req, res) => {
       return res.status(400).json({ message: 'Invalid OTP' });
     }
 
-    // Fetch temp user data
+    // Fetch temp user data from optStore
     const tempUser = otpStore.get(`${email}_tempUser`);
     if (!tempUser) {
       return res.status(400).json({ message: 'User not found' });

@@ -10,7 +10,11 @@ const cors = require('cors');
 const cookieParser = require('cookie-parser');
 const morgan = require('morgan');
 const session = require('express-session');
+const RedisStore = require('connect-redis').default;
+const { createClient } = require('redis');
 const app = express();
+const redisClient = createClient();
+redisClient.connect().catch(console.error);
 
 // Use Helmet for various security headers
 app.use(helmet());
@@ -46,6 +50,8 @@ app.use(cookieParser());
 // Configure the session middleware
 app.use(
   session({
+    // session data will be stored in Redis
+    store: new RedisStore({ client: redisClient }),
     secret: process.env.SECRET_KEY,
     resave: false,
     saveUninitialized: true,
