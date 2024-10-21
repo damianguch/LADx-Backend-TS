@@ -9,6 +9,7 @@ const rateLimit = require('express-rate-limit');
 const cors = require('cors');
 const cookieParser = require('cookie-parser');
 const morgan = require('morgan');
+const session = require('express-session');
 const app = express();
 
 // Use Helmet for various security headers
@@ -41,6 +42,16 @@ app.use(
 );
 
 app.use(cookieParser());
+
+// Configure the session middleware
+app.use(
+  session({
+    secret: process.env.SECRET_KEY,
+    resave: false,
+    saveUninitialized: true,
+    cookie: { secure: true }
+  })
+);
 
 const limiter = rateLimit({
   windowMs: 15 * 60 * 1000, // 15 minutes

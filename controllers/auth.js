@@ -16,210 +16,184 @@ const { encryptPasswordWithBcrypt } = require('../utils/passwordEncrypt');
 const { sendOTPEmail } = require('../utils/emailService');
 const { isEmail, escape } = require('validator');
 const { currentDate } = require('../utils/date');
-const crypto = require('crypto');
+const otpStore = new Map(); // More scalable and secure in-memory store
 
-let otpStore = {}; // In-memory storage of OTPs
-let emailStore = {}; // Im-memory storage of email
-
-// SignUp-Request OTP Route
+// SignUp - Request OTP Route
 const SignUp = async (req, res) => {
-  // get request body
-  const { fullname, email, country, state, phone, password, confirm_password } =
-    req.body;
-
-  // data validation
-  if (!fullname) {
-    await createAppLog(JSON.stringify('Full name is required')); // log error
-    return res.status(400).json({
-      status: 'E00',
-      success: false,
-      message: 'Full name is required'
-    });
-  }
-
-  if (!email) {
-    await createAppLog(JSON.stringify('Email is required')); // log error
-    return res.status(400).json({
-      status: 'E00',
-      success: false,
-      message: 'Email is required'
-    });
-  }
-
-  // Validate email format
-  if (!isEmail(email)) {
-    return res.status(400).json({
-      status: 'E00',
-      success: false,
-      message: 'Invalid email format'
-    });
-  } else {
-    emailStore.email = email;
-  }
-
-  if (!phone) {
-    await createAppLog(JSON.stringify('Phone number is required')); // log error
-    return res.status(400).json({
-      status: 'E00',
-      success: false,
-      message: 'Phone number is required'
-    });
-  }
-
-  if (!country) {
-    await createAppLog(JSON.stringify('Country is required')); // log error
-    return res.status(400).json({
-      status: 'E00',
-      success: false,
-      message: 'Country is required'
-    });
-  }
-
-  if (!state) {
-    await createAppLog(JSON.stringify('State is required')); // log error
-    return res.status(400).json({
-      status: 'E00',
-      success: false,
-      message: 'State is required'
-    });
-  }
-
-  if (!password) {
-    await createAppLog(JSON.stringify('Password is required')); // log error
-    return res.status(400).json({
-      status: 'E00',
-      success: false,
-      message: 'Password is required'
-    });
-  }
-
-  if (!confirm_password) {
-    await createAppLog(JSON.stringify('Confirm password is required')); // log error
-    return res.status(400).json({
-      status: 'E00',
-      success: false,
-      message: 'Confirm password is required'
-    });
-  }
-
-  if (password != confirm_password) {
-    await createAppLog(JSON.stringify('Password does not match!')); // log error
-    return res.status(400).json({
-      status: 'E00',
-      success: false,
-      message: 'Password does not match!'
-    });
-  }
-
   try {
+    // Get request body
+    let { fullname, email, country, state, phone, password, confirm_password } =
+      req.body;
+
+    // Escape and sanitize inputs
+    fullname = escape(fullname);
+    email = escape(email);
+    country = escape(country);
+    state = escape(state);
+    phone = escape(phone);
+    password = escape(password);
+    confirm_password = escape(confirm_password);
+
+    // Input validation
+    if (!fullname)
+      return res
+        .status(400)
+        .json({ status: 'E00', message: 'Full name is required' });
+    if (!email || !isEmail(email))
+      return res
+        .status(400)
+        .json({ status: 'E00', message: 'Invalid email format' });
+    if (!phone)
+      return res
+        .status(400)
+        .json({ status: 'E00', message: 'Phone number is required' });
+    if (!country)
+      return res
+        .status(400)
+        .json({ status: 'E00', message: 'Country is required' });
+    if (!state)
+      return res
+        .status(400)
+        .json({ status: 'E00', message: 'State is required' });
+    if (!password)
+      return res
+        .status(400)
+        .json({ status: 'E00', message: 'Password is required' });
+    if (password !== confirm_password)
+      return res
+        .status(400)
+        .json({ status: 'E00', message: 'Passwords do not match' });
+
+    // Check if email is already registered
     const existingUser = await User.findOne({ email });
+    if (existingUser)
+      return res
+        .status(400)
+        .json({ status: 'E00', message: 'Email already registered' });
 
-    if (existingUser) {
-      await createAppLog(JSON.stringify('Email already registered'));
-      return res.status(400).json({
-        status: 'E00',
-        success: false,
-        message: 'Email already registered'
-      });
-    }
+    // Generate OTP and hash it
+    const otp = await EmailCode(6);
+    console.log(otp);
+    const salt = await bcrypt.genSalt(10);
+    const hashedOTP = await bcrypt.hash(otp, salt);
 
-    const otp = await EmailCode(6); // generate 6 digit code
+    // Store OTP in a map with an expiration time
+    // otpStore.set(email, { hashedOTP, expiresAt: Date.now() + 60 * 60 * 1000 });
 
-    const hashedOTP = await bcrypt.hash(otp, 10); // Store hashed OTP for security
-    otpStore.email = hashedOTP; // Save OTP for verification later
+    // Store OTP and email in the session
+    req.session.otpData = { hashedOTP, expiresAt: Date.now() + 60 * 60 * 1000 };
+    req.session.email = email; // Store email in session
 
-    const encrypt_password = await encryptPasswordWithBcrypt(password);
+    // Hash password for later use (only after OTP verification)
+    const encryptedPassword = await encryptPasswordWithBcrypt(password);
 
-    userInfo = {
+    // Save user info temporarily (could be done in Redis or DB for better scalability)
+    const tempUser = {
       fullname,
       email,
       phone,
       country,
       state,
-      password: encrypt_password,
-      email_verification_code: hashedOTP,
-      is_email_verified: 0,
-      roles: 0
+      password: encryptedPassword
     };
 
-    // Save the user to the database
-    const newUser = new User(userInfo);
-    await User.init();
-    await newUser.save();
+    // Optionally send OTP via email
+    // await sendOTPEmail(email, otp);
 
-    const result = await sendOTPEmail(email, otp);
-    await createAppLog(JSON.stringify('User created successfully'));
+    // Store temp user in memory
+    otpStore.set(`${email}_tempUser`, tempUser);
 
-    // Log the Sign Up activity
-    const log = new LogFile({
-      fullname: newUser.fullname,
-      email: newUser.email,
-      ActivityName: 'New user created with credential: ' + newUser.email,
-      AddedOn: currentDate
-    });
-
-    await log.save();
-
-    return res.status(201).json({
-      OTP: result,
-      message: 'User created successfully'
-    });
+    return res.status(200).json({ message: 'OTP sent to your email' });
   } catch (error) {
     createAppLog(JSON.stringify({ Error: error.message }));
-    return res.status(500).json({ Error: error.message });
+    return res
+      .status(500)
+      .json({ status: 'E500', message: 'Internal Server Error' });
   }
 };
 
-// OTP Verification route
+// OTP Verification Route
 const verifyOTP = async (req, res) => {
-  const { otp } = req.body;
+  const { otp } = req.body; // Get from request
+  const email = req.session.email; // Retrieve email from session
 
-  if (!otp) {
-    return res.status(400).json({ message: 'OTP is required' });
+  console.log(otpStore);
+  console.log(email);
+
+  if (!otp || !email) {
+    return res.status(400).json({ message: 'OTP or email not found' });
   }
 
   try {
-    const storedOTP = otpStore['email'];
-    const storedEmail = emailStore['email'];
+    // Fetch stored OTP and temp user from the map
+    // const storedOTPData = otpStore.get(email);
+    // const tempUser = otpStore.get(`${email}_tempUser`);
+    // if (!storedOTPData || !tempUser) {
+    //   return res.status(400).json({ message: 'OTP not found or expired' });
+    // }
 
-    const user = await User.findOne({ email: storedEmail });
-    if (!user) {
+    // Fetch stored OTP from session
+    const storedOTPData = req.session.otpData;
+
+    if (!storedOTPData) {
+      return res.status(400).json({ message: 'OTP not found or expired' });
+    }
+
+    const { hashedOTP, expiresAt } = storedOTPData;
+
+    // Check if OTP has expired
+    if (Date.now() > expiresAt) {
+      req.session.destroy(); // Clear session data
+      return res.status(400).json({ message: 'OTP expired' });
+    }
+
+    // Verify OTP
+    const isMatch = await bcrypt.compare(otp, hashedOTP);
+    if (!isMatch) {
+      return res.status(400).json({ message: 'Invalid OTP' });
+    }
+
+    // Fetch temp user data
+    const tempUser = otpStore.get(`${email}_tempUser`);
+    if (!tempUser) {
       return res.status(400).json({ message: 'User not found' });
     }
 
-    if (!storedOTP) {
-      return res.status(400).json({ message: 'OTP not found ' });
-    }
+    // Create the user in the database
+    const newUser = new User(tempUser);
+    await User.init(); // Ensure indexes are created before saving
+    await newUser.save();
 
-    const isMatch = await bcrypt.compare(otp, storedOTP);
-    if (isMatch) {
-      user.is_email_verified = 1;
-      await user.save();
+    // Log the OTP verification activity
+    const otpVerificationLog = new LogFile({
+      email: tempUser.email,
+      ActivityName: 'User Verified OTP',
+      AddedOn: currentDate
+    });
+    await otpVerificationLog.save();
 
-      // Remove OTP/email after successful verification
-      delete otpStore['email'];
-      delete emailStore['email'];
+    // Log the new user creation activity
+    const userCreationLog = new LogFile({
+      fullname: tempUser.fullname,
+      email: tempUser.email,
+      ActivityName: `New user created with email: ${tempUser.email}`,
+      AddedOn: currentDate
+    });
+    await userCreationLog.save();
 
-      // log data
-      await createAppLog(JSON.stringify('OTP verified successfully!'));
+    // Clear session and temp user data after successful verification
+    req.session.destroy(); // Clear session data
+    otpStore.delete(`${email}_tempUser`);
 
-      // Log the verification activity
-      const log = new LogFile({
-        email: user.email,
-        ActivityName: 'User Verified OTP',
-        AddedOn: currentDate
-      });
-
-      await log.save();
-
-      return res.status(200).json({ message: 'OTP verified successfully!' });
-    } else {
-      await createAppLog(JSON.stringify('Invalid OTP'));
-      return res.status(400).json({ message: 'Invalid OTP' });
-    }
+    await createAppLog(
+      JSON.stringify('OTP verified, User created successfully')
+    );
+    return res
+      .status(201)
+      .json({ message: 'OTP verified, User created successfully' });
   } catch (error) {
-    createAppLog(JSON.stringify('OTP Verification Error!'));
-    return res.status(500).json({ message: 'Internal Server Error!' });
+    createAppLog(JSON.stringify({ Error: error.message }));
+    return res.status(500).json({ message: 'Internal Server Error' });
   }
 };
 
