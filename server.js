@@ -13,7 +13,14 @@ const session = require('express-session');
 const RedisStore = require('connect-redis').default;
 const { createClient } = require('redis');
 const app = express();
-const redisClient = createClient();
+
+const redisClient = createClient({
+  socket: {
+    host: 'localhost', // Or Redis server IP
+    port: 6379 // the default Redis port
+  }
+});
+
 redisClient.connect().catch(console.error);
 
 // Use Helmet for various security headers
