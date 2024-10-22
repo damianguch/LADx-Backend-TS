@@ -182,11 +182,11 @@ const verifyOTP = async (req, res) => {
     otpStore.delete(`${email}_tempUser`);
 
     await createAppLog(
-      JSON.stringify('OTP verified, User created successfully')
+      JSON.stringify('OTP verified successfully. User account created.')
     );
     return res
       .status(201)
-      .json({ message: 'OTP verified, User created successfully' });
+      .json({ message: 'OTP verified successfully. User account created.' });
   } catch (error) {
     createAppLog(JSON.stringify({ Error: error.message }));
     return res.status(500).json({ message: 'Internal Server Error' });
@@ -270,14 +270,13 @@ const Login = async (req, res) => {
       .cookie('token', token, {
         httpOnly: true, // Prevent JavaScript access
         secure: process.env.NODE_ENV === 'production' ? true : false, // Only send cookie over HTTPS in production
-        sameSite: 'Strict', // Prevent CSRF attacks
+        sameSite: 'None', // Prevent CSRF attacks if set to Strict
         maxAge: 60 * 60 * 1000 // Cookie expiration time (1 hour)
       })
       .json({
         status: '200',
         success: true,
         message: 'Login successful!',
-        // token: token,
         email: user.email
       });
   } catch (err) {
