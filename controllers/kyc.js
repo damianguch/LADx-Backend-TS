@@ -25,7 +25,7 @@ const storage = new CloudinaryStorage({
   }
 });
 
-const upload = multer({ storage: storage });
+const identityUpload = multer({ storage: storage });
 
 // POST: create identity
 const UploadKYC = async (req, res) => {
@@ -96,5 +96,5 @@ const UploadKYC = async (req, res) => {
 
 module.exports = {
   UploadKYC,
-  upload
+  identityUpload
 };

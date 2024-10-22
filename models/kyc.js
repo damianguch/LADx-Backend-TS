@@ -17,7 +17,7 @@ const kycSchema = new Schema(
 
     identityUrl: {
       type: String,
-      required: trure
+      required: true
     },
 
     user: {
@@ -34,6 +34,6 @@ const kycSchema = new Schema(
   { timestamps: true }
 );
 
-const Kyc = mongoose.model('Kyc', KycSchema);
+const Kyc = mongoose.model('Kyc', kycSchema);
 
 module.exports = Kyc;

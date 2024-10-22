@@ -10,6 +10,7 @@ const {
   ResetPassword
 } = require('../controllers/forgotPassword');
 const { GetProfilePhoto } = require('../controllers/getProfilePhoto');
+const { UploadKYC, identityUpload } = require('../controllers/kyc');
 
 // Middleware for CSRF protection
 const csrfProtection = csrf({
@@ -53,6 +54,8 @@ router.put(
 
 //Use multer to handle multipart/form-data requests.
 router.post('/login', upload.none(), Login);
+
+router.post('/kyc', identityUpload.single('identity'), UploadKYC);
 
 router.post('/logout', Logout);
 router.post('/forgot-password', ForgotPassword);
