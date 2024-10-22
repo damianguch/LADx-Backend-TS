@@ -26,11 +26,6 @@ const kycSchema = new Schema(
       required: true
     }, // Foreign key to User model
 
-    role: {
-      type: String,
-      enum: ['sender', 'traveller']
-    },
-
     created_at: {
       type: Date,
       default: Date.now()
