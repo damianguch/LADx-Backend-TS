@@ -1,10 +1,10 @@
-// POST: create request delivery
-const RequestDelivery = async (req, res) => {};
+// POST: request delivery
+const RequestDeliveryDetails = async (req, res) => {};
 
 // PUT: update shipping details
-const UpdateShippingDetails = async (req, res) => {};
+const UpdateRequestDetails = async (req, res) => {};
 
 module.exports = {
-  UpdateShippingDetails,
-  RequestDelivery
+  UpdateRequestDetails,
+  RequestDeliveryDetails
 };
