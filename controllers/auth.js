@@ -158,7 +158,7 @@ const verifyOTP = async (req, res) => {
     // Create the user in the database
     const newUser = new User(tempUser);
     await User.init(); // Ensure indexes are created before saving
-    await newUser.save();
+    const user = await newUser.save();
 
     // Log the OTP verification activity
     const otpVerificationLog = new LogFile({
@@ -181,12 +181,32 @@ const verifyOTP = async (req, res) => {
     req.session.destroy(); // Clear session data
     otpStore.delete(`${email}_tempUser`);
 
+    // Generate JWT token with the user payload
+    try {
+      token = generateToken({ email: user.email, id: user.id });
+    } catch (err) {
+      await createAppLog('Error generating token: ' + err.message);
+      return res.status(500).json({
+        status: 'E00',
+        success: false,
+        message: 'Failed to generate token.'
+      });
+    }
+
     await createAppLog(
       JSON.stringify('OTP verified successfully. User account created.')
     );
     return res
-      .status(201)
-      .json({ message: 'OTP verified successfully. User account created.' });
+      .cookie('token', token, {
+        httpOnly: true, // Prevent JavaScript access
+        secure: process.env.NODE_ENV === 'production' ? true : false, // Only send cookie over HTTPS in production
+        sameSite: 'None', // Prevent CSRF attacks if set to Strict
+        maxAge: 60 * 60 * 1000 // Cookie expiration time (1 hour)
+      })
+      .json({
+        message: 'OTP verified successfully. User account created.',
+        status: 200
+      });
   } catch (error) {
     createAppLog(JSON.stringify({ Error: error.message }));
     return res.status(500).json({ message: 'Internal Server Error' });
