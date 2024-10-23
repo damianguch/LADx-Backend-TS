@@ -29,7 +29,7 @@ const identityUpload = multer({ storage: storage });
 
 // POST: Create identity
 const UploadKYC = async (req, res) => {
-  // Assume user ID comes from an authenticated session or token
+  // Get user ID from an authenticated token
   const userId = req.id;
   const identity = req.file; // Get uploaded file from multer
 
@@ -56,6 +56,7 @@ const UploadKYC = async (req, res) => {
       return res.status(400).json({ message: 'User ID is required for KYC.' });
 
     let identityUrl;
+
     try {
       identityUrl = identity.path; // Cloudinary URL
     } catch (uploadError) {
@@ -77,12 +78,11 @@ const UploadKYC = async (req, res) => {
       const newKyc = new Kyc(kycDetails);
       await Kyc.init(); // Ensure indexes are created before saving
       await newKyc.save();
-
       await createAppLog('KYC details saved Successfully!');
     } catch (dbError) {
       createAppLog(JSON.stringify({ Error: dbError.message }));
       return res.status(500).json({
-        status: 'E02',
+        status: 'E00',
         message: 'Error saving KYC details to the database.'
       });
     }
