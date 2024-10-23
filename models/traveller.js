@@ -43,7 +43,7 @@ const travellerSchema = new Schema(
     airline_name: String,
     item_weight: Number,
 
-    user: {
+    userId: {
       type: Schema.Types.ObjectId,
       ref: 'User',
       required: true
