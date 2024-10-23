@@ -62,7 +62,7 @@ const UploadKYC = async (req, res) => {
     } catch (uploadError) {
       createAppLog(JSON.stringify({ Error: uploadError.message }));
       return res.status(500).json({
-        status: 'E01',
+        status: 'E00',
         message: 'Error uploading identity document. Please try again later.'
       });
     }
@@ -76,7 +76,7 @@ const UploadKYC = async (req, res) => {
 
     try {
       const newKyc = new Kyc(kycDetails);
-      await Kyc.init(); // Ensure indexes are created before saving
+      await Kyc.init(); // Ensures indexes are created before saving
       await newKyc.save();
       await createAppLog('KYC details saved Successfully!');
     } catch (dbError) {

@@ -3,3 +3,12 @@ Time logged: (6:34:35 AM):-  Message: {"Error":"Kyc validation failed: userId: P
 Time logged: (6:36:00 AM):-  Message: KYC details saved Successfully!
 Time logged: (6:59:34 AM):-  Message: KYC details saved Successfully!
 Time logged: (7:04:54 AM):-  Message: "OTP verified successfully. User account created."
+Time logged: (11:48:55 AM):-  Message: Login information"damianguch@yahoo.com"
+Time logged: (11:49:03 AM):-  Message: Wrong password.
+Time logged: (11:49:33 AM):-  Message: Login information"damianguch@yahoo.com"
+Time logged: (11:49:33 AM):-  Message: Wrong password.
+Time logged: (11:49:47 AM):-  Message: Login information"damianguch@yahoo.com"
+Time logged: (11:49:48 AM):-  Message: User logged in successfully
+Time logged: (11:50:49 AM):-  Message: User damianguch@yahoo.com logged out!
+Time logged: (11:53:27 AM):-  Message: "OTP verified successfully. User account created."
+Time logged: (12:03:49 PM):-  Message: KYC details saved Successfully!

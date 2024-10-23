@@ -15,10 +15,10 @@ const { createClient } = require('redis');
 const app = express();
 
 const redisClient = createClient({
+  url: 'redis://localhost:6379',
   socket: {
     host: 'localhost', // Or Redis server IP
-    port: 6379, // Default Redis port
-    timeout: 30000
+    port: 6379 // Default Redis port
   }
 });
 

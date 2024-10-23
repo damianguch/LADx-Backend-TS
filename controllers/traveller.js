@@ -79,7 +79,7 @@ const TravelDetails = async (req, res) => {
     };
 
     try {
-      const newTravelDetails = new Traveller(travelDetailsDetails);
+      const newTravelDetails = new Traveller(travelDetails);
       await Traveller.init(); // Ensures indexes are created before saving
       await newTravelDetails.save();
       await createAppLog('Travel details saved Successfully!');
