@@ -1,5 +1,5 @@
 /**********************************************************************
- * Controller: Profile Photo controller
+ * Controller: Get Profile Photo controller
  * Description: Controller contains functions for profile photo update.
  * Author: Damian Oguche
  * Date: 14-10-2024

@@ -1,0 +1,4 @@
+Time logged: (6:33:43 AM):-  Message: "OTP verified successfully. User account created."
+Time logged: (6:34:35 AM):-  Message: {"Error":"Kyc validation failed: userId: Path `userId` is required."}
+Time logged: (6:36:00 AM):-  Message: KYC details saved Successfully!
+Time logged: (6:59:34 AM):-  Message: KYC details saved Successfully!

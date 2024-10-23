@@ -1,0 +1,7 @@
+Time logged: (6:22:17 PM):-  Message: {"Error":"Expected a string but received a undefined"}
+Time logged: (6:24:37 PM):-  Message: {"Error":"Expected a string but received a undefined"}
+Time logged: (6:24:56 PM):-  Message: {"Error":"Kyc validation failed: user: Path `user` is required."}
+Time logged: (6:28:19 PM):-  Message: {"Error":"Kyc validation failed: user: Path `user` is required."}
+Time logged: (6:30:31 PM):-  Message: {"Error":"Kyc validation failed: user: Path `user` is required."}
+Time logged: (6:36:48 PM):-  Message: {"Error":"Kyc validation failed: user: Path `user` is required."}
+Time logged: (7:10:19 PM):-  Message: {"Error":"Kyc validation failed: user: Path `user` is required."}
