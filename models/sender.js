@@ -60,7 +60,7 @@ const senderSchema = new Schema(
       required: true
     },
 
-    user: {
+    userId: {
       type: Schema.Types.ObjectId,
       ref: 'User',
       required: true
@@ -69,5 +69,5 @@ const senderSchema = new Schema(
   { timestamps: true }
 );
 
-const Sender = mongoose.model('Sender', travellerSchema);
+const Sender = mongoose.model('Sender', senderSchema);
 module.exports = Sender;
