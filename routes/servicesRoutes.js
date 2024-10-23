@@ -55,7 +55,12 @@ router.put(
 //Use multer to handle multipart/form-data requests.
 router.post('/login', upload.none(), Login);
 
-router.post('/kyc', identityUpload.single('identity'), UploadKYC);
+router.post(
+  '/kyc',
+  verifyTokenFromCookie,
+  identityUpload.single('identity'),
+  UploadKYC
+);
 
 router.post('/logout', Logout);
 router.post('/forgot-password', ForgotPassword);

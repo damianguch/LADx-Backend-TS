@@ -1,5 +1,5 @@
 /**********************************************************************
- * Controller: Profile Photo controller
+ * Controller: UploadKYC controller
  * Description: Controller contains functions for user KYC details.
  * Author: Damian Oguche
  * Date: 22-10-2024
@@ -27,8 +27,10 @@ const storage = new CloudinaryStorage({
 
 const identityUpload = multer({ storage: storage });
 
-// POST: create identity
+// POST: Create identity
 const UploadKYC = async (req, res) => {
+  // Assume user ID comes from an authenticated session or token
+  const userId = req.id;
   const identity = req.file; // Get uploaded file from multer
 
   try {
@@ -50,10 +52,12 @@ const UploadKYC = async (req, res) => {
         .json({ status: 'E00', message: 'Work address is required' });
 
     if (!identity) return res.status(400).json({ message: 'No file uploaded' });
+    if (!userId)
+      return res.status(400).json({ message: 'User ID is required for KYC.' });
 
     let identityUrl;
     try {
-      identityUrl = req.file.path; // Cloudinary URL
+      identityUrl = identity.path; // Cloudinary URL
     } catch (uploadError) {
       createAppLog(JSON.stringify({ Error: uploadError.message }));
       return res.status(500).json({
@@ -65,22 +69,38 @@ const UploadKYC = async (req, res) => {
     const kycDetails = {
       residential_address,
       work_address,
-      identityUrl: req.file.path // Cloudinary URL
+      identityUrl: identity.path, // Cloudinary URL
+      userId
     };
 
-    // Create the kyc in the database
-    const newKyc = new Kyc(kycDetails);
-    await Kyc.init(); // Ensure indexes are created before saving
-    await newKyc.save();
+    try {
+      const newKyc = new Kyc(kycDetails);
+      await Kyc.init(); // Ensure indexes are created before saving
+      await newKyc.save();
 
-    // Log Profile Photo Update activity
-    const logKYCUpload = new LogFile({
-      ActivityName: `Kyc details added by user`,
-      AddedOn: currentDate
-    });
+      await createAppLog('KYC details saved Successfully!');
+    } catch (dbError) {
+      createAppLog(JSON.stringify({ Error: dbError.message }));
+      return res.status(500).json({
+        status: 'E02',
+        message: 'Error saving KYC details to the database.'
+      });
+    }
 
-    await logKYCUpload.save();
-    await createAppLog('KYC details Uploaded Successfully!');
+    try {
+      const logKYCUpload = new LogFile({
+        ActivityName: `Kyc details added by user`,
+        AddedOn: currentDate
+      });
+      await logKYCUpload.save();
+    } catch (logError) {
+      console.error('Error saving log file:', logError); // Log the error
+      createAppLog(JSON.stringify({ Error: logError.message }));
+      return res.status(500).json({
+        status: 'E03',
+        message: 'Error saving log details to the database.'
+      });
+    }
 
     return res.status(200).json({
       status: '00',
