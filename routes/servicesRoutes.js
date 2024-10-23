@@ -11,6 +11,7 @@ const {
 } = require('../controllers/forgotPassword');
 const { GetProfilePhoto } = require('../controllers/getProfilePhoto');
 const { UploadKYC, identityUpload } = require('../controllers/kyc');
+const { TravelDetails } = require('../controllers/traveller');
 
 // Middleware for CSRF protection
 const csrfProtection = csrf({
@@ -32,6 +33,11 @@ const csrfProtection = csrf({
 
 router.post('/signup', SignUp);
 router.post('/verify-otp', verifyOTP);
+//Use multer to handle multipart/form-data requests.
+router.post('/login', upload.none(), Login);
+router.post('/logout', Logout);
+router.post('/forgot-password', ForgotPassword);
+router.put('/reset-password', ResetPassword);
 
 // Handling Image Upload in Request
 router.put(
@@ -44,6 +50,9 @@ router.put(
 // Get User profile
 router.get('/users/profile', verifyTokenFromCookie, GetUserProfile);
 
+// Get Profile Photo
+router.get('/users/profilePhoto', verifyTokenFromCookie, GetProfilePhoto);
+
 // Use multer to handle multipart/form-data requests.
 router.put(
   '/users/profile',
@@ -52,9 +61,6 @@ router.put(
   UpdateProfile
 );
 
-//Use multer to handle multipart/form-data requests.
-router.post('/login', upload.none(), Login);
-
 router.post(
   '/kyc',
   verifyTokenFromCookie,
@@ -62,9 +68,6 @@ router.post(
   UploadKYC
 );
 
-router.post('/logout', Logout);
-router.post('/forgot-password', ForgotPassword);
-router.put('/reset-password', ResetPassword);
-router.get('/users/profilePhoto', verifyTokenFromCookie, GetProfilePhoto);
+router.post('/travel-details', verifyTokenFromCookie, TravelDetails);
 
 module.exports = router;
