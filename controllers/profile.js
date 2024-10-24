@@ -5,6 +5,7 @@
  * Date: 12-10-2024
  **************************************************************************/
 
+const { escape } = require('validator');
 const LogFile = require('../models/LogFile');
 const User = require('../models/user');
 const { createAppLog } = require('../utils/createLog');
@@ -69,7 +70,11 @@ const UpdateProfile = async (req, res) => {
       });
     }
 
-    const { fullname, country, state } = req.body;
+    let { fullname, country, state } = req.body;
+
+    fullname = escape(fullname);
+    country = escape(country);
+    state = escape(state);
 
     // Build the user profile update object
     const userProfile = {
