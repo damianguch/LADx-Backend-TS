@@ -11,10 +11,14 @@ const {
 } = require('../controllers/forgotPassword');
 const { GetProfilePhoto } = require('../controllers/getProfilePhoto');
 const { UploadKYC, identityUpload } = require('../controllers/kyc');
-const { TravelDetails } = require('../controllers/traveller');
+const {
+  TravelDetails,
+  UpdateTravelDetails
+} = require('../controllers/traveller');
 const {
   RequestDetails,
-  requestItemsImageUpload
+  requestItemsImageUpload,
+  UpdateRequestDetails
 } = require('../controllers/sender');
 
 // Middleware for CSRF protection
@@ -75,15 +79,26 @@ router.post(
   UploadKYC
 );
 
-// Traveller's details route
+// Create raveller's details route
 router.post('users/travel-details', verifyTokenFromCookie, TravelDetails);
 
-// Senders request details route
+// Update traveller's request details route
+router.put('users/travel-details', verifyTokenFromCookie, UpdateTravelDetails);
+
+// Create senders request details route
 router.post(
   '/users/request-details',
   verifyTokenFromCookie,
   requestItemsImageUpload, // Handles multiple images
   RequestDetails
+);
+
+// Update sender's request details route
+router.put(
+  '/users/request-details',
+  verifyTokenFromCookie,
+  requestItemsImageUpload,
+  UpdateRequestDetails
 );
 
 module.exports = router;
