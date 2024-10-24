@@ -77,7 +77,7 @@ const RequestDetails = async (req, res) => {
     if (!item_description)
       return res.status(400).json({ message: 'Item description is required' });
     if (!package_value)
-      return res.status(400).json({ message: 'Package valueis required' });
+      return res.status(400).json({ message: 'Package value is required' });
     if (!quantity)
       return res.status(400).json({ message: 'Quantity  is required' });
     if (!price) return res.status(400).json({ message: 'Price is required' });
@@ -160,8 +160,112 @@ const RequestDetails = async (req, res) => {
   }
 };
 
-// PUT: Update shipping details
-const UpdateRequestDetails = async (req, res) => {};
+// PUT: Update(Partial) request details
+const UpdateRequestDetails = async (req, res) => {
+  // Get the user ID from the authenticated token
+  const userId = req.id;
+  if (!userId)
+    return res
+      .status(400)
+      .json({ message: 'User ID is required for request update.' });
+
+  // Get uploaded files (array of images)
+  const requestItemImages = req.files;
+
+  try {
+    // Get request body
+    let {
+      package_details,
+      package_name,
+      item_description,
+      package_value,
+      quantity,
+      price,
+      address_from,
+      address_to,
+      reciever_name,
+      reciever_phone_number
+    } = req.body;
+
+    // Escape and sanitize inputs if they are provided
+    if (package_details) package_details = escape(package_details);
+    if (package_name) package_name = escape(package_name);
+    if (item_description) item_description = escape(item_description);
+    if (package_value) package_value = escape(package_value);
+    if (quantity) quantity = escape(quantity);
+    if (price) price = escape(price);
+    if (address_from) address_from = escape(address_from);
+    if (address_to) address_to = escape(address_to);
+    if (reciever_name) reciever_name = escape(reciever_name);
+    if (reciever_phone_number)
+      reciever_phone_number = escape(reciever_phone_number);
+
+    // Find the existing request details
+    const requestDetails = await Sender.findById(userId);
+    if (!requestDetails) {
+      return res.status(404).json({ message: 'Request details not found.' });
+    }
+
+    // If images were uploaded, replace the existing image URLs
+    if (requestItemImages && requestItemImages.length > 0) {
+      const newImageUrls = requestItemImages.map((file) => file.path);
+      requestDetails.requestItemsUrls = newImageUrls; // Replace old images
+    }
+
+    // Initialize an update object
+    let requestDetailsObject = {
+      ...(package_details && { package_details }),
+      ...(package_name && { package_name }),
+      ...(item_description && { item_description }),
+      ...(package_value && { package_value }),
+      ...(quantity && { quantity }),
+      ...(price && { price }),
+      ...(address_from && { address_from }),
+      ...(address_to && { address_to }),
+      ...(reciever_name && { reciever_name }),
+      ...(reciever_phone_number && { reciever_phone_number })
+    };
+
+    try {
+      // Update the request details in the database
+      const updatedRequestDetails = await Sender.findByIdAndUpdate(
+        userId,
+        { $set: requestDetailsObject },
+        { new: true }
+      );
+
+      if (!updatedRequestDetails) {
+        return res.status(404).json({ message: 'Request details not found.' });
+      }
+
+      await createAppLog('Request details updated successfully!');
+
+      // Log the update action
+      const logRequestDetailsUpdate = new LogFile({
+        ActivityName: `Request details updated by user`,
+        AddedOn: currentDate
+      });
+      await logRequestDetailsUpdate.save();
+    } catch (dbError) {
+      createAppLog(JSON.stringify({ Error: dbError.message }));
+      return res.status(500).json({
+        status: 'E00',
+        message: 'Error updating request details in the database.'
+      });
+    }
+
+    // Return success response
+    return res.status(200).json({
+      status: '00',
+      success: true,
+      message: 'Request details updated successfully!',
+      requestDetails
+    });
+  } catch (error) {
+    createAppLog(JSON.stringify({ Error: error.message }));
+    return res.status(500).json({ message: 'Internal Server Error' });
+  }
+};
 
 module.exports = {
   UpdateRequestDetails,
