@@ -39,25 +39,39 @@ const TravelDetails = async (req, res) => {
         .json({ status: 'E00', message: 'Departure city is required' });
     }
     if (!req.body.destination_city) {
-      return res.status(400).json({ message: 'Destination city is required' });
+      return res
+        .status(400)
+        .json({ status: 'E00', message: 'Destination city is required' });
     }
     if (!req.body.departure_date) {
-      return res.status(400).json({ message: 'Departure date is required' });
+      return res
+        .status(400)
+        .json({ status: 'E00', message: 'Departure date is required' });
     }
     if (!req.body.arrival_time) {
-      return res.status(400).json({ message: 'Arrival time is required' });
+      return res
+        .status(400)
+        .json({ status: 'E00', message: 'Arrival time is required' });
     }
     if (!req.body.boarding_time) {
-      return res.status(400).json({ message: 'Boarding time is required' });
+      return res
+        .status(400)
+        .json({ status: 'E00', message: 'Boarding time is required' });
     }
     if (!req.body.item_weight) {
-      return res.status(400).json({ message: 'Item weight is required' });
+      return res
+        .status(400)
+        .json({ status: 'E00', message: 'Item weight is required' });
     }
     if (!req.body.airline_name) {
-      return res.status(400).json({ message: 'Airline name is required' });
+      return res
+        .status(400)
+        .json({ status: 'E00', message: 'Airline name is required' });
     }
     if (!userId) {
-      return res.status(400).json({ message: 'User ID is required for KYC.' });
+      return res
+        .status(400)
+        .json({ status: 'E00', message: 'User ID is required for KYC.' });
     }
 
     const travelDetails = {

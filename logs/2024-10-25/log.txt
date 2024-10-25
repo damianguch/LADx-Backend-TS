@@ -1,0 +1,51 @@
+Time logged: (9:48:57 AM):-  Message: Login information"damianguch@yahoo.com"
+Time logged: (9:48:59 AM):-  Message: Wrong password.
+Time logged: (9:49:11 AM):-  Message: Login information"damianguch@yahoo.com"
+Time logged: (9:49:11 AM):-  Message: Wrong password.
+Time logged: (9:49:23 AM):-  Message: Login information"damianguch@yahoo.com"
+Time logged: (9:49:23 AM):-  Message: User logged in successfully
+Time logged: (9:53:32 AM):-  Message: {"Error":"Traveller validation failed: depature_date: Cast to date failed for value \"21-11-2024\" (type string) at path \"depature_date\", destination_date: Cast to date failed for value \"23-11-2024\" (type string) at path \"destination_date\", arrival_time: Cast to date failed for value \"4:30pm\" (type string) at path \"arrival_time\", boarding_time: Cast to date failed for value \"9:00am\" (type string) at path \"boarding_time\", item_weight: Cast to Number failed for value \"23kg\" (type string) at path \"item_weight\""}
+Time logged: (9:59:49 AM):-  Message: {"Error":"Traveller validation failed: depature_date: Cast to date failed for value \"21-11-2024\" (type string) at path \"depature_date\", destination_date: Cast to date failed for value \"23-11-2024\" (type string) at path \"destination_date\", arrival_time: Cast to date failed for value \"4:30pm\" (type string) at path \"arrival_time\", boarding_time: Cast to date failed for value \"9:00am\" (type string) at path \"boarding_time\", item_weight: Cast to Number failed for value \"23kg\" (type string) at path \"item_weight\""}
+Time logged: (10:03:01 AM):-  Message: {"Error":"Traveller validation failed: depature_date: Cast to date failed for value \"21-11-2024\" (type string) at path \"depature_date\", destination_date: Cast to date failed for value \"23-11-2024\" (type string) at path \"destination_date\", arrival_time: Cast to date failed for value \"4:30pm\" (type string) at path \"arrival_time\", boarding_time: Cast to date failed for value \"9:00am\" (type string) at path \"boarding_time\", item_weight: Cast to Number failed for value \"23kg\" (type string) at path \"item_weight\", userId: Path `userId` is required."}
+Time logged: (10:09:27 AM):-  Message: {"Error":"Expected a string but received a undefined"}
+Time logged: (10:10:14 AM):-  Message: {"Error":"Expected a string but received a undefined"}
+Time logged: (10:12:08 AM):-  Message: {"Error":"Expected a string but received a undefined"}
+Time logged: (10:15:42 AM):-  Message: {"Error":"Expected a string but received a undefined"}
+Time logged: (10:18:47 AM):-  Message: {"Error":"Expected a string but received a undefined"}
+Time logged: (10:20:19 AM):-  Message: {"Error":"Expected a string but received a undefined"}
+Time logged: (10:21:28 AM):-  Message: {"Error":"Expected a string but received a undefined"}
+Time logged: (10:22:37 AM):-  Message: {"Error":"Expected a string but received a undefined"}
+Time logged: (10:36:35 AM):-  Message: {"Error":"Expected a string but received a undefined"}
+Time logged: (10:38:20 AM):-  Message: {"Error":"Expected a string but received a undefined"}
+Time logged: (10:40:18 AM):-  Message: {"Error":"Expected a string but received a undefined"}
+Time logged: (3:14:08 PM):-  Message: "OTP verified successfully. User account created."
+Time logged: (3:17:57 PM):-  Message: {"Error":"Expected a string but received a undefined"}
+Time logged: (3:18:43 PM):-  Message: {"Error":"Expected a string but received a undefined"}
+Time logged: (3:29:33 PM):-  Message: {"Error":"Expected a string but received a undefined"}
+Time logged: (3:30:56 PM):-  Message: {"Error":"Expected a string but received a undefined"}
+Time logged: (3:31:39 PM):-  Message: {"Error":"Expected a string but received a undefined"}
+Time logged: (3:32:39 PM):-  Message: {"Error":"Expected a string but received a undefined"}
+Time logged: (3:39:20 PM):-  Message: {"Error":"Expected a string but received a undefined"}
+Time logged: (3:43:32 PM):-  Message: {"Error":"Expected a string but received a undefined"}
+Time logged: (3:56:41 PM):-  Message: {"Error":"Traveller validation failed: destination_date: Cast to date failed for value \"23-11-2024\" (type string) at path \"destination_date\", arrival_time: Cast to date failed for value \"4:30pm\" (type string) at path \"arrival_time\", boarding_time: Cast to date failed for value \"9:00am\" (type string) at path \"boarding_time\", item_weight: Cast to Number failed for value \"23kg\" (type string) at path \"item_weight\", depature_date: Path `depature_date` is required."}
+Time logged: (4:00:10 PM):-  Message: {"Error":"Traveller validation failed: destination_date: Cast to date failed for value \"23-11-2024\" (type string) at path \"destination_date\", arrival_time: Cast to date failed for value \"4:30pm\" (type string) at path \"arrival_time\", boarding_time: Cast to date failed for value \"9:00am\" (type string) at path \"boarding_time\", item_weight: Cast to Number failed for value \"23kg\" (type string) at path \"item_weight\", depature_date: Path `depature_date` is required."}
+Time logged: (4:04:15 PM):-  Message: {"Error":"Traveller validation failed: destination_date: Cast to date failed for value \"23-11-2024\" (type string) at path \"destination_date\", arrival_time: Cast to date failed for value \"4:30pm\" (type string) at path \"arrival_time\", boarding_time: Cast to date failed for value \"9:00am\" (type string) at path \"boarding_time\", depature_date: Path `depature_date` is required."}
+Time logged: (4:11:13 PM):-  Message: {"Error":"Traveller validation failed: destination_date: Cast to date failed for value \"Invalid Date\" (type Date) at path \"destination_date\", arrival_time: Cast to date failed for value \"Invalid Date\" (type Date) at path \"arrival_time\", boarding_time: Cast to date failed for value \"Invalid Date\" (type Date) at path \"boarding_time\", depature_date: Path `depature_date` is required."}
+Time logged: (4:22:13 PM):-  Message: Login information"eguchealadi@yahoo.com"
+Time logged: (4:22:13 PM):-  Message: Wrong password.
+Time logged: (4:22:50 PM):-  Message: Login information"eguchealadi@yahoo.com"
+Time logged: (4:22:50 PM):-  Message: User logged in successfully
+Time logged: (4:23:08 PM):-  Message: {"Error":"Traveller validation failed: destination_date: Cast to date failed for value \"Invalid Date\" (type Date) at path \"destination_date\", arrival_time: Cast to date failed for value \"Invalid Date\" (type Date) at path \"arrival_time\", boarding_time: Cast to date failed for value \"Invalid Date\" (type Date) at path \"boarding_time\", depature_date: Path `depature_date` is required."}
+Time logged: (4:23:49 PM):-  Message: {"Error":"Traveller validation failed: destination_date: Cast to date failed for value \"Invalid Date\" (type Date) at path \"destination_date\", arrival_time: Cast to date failed for value \"Invalid Date\" (type Date) at path \"arrival_time\", boarding_time: Cast to date failed for value \"Invalid Date\" (type Date) at path \"boarding_time\", depature_date: Path `depature_date` is required."}
+Time logged: (4:25:12 PM):-  Message: {"Error":"Expected a string but received a number"}
+Time logged: (4:27:21 PM):-  Message: {"Error":"Traveller validation failed: destination_date: Cast to date failed for value \"Invalid Date\" (type Date) at path \"destination_date\", arrival_time: Cast to date failed for value \"Invalid Date\" (type Date) at path \"arrival_time\", boarding_time: Cast to date failed for value \"Invalid Date\" (type Date) at path \"boarding_time\", depature_date: Path `depature_date` is required."}
+Time logged: (4:32:10 PM):-  Message: {"Error":"Traveller validation failed: destination_date: Cast to date failed for value \"Invalid Date\" (type Date) at path \"destination_date\", depature_date: Path `depature_date` is required."}
+Time logged: (4:34:43 PM):-  Message: {"Error":"Traveller validation failed: destination_date: Cast to date failed for value \"Invalid Date\" (type Date) at path \"destination_date\", depature_date: Path `depature_date` is required."}
+Time logged: (4:38:21 PM):-  Message: {"Error":"Traveller validation failed: depature_date: Path `depature_date` is required."}
+Time logged: (4:42:18 PM):-  Message: {"Error":"Traveller validation failed: depature_date: Path `depature_date` is required."}
+Time logged: (4:50:51 PM):-  Message: {"Error":"Traveller validation failed: depature_date: Path `depature_date` is required."}
+Time logged: (4:53:17 PM):-  Message: {"Error":"Traveller validation failed: depature_date: Path `depature_date` is required."}
+Time logged: (5:00:18 PM):-  Message: Travel details saved Successfully!
+Time logged: (5:00:18 PM):-  Message: "Travel details saved Successfully!"
+Time logged: (5:02:11 PM):-  Message: Travel details saved Successfully!
+Time logged: (5:02:11 PM):-  Message: "Travel details saved Successfully!"
