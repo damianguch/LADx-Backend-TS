@@ -13,7 +13,8 @@ const { GetProfilePhoto } = require('../controllers/getProfilePhoto');
 const { UploadKYC, identityUpload } = require('../controllers/kyc');
 const {
   TravelDetails,
-  UpdateTravelDetails
+  UpdateTravelDetails,
+  travelUpload
 } = require('../controllers/traveller');
 const {
   RequestDetails,
@@ -79,11 +80,11 @@ router.post(
   UploadKYC
 );
 
-// Create raveller's details route
-router.post('users/travel-details', verifyTokenFromCookie, TravelDetails);
+// Create traveller's details route
+router.post('/users/travel-details', verifyTokenFromCookie, TravelDetails);
 
 // Update traveller's request details route
-router.put('users/travel-details', verifyTokenFromCookie, UpdateTravelDetails);
+router.put('/users/travel-details', verifyTokenFromCookie, UpdateTravelDetails);
 
 // Create senders request details route
 router.post(

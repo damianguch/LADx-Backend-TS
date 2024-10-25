@@ -2,7 +2,7 @@
  * Controller: Traveller Details controller
  * Description: Controller contains functions for traveller details.
  * Author: Damian Oguche
- * Date: 23-10-2024
+ * Date: 24-10-2024
  ***********************************************************************/
 
 const LogFile = require('../models/LogFile');
@@ -17,77 +17,72 @@ const TravelDetails = async (req, res) => {
   const userId = req.id;
 
   try {
-    // Get request body
-    let {
-      flight_number,
-      departure_city,
-      destination_city,
-      depature_date,
-      destination_date,
-      arrival_time,
-      boarding_time,
-      airline_name,
-      item_weight
-    } = req.body;
-
-    // Escape and sanitize inputs
-    flight_number = escape(flight_number);
-    departure_city = escape(departure_city);
-    destination_city = escape(destination_city);
-    depature_date = escape(depature_date);
-    destination_date = escape(destination_date);
-    arrival_time = escape(arrival_time);
-    boarding_time = escape(boarding_time);
-    airline_name = escape(airline_name);
-    item_weight = escape(item_weight);
+    req.body.flight_number = escape(req.body.flight_number);
+    req.body.departure_city = escape(req.body.departure_city);
+    req.body.destination_city = escape(req.body.destination_city);
+    req.body.departure_date = new Date(req.body.departure_date);
+    req.body.destination_date = new Date(req.body.destination_date);
+    req.body.arrival_time = escape(req.body.arrival_time);
+    req.body.boarding_time = escape(req.body.boarding_time);
+    req.body.airline_name = escape(req.body.airline_name);
+    req.body.item_weight = Number(req.body.item_weight);
 
     // Input validation
-    if (!flight_number)
+    if (!req.body.flight_number) {
       return res
         .status(400)
-        .json({ status: 'E00', message: 'flight number is required' });
-    if (!departure_city)
+        .json({ status: 'E00', message: 'Flight number is required' });
+    }
+    if (!req.body.departure_city) {
       return res
         .status(400)
-        .json({ status: 'E00', message: 'depature city is required' });
-    if (!destination_city)
-      return res.status(400).json({ message: 'Destination City is required' });
-    if (!depature_date)
+        .json({ status: 'E00', message: 'Departure city is required' });
+    }
+    if (!req.body.destination_city) {
+      return res.status(400).json({ message: 'Destination city is required' });
+    }
+    if (!req.body.departure_date) {
       return res.status(400).json({ message: 'Departure date is required' });
-    if (!arrival_time)
+    }
+    if (!req.body.arrival_time) {
       return res.status(400).json({ message: 'Arrival time is required' });
-    if (!boarding_time)
+    }
+    if (!req.body.boarding_time) {
       return res.status(400).json({ message: 'Boarding time is required' });
-    if (!item_weight)
+    }
+    if (!req.body.item_weight) {
       return res.status(400).json({ message: 'Item weight is required' });
-    if (!airline_name)
+    }
+    if (!req.body.airline_name) {
       return res.status(400).json({ message: 'Airline name is required' });
-    if (!userId)
+    }
+    if (!userId) {
       return res.status(400).json({ message: 'User ID is required for KYC.' });
+    }
 
     const travelDetails = {
-      flight_number,
-      departure_city,
-      destination_city,
-      depature_date,
-      destination_date,
-      arrival_time,
-      boarding_time,
-      airline_name,
-      item_weight,
+      flight_number: req.body.flight_number,
+      departure_city: req.body.departure_city,
+      destination_city: req.body.destination_city,
+      departure_date: req.body.departure_date,
+      destination_date: req.body.destination_date,
+      arrival_time: req.body.arrival_time,
+      boarding_time: req.body.boarding_time,
+      airline_name: req.body.airline_name,
+      item_weight: req.body.item_weight,
       userId
     };
 
     try {
       const newTravelDetails = new Traveller(travelDetails);
-      await Traveller.init(); // Ensures indexes are created before saving
+      await Traveller.init();
       await newTravelDetails.save();
       await createAppLog('Travel details saved Successfully!');
     } catch (dbError) {
       createAppLog(JSON.stringify({ Error: dbError.message }));
       return res.status(500).json({
         status: 'E00',
-        message: 'Error saving travel details to the database.'
+        message: 'Error saving travel details to the database.' + dbError.stack
       });
     }
 
@@ -160,6 +155,7 @@ const UpdateTravelDetails = async (req, res) => {
     }
 
     // Initialize an update object
+    // (Using conditional object property spread syntax)
     let travelDetailsObject = {
       ...(flight_number && { flight_number }),
       ...(departure_city && { departure_city }),

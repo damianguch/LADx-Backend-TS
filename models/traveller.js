@@ -20,7 +20,7 @@ const travellerSchema = new Schema(
       required: true
     },
 
-    depature_date: {
+    departure_date: {
       type: Date,
       required: true
     },
@@ -31,12 +31,12 @@ const travellerSchema = new Schema(
     },
 
     arrival_time: {
-      type: Date,
+      type: String,
       required: true
     },
 
     boarding_time: {
-      type: Date,
+      type: String,
       required: true
     },
 
