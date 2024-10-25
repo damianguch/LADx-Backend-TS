@@ -96,7 +96,7 @@ const TravelDetails = async (req, res) => {
       createAppLog(JSON.stringify({ Error: dbError.message }));
       return res.status(500).json({
         status: 'E00',
-        message: 'Error saving travel details to the database.' + dbError.stack
+        message: 'Error saving travel details to the database.'
       });
     }
 
@@ -132,6 +132,9 @@ const TravelDetails = async (req, res) => {
 const UpdateTravelDetails = async (req, res) => {
   // Get the user ID from the authenticated token
   const userId = req.id;
+
+  console.log(userId);
+
   if (!userId)
     return res
       .status(400)
@@ -139,53 +142,66 @@ const UpdateTravelDetails = async (req, res) => {
 
   try {
     // Get request body
-    let {
-      flight_number,
-      departure_city,
-      destination_city,
-      depature_date,
-      destination_date,
-      arrival_time,
-      boarding_time,
-      airline_name,
-      item_weight
-    } = req.body;
+    // Escape and sanitize inputs if they are provided
+    req.body.flight_number = escape(req.body.flight_number);
+    req.body.departure_city = escape(req.body.departure_city);
+    req.body.destination_city = escape(req.body.destination_city);
+    req.body.departure_date = new Date(req.body.departure_date);
+    req.body.destination_date = new Date(req.body.destination_date);
+    req.body.arrival_time = escape(req.body.arrival_time);
+    req.body.boarding_time = escape(req.body.boarding_time);
+    req.body.airline_name = escape(req.body.airline_name);
+    req.body.item_weight = Number(req.body.item_weight);
 
     // Escape and sanitize inputs if they are provided
-    if (flight_number) flight_number = escape(flight_number);
-    if (departure_city) departure_city = escape(departure_city);
-    if (destination_city) destination_city = escape(destination_city);
-    if (depature_date) depature_date = escape(depature_date);
-    if (destination_date) destination_date = escape(destination_date);
-    if (arrival_time) arrival_time = escape(arrival_time);
-    if (boarding_time) boarding_time = escape(boarding_time);
-    if (airline_name) airline_name = escape(airline_name);
-    if (item_weight) item_weight = escape(item_weight);
+    // if (flight_number) flight_number = escape(flight_number);
+    // if (departure_city) departure_city = escape(departure_city);
+    // if (destination_city) destination_city = escape(destination_city);
+    // if (depature_date) depature_date = escape(depature_date);
+    // if (destination_date) destination_date = escape(destination_date);
+    // if (arrival_time) arrival_time = escape(arrival_time);
+    // if (boarding_time) boarding_time = escape(boarding_time);
+    // if (airline_name) airline_name = escape(airline_name);
+    // if (item_weight) item_weight = escape(item_weight);
 
     // Find the existing request details
-    const travelDetails = await Sender.findById(userId);
+    const travelDetails = await Traveller.findOne({ userId });
+
     if (!travelDetails) {
-      return res.status(404).json({ message: 'Request details not found.' });
+      return res
+        .status(404)
+        .json({ message: `Request details with id ${userId} not found.` });
     }
 
     // Initialize an update object
     // (Using conditional object property spread syntax)
     let travelDetailsObject = {
-      ...(flight_number && { flight_number }),
-      ...(departure_city && { departure_city }),
-      ...(destination_city && { destination_city }),
-      ...(depature_date && { depature_date }),
-      ...(destination_date && { destination_date }),
-      ...(arrival_time && { arrival_time }),
-      ...(boarding_time && { boarding_time }),
-      ...(airline_name && { airline_name }),
-      ...(item_weight && { item_weight })
+      ...(req.body.flight_number && { flight_number: req.body.flight_number }),
+      ...(req.body.departure_city && {
+        departure_city: req.body.departure_city
+      }),
+      ...(req.body.destination_city && {
+        destination_city: req.body.destination_city
+      }),
+      ...(req.body.departure_date && {
+        departure_date: req.body.departure_date
+      }),
+      ...(req.body.destination_date && {
+        destination_date: req.body.destination_date
+      }),
+      ...(req.body.arrival_time && { arrival_time: req.body.arrival_time }),
+      ...(req.body.boarding_time && { boarding_time: req.body.boarding_time }),
+      ...(req.body.airline_name && { airline_name: req.body.airline_name }),
+      ...(req.body.item_weight && { item_weight: req.body.item_weight })
     };
+
+    let updatedTravelDetails;
 
     try {
       // Update the request details in the database
-      const updatedTravelDetails = await Sender.findByIdAndUpdate(
-        userId,
+      const id = travelDetails._id;
+      updatedTravelDetails = await Traveller.findByIdAndUpdate(
+        id,
         { $set: travelDetailsObject },
         { new: true }
       );
@@ -215,7 +231,7 @@ const UpdateTravelDetails = async (req, res) => {
       status: '00',
       success: true,
       message: 'Travel details updated successfully!',
-      travelDetails
+      updatedTravelDetails
     });
   } catch (error) {
     createAppLog(JSON.stringify({ Error: error.message }));

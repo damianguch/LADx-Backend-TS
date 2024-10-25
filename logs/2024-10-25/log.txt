@@ -49,3 +49,19 @@ Time logged: (5:00:18 PM):-  Message: Travel details saved Successfully!
 Time logged: (5:00:18 PM):-  Message: "Travel details saved Successfully!"
 Time logged: (5:02:11 PM):-  Message: Travel details saved Successfully!
 Time logged: (5:02:11 PM):-  Message: "Travel details saved Successfully!"
+Time logged: (5:36:57 PM):-  Message: Login information"eguchealadi@yahoo.com"
+Time logged: (5:36:57 PM):-  Message: This email is not registered
+Time logged: (5:38:09 PM):-  Message: "OTP verified successfully. User account created."
+Time logged: (5:38:44 PM):-  Message: {"Error":"Expected a string but received a number"}
+Time logged: (5:55:05 PM):-  Message: {"Error":"Sender is not defined"}
+Time logged: (5:57:39 PM):-  Message: {"Error":"usersId is not defined"}
+Time logged: (6:01:54 PM):-  Message: Travel details saved Successfully!
+Time logged: (6:01:54 PM):-  Message: "Travel details saved Successfully!"
+Time logged: (6:07:33 PM):-  Message: {"Error":"Sender is not defined"}
+Time logged: (6:11:41 PM):-  Message: {"Error":"Cast to ObjectId failed for value \"{ userId: '671bc9700fdf906c41b74a47' }\" (type Object) at path \"_id\" for model \"Traveller\""}
+Time logged: (6:13:12 PM):-  Message: {"Error":"Cast to ObjectId failed for value \"{ userId: '671bc9700fdf906c41b74a47' }\" (type Object) at path \"_id\" for model \"Traveller\""}
+Time logged: (6:15:58 PM):-  Message: Travel details updated successfully!
+Time logged: (6:21:19 PM):-  Message: Travel details updated successfully!
+Time logged: (6:21:19 PM):-  Message: {"Error":"updatedTravelDetails is not defined"}
+Time logged: (6:24:38 PM):-  Message: Travel details updated successfully!
+Time logged: (6:27:32 PM):-  Message: Travel details updated successfully!
