@@ -6,3 +6,19 @@ Time logged: (5:02:40 AM):-  Message: {"Error":"package_details is not defined"}
 Time logged: (5:12:47 AM):-  Message: {"Error":"Kyc validation failed: identityUrl: Path `identityUrl` is required., work_address: Path `work_address` is required., residential_address: Path `residential_address` is required."}
 Time logged: (5:24:41 AM):-  Message: {"Error":"Kyc validation failed: identityUrl: Path `identityUrl` is required., work_address: Path `work_address` is required., residential_address: Path `residential_address` is required."}
 Time logged: (5:27:04 AM):-  Message: {"Error":"Kyc validation failed: identityUrl: Path `identityUrl` is required., work_address: Path `work_address` is required., residential_address: Path `residential_address` is required."}
+Time logged: (5:52:52 AM):-  Message: Login information"eguchealadi@yahoo.com"
+Time logged: (5:52:52 AM):-  Message: User logged in successfully
+Time logged: (5:53:04 AM):-  Message: {"Error":"Kyc validation failed: identityUrl: Path `identityUrl` is required., work_address: Path `work_address` is required., residential_address: Path `residential_address` is required."}
+Time logged: (6:04:10 AM):-  Message: {"Error":"Sender validation failed: requestItemsImageUrls: Cast to string failed for value \"[\n  'https://res.cloudinary.com/djheoe7ya/image/upload/v1729919050/requestItems-pics/qjf3umxqdysijlapg3if.png',\n  'https://res.cloudinary.com/djheoe7ya/image/upload/v1729919050/requestItems-pics/nowzzrl6odtfwgnnnbz1.png'\n]\" (type Array) at path \"requestItemsImageUrls\""}
+Time logged: (6:08:52 AM):-  Message: Request details saved Successfully!
+Time logged: (6:08:52 AM):-  Message: "Request details saved Successfully!"
+Time logged: (6:11:23 AM):-  Message: Request details saved Successfully!
+Time logged: (6:11:23 AM):-  Message: "Request details saved Successfully!"
+Time logged: (6:13:34 AM):-  Message: Request details saved Successfully!
+Time logged: (6:13:34 AM):-  Message: "Request details saved Successfully!"
+Time logged: (6:15:08 AM):-  Message: {"Error":"requestItemImages is not defined"}
+Time logged: (6:16:00 AM):-  Message: {"Error":"requestItemImages is not defined"}
+Time logged: (6:16:35 AM):-  Message: Request details saved Successfully!
+Time logged: (6:16:36 AM):-  Message: "Request details saved Successfully!"
+Time logged: (6:19:30 AM):-  Message: Request details saved Successfully!
+Time logged: (6:19:30 AM):-  Message: "Request details saved Successfully!"

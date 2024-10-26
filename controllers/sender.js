@@ -2,14 +2,14 @@
  * Controller: Request Details(Sender) controller
  * Description: Controller contains functions for sender details.
  * Author: Damian Oguche
- * Date: 23-10-2024
+ * Date: 26-10-2024
  ***********************************************************************/
 
 const multer = require('multer');
 const { CloudinaryStorage } = require('multer-storage-cloudinary');
 const cloudinary = require('../utils/cloudinaryConfig');
 const LogFile = require('../models/LogFile');
-const Sender = require('../models/kyc');
+const Sender = require('../models/sender');
 const { createAppLog } = require('../utils/createLog');
 const { currentDate } = require('../utils/date');
 const { escape } = require('validator');
@@ -37,7 +37,7 @@ const RequestDetails = async (req, res) => {
   const userId = req.id;
 
   // Get file upload
-  const requestItemImages = req.files;
+  const requestItemsImages = req.files;
 
   try {
     // Get request body, escape and sanitize inputs
@@ -97,14 +97,14 @@ const RequestDetails = async (req, res) => {
         .json({ status: 'E00', message: 'User ID is required for KYC.' });
 
     // Ensure multiple files upload check
-    if (!requestItemImages || requestItemImages.length === 0) {
+    if (!requestItemsImages || requestItemsImages.length === 0) {
       return res
         .status(400)
         .json({ message: 'At least one Image upload is required.' });
     }
 
     // Collect image URLs
-    const imageUrls = requestItemImages.map((file) => file.path);
+    const imageUrls = requestItemsImages.map((file) => file.path);
 
     const requestDetails = {
       package_details: req.body.package_details,
@@ -117,7 +117,7 @@ const RequestDetails = async (req, res) => {
       address_to: req.body.address_to,
       reciever_name: req.body.reciever_name,
       reciever_phone_number: req.body.reciever_phone_number,
-      requestItemsUrls: imageUrls, // Store all image URLs
+      requestItemsImageUrls: imageUrls, // Store all image URLs
       userId
     };
 
@@ -130,7 +130,7 @@ const RequestDetails = async (req, res) => {
       createAppLog(JSON.stringify({ Error: dbError.message }));
       return res.status(500).json({
         status: 'E00',
-        message: 'Error saving request details to the database.' + dbError.stack
+        message: 'Error saving request details to the database.'
       });
     }
 
@@ -158,7 +158,7 @@ const RequestDetails = async (req, res) => {
     });
   } catch (error) {
     createAppLog(JSON.stringify({ Error: error.message }));
-    return res.status(500).json({ message: 'Internal Server Error' });
+    return res.status(500).json({ message: 'Internal Server Error' + error });
   }
 };
 

@@ -55,8 +55,8 @@ const senderSchema = new Schema(
       required: true
     },
 
-    requestItemImageUrls: {
-      type: String,
+    requestItemsImageUrls: {
+      type: [String],
       required: true
     },
 
