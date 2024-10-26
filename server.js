@@ -22,7 +22,10 @@ const redisClient = createClient({
   }
 });
 
-redisClient.connect().catch(console.error);
+redisClient
+  .connect()
+  .then(() => console.log('Connected to redis!'))
+  .catch((error) => console.error(error.message));
 
 // Use Helmet for various security headers
 app.use(helmet());

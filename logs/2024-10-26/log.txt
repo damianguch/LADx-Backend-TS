@@ -1,0 +1,8 @@
+Time logged: (4:34:33 AM):-  Message: Login information"eguchealadi@yahoo.com"
+Time logged: (4:34:35 AM):-  Message: User logged in successfully
+Time logged: (4:35:02 AM):-  Message: {"Error":"Expected a string but received a number"}
+Time logged: (4:59:46 AM):-  Message: {"Error":"requestItemImage is not defined"}
+Time logged: (5:02:40 AM):-  Message: {"Error":"package_details is not defined"}
+Time logged: (5:12:47 AM):-  Message: {"Error":"Kyc validation failed: identityUrl: Path `identityUrl` is required., work_address: Path `work_address` is required., residential_address: Path `residential_address` is required."}
+Time logged: (5:24:41 AM):-  Message: {"Error":"Kyc validation failed: identityUrl: Path `identityUrl` is required., work_address: Path `work_address` is required., residential_address: Path `residential_address` is required."}
+Time logged: (5:27:04 AM):-  Message: {"Error":"Kyc validation failed: identityUrl: Path `identityUrl` is required., work_address: Path `work_address` is required., residential_address: Path `residential_address` is required."}

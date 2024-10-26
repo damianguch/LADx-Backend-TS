@@ -65,3 +65,10 @@ Time logged: (6:21:19 PM):-  Message: Travel details updated successfully!
 Time logged: (6:21:19 PM):-  Message: {"Error":"updatedTravelDetails is not defined"}
 Time logged: (6:24:38 PM):-  Message: Travel details updated successfully!
 Time logged: (6:27:32 PM):-  Message: Travel details updated successfully!
+Time logged: (6:46:05 PM):-  Message: Login information"eguchealadi@yahoo.com"
+Time logged: (6:46:06 PM):-  Message: User logged in successfully
+Time logged: (6:47:08 PM):-  Message: Travel details saved Successfully!
+Time logged: (6:47:08 PM):-  Message: "Travel details saved Successfully!"
+Time logged: (6:47:51 PM):-  Message: Travel details updated successfully!
+Time logged: (6:50:54 PM):-  Message: Travel details updated successfully!
+Time logged: (6:57:49 PM):-  Message: Travel details updated successfully!

@@ -133,8 +133,6 @@ const UpdateTravelDetails = async (req, res) => {
   // Get the user ID from the authenticated token
   const userId = req.id;
 
-  console.log(userId);
-
   if (!userId)
     return res
       .status(400)
@@ -152,17 +150,6 @@ const UpdateTravelDetails = async (req, res) => {
     req.body.boarding_time = escape(req.body.boarding_time);
     req.body.airline_name = escape(req.body.airline_name);
     req.body.item_weight = Number(req.body.item_weight);
-
-    // Escape and sanitize inputs if they are provided
-    // if (flight_number) flight_number = escape(flight_number);
-    // if (departure_city) departure_city = escape(departure_city);
-    // if (destination_city) destination_city = escape(destination_city);
-    // if (depature_date) depature_date = escape(depature_date);
-    // if (destination_date) destination_date = escape(destination_date);
-    // if (arrival_time) arrival_time = escape(arrival_time);
-    // if (boarding_time) boarding_time = escape(boarding_time);
-    // if (airline_name) airline_name = escape(airline_name);
-    // if (item_weight) item_weight = escape(item_weight);
 
     // Find the existing request details
     const travelDetails = await Traveller.findOne({ userId });
