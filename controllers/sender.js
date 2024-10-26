@@ -35,65 +35,54 @@ const RequestDetails = async (req, res) => {
   // Get user ID from an authenticated token
   const userId = req.id;
 
+  if (!userId)
+    return res
+      .status(400)
+      .json({ status: 'E00', message: 'User ID is required .' });
+
   // Get file upload
   const requestItemsImages = req.files;
 
-  try {
-    // Get request body, escape and sanitize inputs
-    req.body.package_details = escape(req.body.package_details);
-    req.body.package_name = escape(req.body.package_name);
-    req.body.item_description = escape(req.body.item_description);
-    req.body.package_value = escape(req.body.package_value);
-    req.body.quantity = Number(req.body.quantity);
-    req.body.price = escape(req.body.price);
-    req.body.address_from = escape(req.body.address_from);
-    req.body.address_to = escape(req.body.address_to);
-    req.body.reciever_name = escape(req.body.reciever_name);
-    req.body.reciever_phone_number = Number(req.body.reciever_phone_number);
+  // Helper function to sanitize and validate input data
+  const sanitizeInputData = (data) => ({
+    package_details: escape(data.package_details),
+    package_name: escape(data.package_name),
+    item_description: escape(data.item_description),
+    package_value: escape(data.package_value),
+    quantity: Number(data.quantity),
+    price: escape(data.price),
+    address_from: escape(data.address_from),
+    address_to: escape(data.address_to),
+    reciever_name: escape(data.reciever_name),
+    reciever_phone_number: Number(data.reciever_phone_number)
+  });
 
-    // Input validation
-    if (!req.body.package_details)
-      return res
-        .status(400)
-        .json({ status: 'E00', message: 'Package details is required' });
-    if (!req.body.package_name)
-      return res
-        .status(400)
-        .json({ status: 'E00', message: 'Package name is required' });
-    if (!req.body.item_description)
-      return res
-        .status(400)
-        .json({ status: 'E00', message: 'Item description is required' });
-    if (!req.body.package_value)
-      return res
-        .status(400)
-        .json({ status: 'E00', message: 'Package value is required' });
-    if (!req.body.quantity)
-      return res
-        .status(400)
-        .json({ status: 'E00', message: 'Quantity  is required' });
-    if (!req.body.price)
-      return res.status(400).json({ message: 'Price is required' });
-    if (!req.body.address_from)
-      return res
-        .status(400)
-        .json({ status: 'E00', message: 'Address from is required' });
-    if (!req.body.address_to)
-      return res
-        .status(400)
-        .json({ status: 'E00', message: 'Address to is required' });
-    if (!req.body.reciever_name)
-      return res
-        .status(400)
-        .json({ status: 'E00', message: 'Reciever name is required' });
-    if (!req.body.reciever_phone_number)
-      return res
-        .status(400)
-        .json({ status: 'E00', message: 'Reciever phone number  is required' });
-    if (!userId)
-      return res
-        .status(400)
-        .json({ status: 'E00', message: 'User ID is required for KYC.' });
+  try {
+    // Sanitize and validate the input
+    const sanitizedData = sanitizeInputData(req.body);
+
+    // Validate required fields
+    const requiredFields = [
+      'package_details',
+      'package_name',
+      'item_description',
+      'package_value',
+      'quantity',
+      'price',
+      'address_from',
+      'address_to',
+      'reciever_name',
+      'reciever_phone_number'
+    ];
+
+    for (let field of requiredFields) {
+      if (!sanitizedData[field]) {
+        return res.status(400).json({
+          status: 'E00',
+          message: `${field.replace('_', ' ')} is required.`
+        });
+      }
+    }
 
     // Ensure multiple files upload check
     if (!requestItemsImages || requestItemsImages.length === 0) {
@@ -106,16 +95,7 @@ const RequestDetails = async (req, res) => {
     const imageUrls = requestItemsImages.map((file) => file.path);
 
     const requestDetails = {
-      package_details: req.body.package_details,
-      package_name: req.body.package_name,
-      item_description: req.body.item_description,
-      package_value: req.body.package_value,
-      quantity: req.body.quantity,
-      price: req.body.price,
-      address_from: req.body.address_from,
-      address_to: req.body.address_to,
-      reciever_name: req.body.reciever_name,
-      reciever_phone_number: req.body.reciever_phone_number,
+      ...sanitizedData,
       requestItemsImageUrls: imageUrls, // Store all image URLs
       userId
     };
