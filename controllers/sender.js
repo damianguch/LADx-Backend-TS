@@ -13,7 +13,6 @@ const Sender = require('../models/sender');
 const { createAppLog } = require('../utils/createLog');
 const { currentDate } = require('../utils/date');
 const { escape } = require('validator');
-const { request } = require('express');
 
 // Configure Cloudinary storage for Multer
 const storage = new CloudinaryStorage({
@@ -172,72 +171,73 @@ const UpdateRequestDetails = async (req, res) => {
       .json({ message: 'User ID is required for request update.' });
 
   // Get uploaded files (array of images)
-  const requestItemImages = req.files;
+  const requestItemsImages = req.files;
 
   try {
-    // Get request body
-    let {
-      package_details,
-      package_name,
-      item_description,
-      package_value,
-      quantity,
-      price,
-      address_from,
-      address_to,
-      reciever_name,
-      reciever_phone_number
-    } = req.body;
-
-    // Escape and sanitize inputs if they are provided
-    if (package_details) package_details = escape(package_details);
-    if (package_name) package_name = escape(package_name);
-    if (item_description) item_description = escape(item_description);
-    if (package_value) package_value = escape(package_value);
-    if (quantity) quantity = escape(quantity);
-    if (price) price = escape(price);
-    if (address_from) address_from = escape(address_from);
-    if (address_to) address_to = escape(address_to);
-    if (reciever_name) reciever_name = escape(reciever_name);
-    if (reciever_phone_number)
-      reciever_phone_number = escape(reciever_phone_number);
+    // Get request body, escape and sanitize inputs
+    req.body.package_details = escape(req.body.package_details);
+    req.body.package_name = escape(req.body.package_name);
+    req.body.item_description = escape(req.body.item_description);
+    req.body.package_value = escape(req.body.package_value);
+    req.body.quantity = Number(req.body.quantity);
+    req.body.price = escape(req.body.price);
+    req.body.address_from = escape(req.body.address_from);
+    req.body.address_to = escape(req.body.address_to);
+    req.body.reciever_name = escape(req.body.reciever_name);
+    req.body.reciever_phone_number = Number(req.body.reciever_phone_number);
 
     // Find the existing request details
-    const requestDetails = await Sender.findById(userId);
-    if (!requestDetails) {
-      return res.status(404).json({ message: 'Request details not found.' });
+    const existingRequestDetails = await Sender.findOne({ userId });
+    if (!existingRequestDetails) {
+      return res
+        .status(404)
+        .json({ message: 'Existing Request details not found.' });
     }
+
+    let newImageUrls = [];
 
     // If images were uploaded, replace the existing image URLs
-    if (requestItemImages && requestItemImages.length > 0) {
-      const newImageUrls = requestItemImages.map((file) => file.path);
-      requestDetails.requestItemsUrls = newImageUrls; // Replace old images
+    if (requestItemsImages && requestItemsImages.length > 0) {
+      newImageUrls = requestItemsImages.map((file) => file.path);
+      // existingRequestDetails.requestItemsImageUrls = newImageUrls;
     }
 
-    // Initialize an update object
+    // Initialize an update object(Condition Spread Operator)
     let requestDetailsObject = {
-      ...(package_details && { package_details }),
-      ...(package_name && { package_name }),
-      ...(item_description && { item_description }),
-      ...(package_value && { package_value }),
-      ...(quantity && { quantity }),
-      ...(price && { price }),
-      ...(address_from && { address_from }),
-      ...(address_to && { address_to }),
-      ...(reciever_name && { reciever_name }),
-      ...(reciever_phone_number && { reciever_phone_number })
+      ...(req.body.package_details && {
+        package_details: req.body.package_details
+      }),
+      ...(req.body.package_name && { package_name: req.body.package_name }),
+      ...(req.body.item_description && {
+        item_description: req.body.item_description
+      }),
+      ...(req.body.package_value && { package_value: req.body.package_value }),
+      ...(req.body.quantity && { quantity: req.body.quantity }),
+      ...(req.body.price && { price: req.body.price }),
+      ...(req.body.address_from && { address_from: req.body.address_from }),
+      ...(req.body.address_to && { address_to: req.body.address_to }),
+      ...(req.body.reciever_name && { reciever_name: req.body.reciever_name }),
+      ...(req.body.reciever_phone_number && {
+        reciever_phone_number: req.body.reciever_phone_number
+      }),
+      ...(newImageUrls.length > 0 && { requestItemsImageUrls: newImageUrls })
     };
 
+    let updatedRequestDetails;
+
     try {
+      const id = existingRequestDetails.id;
       // Update the request details in the database
-      const updatedRequestDetails = await Sender.findByIdAndUpdate(
-        userId,
+      updatedRequestDetails = await Sender.findByIdAndUpdate(
+        id,
         { $set: requestDetailsObject },
         { new: true }
       );
 
       if (!updatedRequestDetails) {
-        return res.status(404).json({ message: 'Request details not found.' });
+        return res
+          .status(404)
+          .json({ message: 'Updated Request details not found.' });
       }
 
       await createAppLog('Request details updated successfully!');
@@ -261,7 +261,7 @@ const UpdateRequestDetails = async (req, res) => {
       status: '00',
       success: true,
       message: 'Request details updated successfully!',
-      requestDetails
+      updatedRequestDetails
     });
   } catch (error) {
     createAppLog(JSON.stringify({ Error: error.message }));
