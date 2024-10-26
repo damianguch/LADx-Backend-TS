@@ -31,17 +31,17 @@ const senderSchema = new Schema(
     },
 
     price: {
-      type: Date,
+      type: String,
       required: true
     },
 
     address_from: {
-      type: Date,
+      type: String,
       required: true
     },
 
     address_to: {
-      type: string,
+      type: String,
       required: true
     },
 
@@ -55,7 +55,7 @@ const senderSchema = new Schema(
       required: true
     },
 
-    itemImageUrl: {
+    requestItemImageUrls: {
       type: String,
       required: true
     },
