@@ -25,10 +25,10 @@ const storage = new CloudinaryStorage({
   }
 });
 
-const requestItemsImageUpload = multer({ storage: storage }).array(
-  'itemPics',
-  5
-);
+const requestItemsImageUpload = multer({
+  storage: storage,
+  limits: { fileSize: 1 * 1024 * 1024 } // Limit file size to 1MB
+}).array('itemPics', 5); // Adjust the limit of files as needed
 
 // POST: Request Delivery
 const RequestDetails = async (req, res) => {
