@@ -7,3 +7,8 @@ Time logged: (4:14:40 AM):-  Message: Login information"eguchealadi@yahoo.com"
 Time logged: (4:14:40 AM):-  Message: User logged in successfully
 Time logged: (4:14:58 AM):-  Message: Travel details saved Successfully!
 Time logged: (4:18:20 AM):-  Message: Error saving travel details: Traveller validation failed: arrival_tim: Path `arrival_tim` is required.
+Time logged: (5:08:25 AM):-  Message: Travel details saved Successfully!
+Time logged: (5:19:11 AM):-  Message: Login information"eguchealadi@yahoo.com"
+Time logged: (5:19:11 AM):-  Message: User logged in successfully
+Time logged: (5:19:19 AM):-  Message: Travel details saved Successfully!
+Time logged: (5:22:44 AM):-  Message: Travel details updated successfully!

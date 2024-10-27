@@ -125,54 +125,61 @@ const UpdateTravelDetails = async (req, res) => {
     });
 
   try {
-    // Get request body
-    // Escape and sanitize inputs if they are provided
-    req.body.flight_number = escape(req.body.flight_number);
-    req.body.departure_city = escape(req.body.departure_city);
-    req.body.destination_city = escape(req.body.destination_city);
-    req.body.departure_date = new Date(req.body.departure_date);
-    req.body.destination_date = new Date(req.body.destination_date);
-    req.body.arrival_time = escape(req.body.arrival_time);
-    req.body.boarding_time = escape(req.body.boarding_time);
-    req.body.airline_name = escape(req.body.airline_name);
-    req.body.item_weight = Number(req.body.item_weight);
-
     // Find the existing request details
-    const existingTravelDetails = await Traveller.findOne({ userId });
+    // const existingTravelDetails = await Traveller.findOne({ userId });
 
-    if (!existingTravelDetails) {
-      return res.status(404).json({
+    //update object (conditional spread operator)
+    const travelDetails = {
+      ...(req.body.flight_number && {
+        flight_number: escape(req.body.flight_number)
+      }),
+      ...(req.body.departure_city && {
+        departure_city: escape(req.body.departure_city)
+      }),
+      ...(req.body.destination_city && {
+        destination_city: escape(req.body.destination_city)
+      }),
+      ...(req.body.departure_date && {
+        departure_date: new Date(req.body.departure_date)
+      }),
+      ...(req.body.destination_date && {
+        destination_date: new Date(req.body.destination_date)
+      }),
+      ...(req.body.arrival_time && {
+        arrival_time: escape(req.body.arrival_time)
+      }),
+      ...(req.body.boarding_time && {
+        boarding_time: escape(req.body.boarding_time)
+      }),
+      ...(req.body.airline_name && {
+        airline_name: escape(req.body.airline_name)
+      }),
+      ...(req.body.item_weight && { item_weight: Number(req.body.item_weight) })
+    };
+
+    // Validate dates and number fields before proceeding
+    if (
+      isNaN(travelDetails.departure_date) ||
+      isNaN(travelDetails.destination_date)
+    ) {
+      return res.status(400).json({
         status: 'E00',
         success: false,
-        message: `Travel details with id ${userId} not found.`
+        message: 'Invalid date format for departure or destination date.'
+      });
+    }
+    if (travelDetails.item_weight && isNaN(travelDetails.item_weight)) {
+      return res.status(400).json({
+        status: 'E00',
+        success: false,
+        message: 'Item weight must be a number.'
       });
     }
 
-    // Initialize an update object (conditional spread operator)
-    const travelDetails = {
-      ...(req.body.flight_number && { flight_number: req.body.flight_number }),
-      ...(req.body.departure_city && {
-        departure_city: req.body.departure_city
-      }),
-      ...(req.body.destination_city && {
-        destination_city: req.body.destination_city
-      }),
-      ...(req.body.departure_date && {
-        departure_date: req.body.departure_date
-      }),
-      ...(req.body.destination_date && {
-        destination_date: req.body.destination_date
-      }),
-      ...(req.body.arrival_time && { arrival_time: req.body.arrival_time }),
-      ...(req.body.boarding_time && { boarding_time: req.body.boarding_time }),
-      ...(req.body.airline_name && { airline_name: req.body.airline_name }),
-      ...(req.body.item_weight && { item_weight: req.body.item_weight })
-    };
-
     // Update the request details in the database
-    const id = existingTravelDetails.id;
-    const updatedTravelDetails = await Traveller.findByIdAndUpdate(
-      id,
+    // const id = existingTravelDetails.id;
+    const updatedTravelDetails = await Traveller.findOneAndUpdate(
+      { userId },
       { $set: travelDetails },
       { new: true }
     );
@@ -181,7 +188,7 @@ const UpdateTravelDetails = async (req, res) => {
       return res.status(404).json({
         status: 'E00',
         success: false,
-        message: 'Travel details not found.'
+        message: `Travel details with user ID ${userId} not found.`
       });
     }
 
