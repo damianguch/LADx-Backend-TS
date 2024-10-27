@@ -128,7 +128,7 @@ const RequestDetails = async (req, res) => {
     return res.status(500).json({
       status: 'E00',
       success: false,
-      message: 'Internal Server Error' + err.message
+      message: 'Internal Server Error: ' + err.message
     });
   }
 };
@@ -241,7 +241,7 @@ const UpdateRequestDetails = async (req, res) => {
     return res.status(500).json({
       status: 'E00',
       success: false,
-      message: 'Internal Server Error' + err.message
+      message: 'Internal Server Error: ' + err.message
     });
   }
 };

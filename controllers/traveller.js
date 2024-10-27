@@ -10,121 +10,105 @@ const Traveller = require('../models/traveller');
 const { createAppLog } = require('../utils/createLog');
 const { currentDate } = require('../utils/date');
 const { escape } = require('validator');
+const Joi = require('joi');
+
+// Validation schema using Joi
+const travelDetailsSchema = Joi.object({
+  flight_number: Joi.string().required().messages({
+    'any.required': 'Flight number is required'
+  }),
+  departure_city: Joi.string().required().messages({
+    'any.required': 'Departure city is required'
+  }),
+  destination_city: Joi.string().required().messages({
+    'any.required': 'Destination city is required'
+  }),
+  departure_date: Joi.date().required().messages({
+    'any.required': 'Departure date is required'
+  }),
+  destination_date: Joi.date().optional(),
+  arrival_time: Joi.string().required().messages({
+    'any.required': 'Arrival time is required'
+  }),
+  boarding_time: Joi.string().required().messages({
+    'any.required': 'Boarding time is required'
+  }),
+  airline_name: Joi.string().required().messages({
+    'any.required': 'Airline name is required'
+  }),
+  item_weight: Joi.number().required().messages({
+    'any.required': 'Item weight is required'
+  })
+});
 
 // POST: Upload travel details
 const TravelDetails = async (req, res) => {
-  // Get user ID from an authenticated token
+  // Get user id from an authenticated token
   const userId = req.id;
 
+  if (!userId) {
+    return res.status(400).json({
+      status: 'E00',
+      success: false,
+      message: 'User ID is required for travel details submission.'
+    });
+  }
+
+  // Validate request body against schema
+  const { error, value } = travelDetailsSchema.validate(req.body, {
+    abortEarly: false,
+    stripUnknown: true
+  });
+
+  if (error) {
+    return res.status(400).json({
+      status: 'E00',
+      success: false,
+      message: 'Validation errors occurred',
+      errors: error.details.map((err) => err.message)
+    });
+  }
+
+  // Escape and sanitize fields
+  const sanitizedData = {
+    flight_number: escape(value.flight_number),
+    departure_city: escape(value.departure_city),
+    destination_city: escape(value.destination_city),
+    departure_date: new Date(value.departure_date),
+    destination_date: new Date(value.destination_date),
+    arrival_time: escape(value.arrival_time),
+    boarding_time: escape(value.boarding_time),
+    airline_name: escape(value.airline_name),
+    item_weight: value.item_weight,
+    userId
+  };
+
   try {
-    req.body.flight_number = escape(req.body.flight_number);
-    req.body.departure_city = escape(req.body.departure_city);
-    req.body.destination_city = escape(req.body.destination_city);
-    req.body.departure_date = new Date(req.body.departure_date);
-    req.body.destination_date = new Date(req.body.destination_date);
-    req.body.arrival_time = escape(req.body.arrival_time);
-    req.body.boarding_time = escape(req.body.boarding_time);
-    req.body.airline_name = escape(req.body.airline_name);
-    req.body.item_weight = Number(req.body.item_weight);
+    const newTravelDetails = new Traveller(sanitizedData);
+    await Traveller.init();
+    await newTravelDetails.save();
 
-    // Input validation
-    if (!req.body.flight_number) {
-      return res
-        .status(400)
-        .json({ status: 'E00', message: 'Flight number is required' });
-    }
-    if (!req.body.departure_city) {
-      return res
-        .status(400)
-        .json({ status: 'E00', message: 'Departure city is required' });
-    }
-    if (!req.body.destination_city) {
-      return res
-        .status(400)
-        .json({ status: 'E00', message: 'Destination city is required' });
-    }
-    if (!req.body.departure_date) {
-      return res
-        .status(400)
-        .json({ status: 'E00', message: 'Departure date is required' });
-    }
-    if (!req.body.arrival_time) {
-      return res
-        .status(400)
-        .json({ status: 'E00', message: 'Arrival time is required' });
-    }
-    if (!req.body.boarding_time) {
-      return res
-        .status(400)
-        .json({ status: 'E00', message: 'Boarding time is required' });
-    }
-    if (!req.body.item_weight) {
-      return res
-        .status(400)
-        .json({ status: 'E00', message: 'Item weight is required' });
-    }
-    if (!req.body.airline_name) {
-      return res
-        .status(400)
-        .json({ status: 'E00', message: 'Airline name is required' });
-    }
-    if (!userId) {
-      return res
-        .status(400)
-        .json({ status: 'E00', message: 'User ID is required for KYC.' });
-    }
+    // Log the action
+    await createAppLog('Travel details saved Successfully!');
+    const logEntry = new LogFile({
+      ActivityName: `Travel details added by user ${userId}`,
+      AddedOn: currentDate
+    });
+    await logEntry.save();
 
-    const travelDetails = {
-      flight_number: req.body.flight_number,
-      departure_city: req.body.departure_city,
-      destination_city: req.body.destination_city,
-      departure_date: req.body.departure_date,
-      destination_date: req.body.destination_date,
-      arrival_time: req.body.arrival_time,
-      boarding_time: req.body.boarding_time,
-      airline_name: req.body.airline_name,
-      item_weight: req.body.item_weight,
-      userId
-    };
-
-    try {
-      const newTravelDetails = new Traveller(travelDetails);
-      await Traveller.init();
-      await newTravelDetails.save();
-      await createAppLog('Travel details saved Successfully!');
-    } catch (dbError) {
-      createAppLog(JSON.stringify({ Error: dbError.message }));
-      return res.status(500).json({
-        status: 'E00',
-        message: 'Error saving travel details to the database.'
-      });
-    }
-
-    try {
-      const logTravelDetails = new LogFile({
-        ActivityName: `Travel details added by user`,
-        AddedOn: currentDate
-      });
-      await logTravelDetails.save();
-    } catch (logError) {
-      console.error('Error saving log file:', logError); // Log the error
-      createAppLog(JSON.stringify({ Error: logError.message }));
-      return res.status(500).json({
-        status: 'E03',
-        message: 'Error saving log details to the database.'
-      });
-    }
-
-    createAppLog(JSON.stringify('Travel details saved Successfully!'));
     return res.status(200).json({
       status: '00',
       success: true,
       message: 'Travel details saved Successfully!',
-      TravelDetails
+      travelDetails: sanitizedData
     });
-  } catch (error) {
-    createAppLog(JSON.stringify({ Error: error.message }));
-    return res.status(500).json({ message: 'Internal Server Error' });
+  } catch (err) {
+    createAppLog(`Error saving travel details: ${err.message}`);
+    return res.status(500).json({
+      status: 'E00',
+      success: false,
+      message: 'Internal Server Error: ' + err.message
+    });
   }
 };
 
@@ -134,9 +118,11 @@ const UpdateTravelDetails = async (req, res) => {
   const userId = req.id;
 
   if (!userId)
-    return res
-      .status(400)
-      .json({ message: 'User ID is required for request update.' });
+    return res.status(400).json({
+      status: 'E00',
+      success: false,
+      message: 'User ID is required for request update.'
+    });
 
   try {
     // Get request body
@@ -152,17 +138,18 @@ const UpdateTravelDetails = async (req, res) => {
     req.body.item_weight = Number(req.body.item_weight);
 
     // Find the existing request details
-    const travelDetails = await Traveller.findOne({ userId });
+    const existingTravelDetails = await Traveller.findOne({ userId });
 
-    if (!travelDetails) {
-      return res
-        .status(404)
-        .json({ message: `Request details with id ${userId} not found.` });
+    if (!existingTravelDetails) {
+      return res.status(404).json({
+        status: 'E00',
+        success: false,
+        message: `Travel details with id ${userId} not found.`
+      });
     }
 
-    // Initialize an update object
-    // (Using conditional object property spread syntax)
-    let travelDetailsObject = {
+    // Initialize an update object (conditional spread operator)
+    const travelDetails = {
       ...(req.body.flight_number && { flight_number: req.body.flight_number }),
       ...(req.body.departure_city && {
         departure_city: req.body.departure_city
@@ -182,47 +169,43 @@ const UpdateTravelDetails = async (req, res) => {
       ...(req.body.item_weight && { item_weight: req.body.item_weight })
     };
 
-    let updatedTravelDetails;
+    // Update the request details in the database
+    const id = existingTravelDetails.id;
+    const updatedTravelDetails = await Traveller.findByIdAndUpdate(
+      id,
+      { $set: travelDetails },
+      { new: true }
+    );
 
-    try {
-      // Update the request details in the database
-      const id = travelDetails._id;
-      updatedTravelDetails = await Traveller.findByIdAndUpdate(
-        id,
-        { $set: travelDetailsObject },
-        { new: true }
-      );
-
-      if (!updatedTravelDetails) {
-        return res.status(404).json({ message: 'Travel details not found.' });
-      }
-
-      await createAppLog('Travel details updated successfully!');
-
-      // Log the update action
-      const logTravelDetailsUpdate = new LogFile({
-        ActivityName: `Travel details updated by user`,
-        AddedOn: currentDate
-      });
-      await logTravelDetailsUpdate.save();
-    } catch (dbError) {
-      createAppLog(JSON.stringify({ Error: dbError.message }));
-      return res.status(500).json({
+    if (!updatedTravelDetails) {
+      return res.status(404).json({
         status: 'E00',
-        message: 'Error updating travel details in the database.'
+        success: false,
+        message: 'Travel details not found.'
       });
     }
 
-    // Return success response
+    // Log the update action
+    await createAppLog('Travel details updated successfully!');
+    const logUpdate = new LogFile({
+      ActivityName: `Travel details updated by user ${userId}`,
+      AddedOn: currentDate
+    });
+    await logUpdate.save();
+
     return res.status(200).json({
       status: '00',
       success: true,
       message: 'Travel details updated successfully!',
       updatedTravelDetails
     });
-  } catch (error) {
-    createAppLog(JSON.stringify({ Error: error.message }));
-    return res.status(500).json({ message: 'Internal Server Error' });
+  } catch (err) {
+    createAppLog(JSON.stringify({ Error: err.message }));
+    return res.status(500).json({
+      status: 'E00',
+      success: false,
+      message: 'Internal Server Error: ' + err.message
+    });
   }
 };
 
