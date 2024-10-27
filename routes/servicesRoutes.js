@@ -21,6 +21,7 @@ const {
   requestItemsImageUpload,
   UpdateRequestDetails
 } = require('../controllers/sender');
+const { uploadErrorHandler } = require('../utils/multerError');
 
 // Middleware for CSRF protection
 const csrfProtection = csrf({
@@ -55,6 +56,7 @@ router.put(
   '/users/profilePhoto',
   verifyTokenFromCookie,
   upload.single('profilePic'),
+  uploadErrorHandler,
   UpdateProfilePhoto
 );
 
@@ -77,6 +79,7 @@ router.post(
   '/kyc',
   verifyTokenFromCookie,
   identityUpload.single('identity'),
+  uploadErrorHandler,
   UploadKYC
 );
 
@@ -91,6 +94,7 @@ router.post(
   '/users/request-details',
   verifyTokenFromCookie,
   requestItemsImageUpload, // Handles multiple images
+  uploadErrorHandler,
   RequestDetails
 );
 
