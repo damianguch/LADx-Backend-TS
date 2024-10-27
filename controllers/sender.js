@@ -148,32 +148,6 @@ const UpdateRequestDetails = async (req, res) => {
   const requestItemsImages = req.files;
 
   try {
-    // Get request body, escape and sanitize inputs
-    req.body.package_details = escape(req.body.package_details);
-    req.body.package_name = escape(req.body.package_name);
-    req.body.item_description = escape(req.body.item_description);
-    req.body.package_value = escape(req.body.package_value);
-    req.body.quantity = isNumeric(req.body.quantity)
-      ? Number(req.body.quantity)
-      : null;
-    req.body.price = escape(req.body.price);
-    req.body.address_from = escape(req.body.address_from);
-    req.body.address_to = escape(req.body.address_to);
-    req.body.reciever_name = escape(req.body.reciever_name);
-    req.body.reciever_phone_number = isNumeric(req.body.reciever_phone_number)
-      ? Number(req.body.reciever_phone_number)
-      : null;
-
-    // Find the existing request details
-    const existingRequestDetails = await Sender.findOne({ userId });
-    if (!existingRequestDetails) {
-      return res.status(404).json({
-        status: 'E00',
-        success: false,
-        message: 'Existing Request details not found.'
-      });
-    }
-
     let newImageUrls = [];
 
     // If images were uploaded, replace the existing image URLs
@@ -185,29 +159,50 @@ const UpdateRequestDetails = async (req, res) => {
     // Initialize an update object(Condition Spread Operator)
     let requestDetails = {
       ...(req.body.package_details && {
-        package_details: req.body.package_details
+        package_details: escape(req.body.package_details)
       }),
-      ...(req.body.package_name && { package_name: req.body.package_name }),
+      ...(req.body.package_name && {
+        package_name: escape(req.body.package_name)
+      }),
       ...(req.body.item_description && {
-        item_description: req.body.item_description
+        item_description: escape(req.body.item_description)
       }),
-      ...(req.body.package_value && { package_value: req.body.package_value }),
-      ...(req.body.quantity && { quantity: req.body.quantity }),
-      ...(req.body.price && { price: req.body.price }),
-      ...(req.body.address_from && { address_from: req.body.address_from }),
-      ...(req.body.address_to && { address_to: req.body.address_to }),
-      ...(req.body.reciever_name && { reciever_name: req.body.reciever_name }),
+      ...(req.body.package_value && {
+        package_value: escape(req.body.package_value)
+      }),
+      ...(req.body.quantity && { quantity: Number(req.body.quantity) }),
+      ...(req.body.price && { price: escape(req.body.price) }),
+      ...(req.body.address_from && {
+        address_from: escape(req.body.address_from)
+      }),
+      ...(req.body.address_to && { address_to: escape(req.body.address_to) }),
+      ...(req.body.reciever_name && {
+        reciever_name: escape(req.body.reciever_name)
+      }),
       ...(req.body.reciever_phone_number && {
-        reciever_phone_number: req.body.reciever_phone_number
+        reciever_phone_number: Number(req.body.reciever_phone_number)
       }),
       ...(newImageUrls.length > 0 && { requestItemsImageUrls: newImageUrls })
     };
 
-    const id = existingRequestDetails.id;
+    if (
+      requestDetails.reciever_phone_number &&
+      isNaN(requestDetails.reciever_phone_number)
+    ) {
+      return res.status(400).json({
+        status: 'E00',
+        success: false,
+        message: 'Receiver phone number must be a number.'
+      });
+    }
+
+    // Find the existing request details
+    // const existingRequestDetails = await Sender.findOne({ userId });
 
     // Update the request details in the database
-    const updatedRequestDetails = await Sender.findByIdAndUpdate(
-      id,
+    // const id = existingRequestDetails.id;
+    const updatedRequestDetails = await Sender.findOneAndUpdate(
+      { userId },
       { $set: requestDetails },
       { new: true }
     );
@@ -216,13 +211,12 @@ const UpdateRequestDetails = async (req, res) => {
       return res.status(404).json({
         status: 'E00',
         success: false,
-        message: 'Updated Request details not found.'
+        message: `Request details with user ID ${userId} not found.`
       });
     }
 
-    await createAppLog('Request details updated successfully!');
-
     // Log the update action
+    await createAppLog('Request details updated successfully!');
     const logRequestDetailsUpdate = new LogFile({
       ActivityName: `Request details updated by user ${userId}`,
       AddedOn: currentDate
