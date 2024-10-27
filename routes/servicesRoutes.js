@@ -22,6 +22,7 @@ const {
   UpdateRequestDetails
 } = require('../controllers/sender');
 const { uploadErrorHandler } = require('../utils/multerError');
+const { validateUserSignup } = require('../validators/userValidtor');
 
 // Middleware for CSRF protection
 const csrfProtection = csrf({
@@ -41,7 +42,7 @@ const csrfProtection = csrf({
 //   csrfProtection(req, res, next); // Apply CSRF protection
 // });
 
-router.post('/signup', SignUp);
+router.post('/signup', validateUserSignup, SignUp);
 router.post('/verify-otp', verifyOTP);
 
 //Use multer to handle multipart/form-data requests.

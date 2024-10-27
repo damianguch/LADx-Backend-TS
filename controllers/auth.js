@@ -14,80 +14,30 @@ const { EmailCode } = require('../utils/randomNumbers');
 const { createAppLog } = require('../utils/createLog');
 const { encryptPasswordWithBcrypt } = require('../utils/passwordEncrypt');
 const { sendOTPEmail } = require('../utils/emailService');
-const { isEmail, escape } = require('validator');
 const { currentDate } = require('../utils/date');
+const { sanitizeInput } = require('../utils/sanitize');
 const otpStore = new Map(); // More scalable and secure in-memory store
 
-// SignUp - Request OTP Route
-const SignUp = async (req, res) => {
+// POST: SignUp
+const SignUp = async (req, res, next) => {
   try {
     // Get request body
-    let { fullname, email, country, state, phone, password, confirm_password } =
-      req.body;
-
-    // Escape and sanitize inputs
-    fullname = escape(fullname);
-    email = escape(email);
-    country = escape(country);
-    state = escape(state);
-    phone = escape(phone);
-    password = escape(password);
-    confirm_password = escape(confirm_password);
-
-    // Input validation
-    if (!fullname)
-      return res
-        .status(400)
-        .json({ status: 'E00', message: 'Full name is required' });
-    if (!email || !isEmail(email))
-      return res
-        .status(400)
-        .json({ status: 'E00', message: 'Invalid email format' });
-    if (!phone)
-      return res
-        .status(400)
-        .json({ status: 'E00', message: 'Phone number is required' });
-    if (!country)
-      return res
-        .status(400)
-        .json({ status: 'E00', message: 'Country is required' });
-    if (!state)
-      return res
-        .status(400)
-        .json({ status: 'E00', message: 'State is required' });
-    if (!password)
-      return res
-        .status(400)
-        .json({ status: 'E00', message: 'Password is required' });
-    if (password !== confirm_password)
-      return res
-        .status(400)
-        .json({ status: 'E00', message: 'Passwords do not match' });
+    const sanitizedData = sanitizeInput(req.body);
+    let { fullname, email, country, state, phone, password } = sanitizedData;
 
     // Check if email is already registered
     const existingUser = await User.findOne({ email });
     if (existingUser)
-      return res
-        .status(400)
-        .json({ status: 'E00', message: 'Email already registered' });
-
-    // Generate OTP and hash it
-    const otp = await EmailCode(6);
-    console.log(otp);
-    const salt = await bcrypt.genSalt(10);
-    const hashedOTP = await bcrypt.hash(otp, salt);
-
-    // Store OTP in a map with an expiration time
-    // otpStore.set(email, { hashedOTP, expiresAt: Date.now() + 60 * 60 * 1000 });
-
-    // Store OTP and email in the session
-    req.session.otpData = { hashedOTP, expiresAt: Date.now() + 60 * 60 * 1000 };
-    req.session.email = email; // Store email in session
+      return res.status(400).json({
+        status: 'E00',
+        success: false,
+        message: 'Email already registered'
+      });
 
     // Hash password for later use (only after OTP verification)
     const encryptedPassword = await encryptPasswordWithBcrypt(password);
 
-    // Save user info temporarily (could be done in Redis or DB for better scalability)
+    // Save user info temporarily
     const tempUser = {
       fullname,
       email,
@@ -97,21 +47,40 @@ const SignUp = async (req, res) => {
       password: encryptedPassword
     };
 
-    // Optionally send OTP via email
-    // await sendOTPEmail(email, otp);
+    // Generate OTP and hash it
+    const otp = await EmailCode(6);
+    const salt = await bcrypt.genSalt(10);
+    const hashedOTP = await bcrypt.hash(otp, salt);
 
+    // Store OTP in a map with an expiration time
+    // otpStore.set(email, { hashedOTP, expiresAt: Date.now() + 60 * 60 * 1000 });
     // Store temp user in memory
     // otpStore.set(`${email}_tempUser`, tempUser);
+
+    // Store OTP and email in the session
+    req.session.otpData = { hashedOTP, expiresAt: Date.now() + 60 * 60 * 1000 };
+    req.session.email = email; // Store email in session
 
     // Store temp user In-Memory Store(Redis)
     req.session.tempUser = tempUser;
 
-    return res.status(200).json({ message: 'OTP sent to your email' });
-  } catch (error) {
-    createAppLog(JSON.stringify({ Error: error.message }));
-    return res
-      .status(500)
-      .json({ status: 'E500', message: 'Internal Server Error' });
+    // Optionally send OTP via email
+    // await sendOTPEmail(email, otp);
+
+    return res.status(200).json({
+      status: '00',
+      success: true,
+      message: 'OTP sent to your email'
+    });
+  } catch (err) {
+    createAppLog(JSON.stringify({ Error: err.message }));
+    next(err);
+
+    return res.status(500).json({
+      status: 'E00',
+      success: false,
+      message: 'Internal Server Error: ' + err.message
+    });
   }
 };
 
@@ -263,23 +232,13 @@ const Login = async (req, res) => {
     }
 
     // Generate JWT token with the user payload
-    try {
-      token = generateToken({ email: user.email, id: user.id });
-    } catch (err) {
-      await createAppLog('Error generating token: ' + err.message);
-      return res.status(500).json({
-        status: 'E00',
-        success: false,
-        message: 'Failed to generate token.'
-      });
-    }
-
-    await createAppLog('User logged in successfully');
+    const token = generateToken({ email: user.email, id: user.id });
 
     // Log the login activity
+    await createAppLog('User logged in successfully');
     const log = new LogFile({
       email: user.email,
-      ActivityName: 'Logged into the system with credential: ' + user.email,
+      ActivityName: 'Logged in with credential: ' + user.email,
       AddedOn: currentDate
     });
 
@@ -304,7 +263,7 @@ const Login = async (req, res) => {
     return res.status(500).json({
       status: 'E00',
       success: false,
-      message: 'Login not successful! Something went wrong.'
+      message: 'Internal Server error: ' + err.message
     });
   }
 };
