@@ -52,11 +52,6 @@ const SignUp = async (req, res, next) => {
     const salt = await bcrypt.genSalt(10);
     const hashedOTP = await bcrypt.hash(otp, salt);
 
-    // Store OTP in a map with an expiration time
-    // otpStore.set(email, { hashedOTP, expiresAt: Date.now() + 60 * 60 * 1000 });
-    // Store temp user in memory
-    // otpStore.set(`${email}_tempUser`, tempUser);
-
     // Store OTP and email in the session
     req.session.otpData = { hashedOTP, expiresAt: Date.now() + 60 * 60 * 1000 };
     req.session.email = email; // Store email in session

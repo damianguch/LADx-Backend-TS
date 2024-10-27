@@ -5,11 +5,12 @@
  * Date: 12-10-2024
  **************************************************************************/
 
-const { escape } = require('validator');
 const LogFile = require('../models/LogFile');
 const User = require('../models/user');
 const { createAppLog } = require('../utils/createLog');
 const { currentDate } = require('../utils/date');
+const { sanitizeProfileInput } = require('../utils/sanitize');
+const { profileUpdateSchema } = require('../validators/profileValidator');
 
 // Get User Profile
 const GetUserProfile = async (req, res) => {
@@ -57,12 +58,10 @@ const UpdateProfile = async (req, res) => {
 
   try {
     // fetch user info by id
-
-    // Automatically casts id to an ObjectId
     const user = await User.findById(id);
 
     if (!user) {
-      await createAppLog('User profile not found!');
+      await createAppLog(`User not found - ID: ${userId}`);
       return res.status(400).json({
         status: 'E00',
         success: false,
@@ -70,46 +69,52 @@ const UpdateProfile = async (req, res) => {
       });
     }
 
-    let { fullname, country, state } = req.body;
+    // Validate incoming data
+    const { error, value } = profileUpdateSchema.validate(req.body);
+    if (error) {
+      return res.status(400).json({
+        status: 'E00',
+        success: false,
+        message: 'Invalid input data',
+        errors: error.details.map((detail) => detail.message)
+      });
+    }
 
-    fullname = escape(fullname);
-    country = escape(country);
-    state = escape(state);
+    // Sanitize validated input
+    const sanitizedData = sanitizeProfileInput(value);
 
-    // Build the user profile update object
-    const userProfile = {
-      fullname,
-      country,
-      state
-    };
-
-    console.log(userProfile);
-
-    await User.findByIdAndUpdate(id, { $set: userProfile }, { new: true });
+    // Update user profile
+    const updatedUser = await User.findByIdAndUpdate(
+      id,
+      { $set: sanitizedData },
+      { new: true, runValidators: true }
+    );
 
     // Log Profile Update activity
-    const logProfileUpdate = new LogFile({
-      fullname: user.fullname,
-      email: user.email,
-      ActivityName: `Profile updated by user: ${user.fullname}`,
+    await createAppLog(`Profile Updated for user ID: ${userId}`);
+    const logUpdate = new LogFile({
+      fullname: updatedUser.fullname,
+      email: updatedUser.email,
+      ActivityName: `Profile updated by user ID: ${id}`,
       AddedOn: currentDate
     });
 
-    await logProfileUpdate.save();
+    await logUpdate.save();
 
-    await createAppLog('Profile Updated Successfully!');
     return res.status(200).json({
       status: '00',
       success: true,
       message: 'Profile Updated Successfully!',
-      data: userProfile
+      data: sanitizedData
     });
   } catch (err) {
-    await createAppLog(err.message);
+    await createAppLog(
+      `Error updating profile for user ID: ${userId} - ${err.message}`
+    );
     res.status(500).json({
       status: 'E00',
       success: false,
-      message: err.message
+      message: 'An error occurred while updating the profile: ' + err.message
     });
   }
 };

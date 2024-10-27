@@ -12,4 +12,15 @@ const sanitizeInput = (input) => {
   };
 };
 
-module.exports = { sanitizeInput };
+const sanitizeProfileInput = (input) => {
+  return {
+    fullname: escape(input.fullname),
+    country: escape(input.country),
+    state: escape(input.state)
+  };
+};
+
+module.exports = {
+  sanitizeInput,
+  sanitizeProfileInput
+};
