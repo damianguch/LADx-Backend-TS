@@ -51,21 +51,8 @@ const UploadKYC = async (req, res) => {
         .status(400)
         .json({ status: 'E00', message: 'Work address is required' });
 
-    if (!identity) return res.status(400).json({ message: 'No file uploaded' });
     if (!userId)
       return res.status(400).json({ message: 'User ID is required for KYC.' });
-
-    let identityUrl;
-
-    try {
-      identityUrl = identity.path; // Cloudinary URL
-    } catch (uploadError) {
-      createAppLog(JSON.stringify({ Error: uploadError.message }));
-      return res.status(500).json({
-        status: 'E00',
-        message: 'Error uploading identity document. Please try again later.'
-      });
-    }
 
     const kycDetails = {
       residential_address,
@@ -74,33 +61,17 @@ const UploadKYC = async (req, res) => {
       userId
     };
 
-    try {
-      const newKyc = new Kyc(kycDetails);
-      await Kyc.init(); // Ensures indexes are created before saving
-      await newKyc.save();
-      await createAppLog('KYC details saved Successfully!');
-    } catch (dbError) {
-      createAppLog(JSON.stringify({ Error: dbError.message }));
-      return res.status(500).json({
-        status: 'E00',
-        message: 'Error saving KYC details to the database.'
-      });
-    }
+    const newKyc = new Kyc(kycDetails);
+    await Kyc.init(); // Ensures indexes are created before saving
+    await newKyc.save();
 
-    try {
-      const logKYCUpload = new LogFile({
-        ActivityName: `Kyc details added by user`,
-        AddedOn: currentDate
-      });
-      await logKYCUpload.save();
-    } catch (logError) {
-      console.error('Error saving log file:', logError); // Log the error
-      createAppLog(JSON.stringify({ Error: logError.message }));
-      return res.status(500).json({
-        status: 'E03',
-        message: 'Error saving log details to the database.'
-      });
-    }
+    // Log the KYC upload
+    await createAppLog('KYC details saved Successfully!');
+    const logUpload = new LogFile({
+      ActivityName: `Kyc details added by user ${userId}`,
+      AddedOn: currentDate
+    });
+    await logUpload.save();
 
     return res.status(200).json({
       status: '00',
@@ -108,9 +79,13 @@ const UploadKYC = async (req, res) => {
       message: 'KYC details Uploaded Successfully!',
       kycDetails
     });
-  } catch (error) {
-    createAppLog(JSON.stringify({ Error: error.message }));
-    return res.status(500).json({ message: 'Internal Server Error' });
+  } catch (err) {
+    createAppLog(JSON.stringify({ Error: err.message }));
+    return res.status(500).json({
+      status: 'E00',
+      success: false,
+      message: 'Internal Server Error: ' + err.message
+    });
   }
 };
 

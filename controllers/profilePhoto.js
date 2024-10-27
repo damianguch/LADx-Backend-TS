@@ -34,18 +34,6 @@ const UpdateProfilePhoto = async (req, res) => {
   if (!profilePic) return res.status(400).json({ message: 'No file uploaded' });
 
   try {
-    // Automatically casts id to an ObjectId
-    const user = await User.findById(id);
-
-    if (!user) {
-      await createAppLog('User profile not found!');
-      return res.status(400).json({
-        status: 'E00',
-        success: false,
-        message: 'User profile not found!'
-      });
-    }
-
     // If there is an old profile picture, delete it from Cloudinary using
     // the stored publicId
     if (user.profilePicPublicId) {
@@ -58,24 +46,31 @@ const UpdateProfilePhoto = async (req, res) => {
 
     // Get the new cloudinary image URL
     profilePhoto.profilePicUrl = req.file.path; // Cloudinary URL
-
     // Get the publicId
     profilePhoto.profilePicPublicId = req.file.filename; // Cloudinary publicId
 
     // Update user profile photo in database
-    await User.findByIdAndUpdate(id, { $set: profilePhoto });
+    const user = await User.findByIdAndUpdate(id, { $set: profilePhoto });
+
+    if (!user) {
+      await createAppLog('User profile not found!');
+      return res.status(400).json({
+        status: 'E00',
+        success: false,
+        message: 'User profile not found!'
+      });
+    }
 
     // Log Profile Photo Update activity
-    const logProfilePhotoUpdate = new LogFile({
+    await createAppLog('Profile Photo Updated Successfully!');
+    const logUpdate = new LogFile({
       email: user.email,
       fullname: user.fullname,
       ActivityName: `Profile Photo updated by user: ${user.fullname}`,
       AddedOn: currentDate
     });
+    await logUpdate.save();
 
-    await logProfilePhotoUpdate.save();
-
-    await createAppLog('Profile Photo Updated Successfully!');
     return res.status(200).json({
       status: '00',
       success: true,
@@ -83,11 +78,11 @@ const UpdateProfilePhoto = async (req, res) => {
       profilePhoto
     });
   } catch (err) {
-    await createAppLog(err.message);
+    await createAppLog(JSON.stringify(err.message));
     res.status(500).json({
       status: 'E00',
       success: false,
-      message: err.message
+      message: 'Internal server error: ' + err.message
     });
   }
 };
