@@ -15,12 +15,12 @@ import { sanitizedTraveldetails } from '../utils/sanitize';
 import { Request, Response } from 'express';
 
 // @POST: Upload travel details
-const TravelDetails = async (req: Request, res: Response) => {
+const TravelDetails = async (req: Request, res: Response): Promise<void> => {
   // Get user id from an authenticated token
   const userId = req.id;
 
   if (!userId) {
-    return res.status(400).json({
+    res.status(400).json({
       status: 'E00',
       success: false,
       message: 'User ID is required for travel details submission.'
@@ -34,7 +34,7 @@ const TravelDetails = async (req: Request, res: Response) => {
   });
 
   if (error) {
-    return res.status(400).json({
+    res.status(400).json({
       status: 'E00',
       success: false,
       message: 'Validation errors occurred',
@@ -57,7 +57,7 @@ const TravelDetails = async (req: Request, res: Response) => {
     });
     await logEntry.save();
 
-    return res.status(200).json({
+    res.status(200).json({
       status: '00',
       success: true,
       message: 'Travel details saved Successfully!',
@@ -65,7 +65,7 @@ const TravelDetails = async (req: Request, res: Response) => {
     });
   } catch (err) {
     createAppLog(`Error saving travel details: ${(err as Error).message}`);
-    return res.status(500).json({
+    res.status(500).json({
       status: 'E00',
       success: false,
       message: 'Internal Server Error: ' + (err as Error).message
@@ -74,12 +74,15 @@ const TravelDetails = async (req: Request, res: Response) => {
 };
 
 // @PUT: Edit travel details
-const UpdateTravelDetails = async (req: Request, res: Response) => {
+const UpdateTravelDetails = async (
+  req: Request,
+  res: Response
+): Promise<void> => {
   // Get the user ID from the authenticated token
   const userId = req.id;
 
   if (!userId)
-    return res.status(400).json({
+    res.status(400).json({
       status: 'E00',
       success: false,
       message: 'User ID is required for request update.'
@@ -123,14 +126,14 @@ const UpdateTravelDetails = async (req: Request, res: Response) => {
       isNaN(travelDetails.departure_date) ||
       isNaN(travelDetails.destination_date)
     ) {
-      return res.status(400).json({
+      res.status(400).json({
         status: 'E00',
         success: false,
         message: 'Invalid date format for departure or destination date.'
       });
     }
     if (travelDetails.item_weight && isNaN(travelDetails.item_weight)) {
-      return res.status(400).json({
+      res.status(400).json({
         status: 'E00',
         success: false,
         message: 'Item weight must be a number.'
@@ -146,7 +149,7 @@ const UpdateTravelDetails = async (req: Request, res: Response) => {
     );
 
     if (!updatedTravelDetails) {
-      return res.status(404).json({
+      res.status(404).json({
         status: 'E00',
         success: false,
         message: `Travel details with user ID ${userId} not found.`
@@ -161,7 +164,7 @@ const UpdateTravelDetails = async (req: Request, res: Response) => {
     });
     await logUpdate.save();
 
-    return res.status(200).json({
+    res.status(200).json({
       status: '00',
       success: true,
       message: 'Travel details updated successfully!',
@@ -169,7 +172,7 @@ const UpdateTravelDetails = async (req: Request, res: Response) => {
     });
   } catch (err) {
     createAppLog(JSON.stringify({ Error: (err as Error).message }));
-    return res.status(500).json({
+    res.status(500).json({
       status: 'E00',
       success: false,
       message: 'Internal Server Error: ' + (err as Error).message

@@ -5,15 +5,16 @@
  * Date: 12-10-2024
  **********************************************************************/
 
-const LogFile = require('../models/LogFile');
-const multer = require('multer');
-const User = require('../models/user');
-const { createAppLog } = require('../utils/createLog');
-const { currentDate } = require('../utils/date');
-const mongoose = require('mongoose');
-const path = require('path');
-const jwt = require('jsonwebtoken');
-const fs = require('fs');
+import LogFile from '../models/LogFile';
+import multer from 'multer';
+import User from '../models/user';
+import createAppLog from '../utils/createLog';
+import currentDate from '../utils/date';
+import mongoose from 'mongoose';
+import path from 'path';
+import jwt, { JwtPayload } from 'jsonwebtoken';
+import fs from 'fs';
+import { Request, Response } from 'express';
 
 // Ensure the uploads directory exists
 const profilePicDir = 'uploads/profile-pics';
@@ -54,7 +55,7 @@ const upload = multer({
 });
 
 // Update Profile Photo
-const UpdateProfilePhoto = async (req, res) => {
+const UpdateProfilePhoto = async (req: Request, res: Response) => {
   const token = req.cookies.token;
 
   if (!token) {
@@ -62,11 +63,15 @@ const UpdateProfilePhoto = async (req, res) => {
     return res.status(401).json({ message: 'Unauthorized. Please login' });
   }
 
-  const SECRET_KEY = process.env.JWT_SECRET_KEY;
-  const decoded = jwt.verify(token, SECRET_KEY);
-  const id = decoded.id;
+  const SECRET_KEY = process.env.JWT_SECRET_KEY as string;
 
-  const profilePic = req.file; // Get uploaded file from multer
+  if (!SECRET_KEY) {
+    throw new Error('JWT_SECRET_KEY not defined in environment variables');
+  }
+  const decoded = jwt.verify(token, SECRET_KEY);
+  const id = (decoded as JwtPayload).id;
+
+  const profilePic = req.file as Express.Multer.File; // Get uploaded file from multer
 
   console.log(profilePic);
 
@@ -99,7 +104,7 @@ const UpdateProfilePhoto = async (req, res) => {
     const oldProfilePic = user.profilePic;
 
     // Build the user profile photo update object
-    const profilePhoto = {};
+    const profilePhoto = {} as { profilePic: string };
 
     if (!profilePic)
       return res.status(400).json({ message: 'No file uploaded' });
@@ -118,23 +123,23 @@ const UpdateProfilePhoto = async (req, res) => {
     await User.findByIdAndUpdate(id, { $set: profilePhoto });
 
     // Log Profile Photo Update activity
-    const logProfilePhotoUpdate = new LogFile({
+    const logUpdate = new LogFile({
       email: user.email,
       fullname: user.fullname,
       ActivityName: `Profile Photo updated by user: ${user.fullname}`,
       AddedOn: currentDate
     });
 
-    await logProfilePhotoUpdate.save();
+    await logUpdate.save();
 
     await createAppLog('Profile Photo Updated Successfully!');
     return res.status(200).json({
       status: '00',
       success: true,
       message: 'Profile Photo Updated Successfully!',
-      data: userProfile
+      data: profilePhoto
     });
-  } catch (err) {
+  } catch (err: any) {
     await createAppLog(err.message);
     res.status(500).json({
       status: 'E00',
@@ -144,7 +149,4 @@ const UpdateProfilePhoto = async (req, res) => {
   }
 };
 
-module.exports = {
-  UpdateProfilePhoto,
-  upload
-};
+export { UpdateProfilePhoto, upload };

@@ -15,16 +15,12 @@ import createAppLog from '../utils/createLog';
 import encryptPasswordWithBcrypt from '../utils/passwordEncrypt';
 import currentDate from '../utils/date';
 import { sanitizeSignUpInput } from '../utils/sanitize';
-import { Request, Response, NextFunction } from 'express';
+import { Request, Response } from 'express';
 
 const otpStore = new Map(); // More scalable and secure in-memory store
 
 // POST: SignUp
-export const SignUp = async (
-  req: Request,
-  res: Response,
-  next: NextFunction
-) => {
+export const SignUp = async (req: Request, res: Response): Promise<void> => {
   try {
     // Get request body
     const sanitizedData = sanitizeSignUpInput(req.body);
@@ -32,12 +28,14 @@ export const SignUp = async (
 
     // Check if email is already registered
     const existingUser = await User.findOne({ email });
-    if (existingUser)
-      return res.status(400).json({
+    if (existingUser) {
+      res.status(400).json({
         status: 'E00',
         success: false,
         message: 'Email already registered'
       });
+      return;
+    }
 
     // Hash password for later use (only after OTP verification)
     const encryptedPassword = await encryptPasswordWithBcrypt(password);
@@ -67,16 +65,14 @@ export const SignUp = async (
     // Optionally send OTP via email
     // await sendOTPEmail(email, otp);
 
-    return res.status(200).json({
+    res.status(200).json({
       status: '00',
       success: true,
       message: 'OTP sent to your email'
     });
   } catch (err: any) {
     createAppLog(JSON.stringify({ Error: err.message }));
-    next(err);
-
-    return res.status(500).json({
+    res.status(500).json({
       status: 'E00',
       success: false,
       message: 'Internal Server Error: ' + err.message
@@ -85,12 +81,13 @@ export const SignUp = async (
 };
 
 // OTP Verification Route
-export const verifyOTP = async (req: Request, res: Response) => {
+export const verifyOTP = async (req: Request, res: Response): Promise<void> => {
   const { otp } = req.body; // Get otp from request body
   const email = req.session.email; // Retrieve email from session
 
   if (!otp || !email) {
-    return res.status(400).json({ message: 'OTP or email not found' });
+    res.status(400).json({ message: 'OTP or email not found' });
+    return;
   }
 
   try {
@@ -98,7 +95,8 @@ export const verifyOTP = async (req: Request, res: Response) => {
     const storedOTPData = req.session.otpData;
 
     if (!storedOTPData) {
-      return res.status(400).json({ message: 'OTP not found or expired' });
+      res.status(400).json({ message: 'OTP not found or expired' });
+      return;
     }
 
     const { hashedOTP, expiresAt } = storedOTPData;
@@ -110,13 +108,15 @@ export const verifyOTP = async (req: Request, res: Response) => {
           createAppLog(JSON.stringify({ Error: err.message }));
         }
       }); // Clear session data
-      return res.status(400).json({ message: 'OTP expired' });
+      res.status(400).json({ message: 'OTP expired' });
+      return;
     }
 
     // Verify OTP
     const isMatch = await bcrypt.compare(otp, hashedOTP);
     if (!isMatch) {
-      return res.status(400).json({ message: 'Invalid OTP' });
+      res.status(400).json({ message: 'Invalid OTP' });
+      return;
     }
 
     // Fetch temp user data from otpStore
@@ -125,7 +125,8 @@ export const verifyOTP = async (req: Request, res: Response) => {
     // Fetch tempUser data from session in-memory storage(Redis)
     const tempUser = req.session.tempUser;
     if (!tempUser) {
-      return res.status(400).json({ message: 'User not found' });
+      res.status(400).json({ message: 'User not found' });
+      return;
     }
 
     // Create the user in the database
@@ -164,7 +165,7 @@ export const verifyOTP = async (req: Request, res: Response) => {
     await createAppLog(
       JSON.stringify('OTP verified successfully. User account created.')
     );
-    return res
+    res
       .cookie('token', token, {
         httpOnly: true, // Prevent JavaScript access
         secure: process.env.NODE_ENV === 'production' ? true : false, // Only send cookie over HTTPS in production
@@ -177,14 +178,12 @@ export const verifyOTP = async (req: Request, res: Response) => {
       });
   } catch (err: any) {
     createAppLog(JSON.stringify({ Error: err.message }));
-    return res
-      .status(500)
-      .json({ message: 'Internal Server Error: ' + err.message });
+    res.status(500).json({ message: 'Internal Server Error: ' + err.message });
   }
 };
 
 // User Login
-export const Login = async (req: Request, res: Response) => {
+export const Login = async (req: Request, res: Response): Promise<void> => {
   try {
     const { email, password } = req.body;
 
@@ -192,20 +191,22 @@ export const Login = async (req: Request, res: Response) => {
 
     if (!email) {
       await createAppLog('Email Required!');
-      return res.status(400).json({
+      res.status(400).json({
         status: 'E00',
         success: false,
         message: 'Email Required!'
       });
+      return;
     }
 
     if (!password) {
       await createAppLog('Password Required!');
-      return res.status(400).json({
+      res.status(400).json({
         status: 'E00',
         success: false,
         message: 'Password Required!'
       });
+      return;
     }
 
     // Verify user login info(Find user by email)
@@ -213,11 +214,12 @@ export const Login = async (req: Request, res: Response) => {
 
     if (!user) {
       await createAppLog('This email is not registered');
-      return res.status(401).json({
+      res.status(401).json({
         status: 'E00',
         success: false,
         message: 'This email is not registered'
       });
+      return;
     }
 
     // Compare hashed password
@@ -225,11 +227,12 @@ export const Login = async (req: Request, res: Response) => {
 
     if (!isPasswordValid) {
       await createAppLog('Wrong password.');
-      return res.status(400).json({
+      res.status(400).json({
         status: 'E00',
         success: false,
         message: 'Wrong password.'
       });
+      return;
     }
 
     // Generate JWT token with the user payload
@@ -246,7 +249,7 @@ export const Login = async (req: Request, res: Response) => {
     await log.save();
 
     // Store token in HTTP-only, secure cookie
-    return res
+    res
       .cookie('token', token, {
         httpOnly: true, // Prevent JavaScript access
         secure: process.env.NODE_ENV === 'production' ? true : false, // Only send cookie over HTTPS in production
@@ -261,7 +264,7 @@ export const Login = async (req: Request, res: Response) => {
       });
   } catch (err: any) {
     await createAppLog('Error: ' + err.message);
-    return res.status(500).json({
+    res.status(500).json({
       status: 'E00',
       success: false,
       message: 'Internal Server error: ' + err.message
@@ -270,12 +273,13 @@ export const Login = async (req: Request, res: Response) => {
 };
 
 // User Logout
-export const Logout = async (req: Request, res: Response) => {
+export const Logout = async (req: Request, res: Response): Promise<void> => {
   const token = req.cookies.token;
 
   if (!token) {
     await createAppLog(`No token found!`);
-    return res.status(401).json({ message: 'No token provided' });
+    res.status(401).json({ message: 'No token provided' });
+    return;
   }
 
   const decoded = jwt.verify(token, process.env.JWT_SECRET_KEY!) as JwtPayload;
@@ -290,7 +294,7 @@ export const Logout = async (req: Request, res: Response) => {
   await log.save();
 
   await createAppLog(`User ${decoded.email} logged out!`);
-  return res
+  res
     .clearCookie('token')
     .clearCookie('csrfToken')
     .json({ message: 'User Logged out' });

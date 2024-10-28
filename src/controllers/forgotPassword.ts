@@ -6,29 +6,31 @@
  * Date: 16-10-2024
  **************************************************************************/
 
-const crypto = require('crypto');
-const User = require('../models/user'); // Mongoose User model
-const bcrypt = require('bcrypt');
-const {
+import crypto from 'crypto';
+import User from '../models/user'; // Mongoose User model
+import {
   passwordResetEmail,
   ConfirmPasswordResetEmail
-} = require('../utils/emailService');
-const { createAppLog } = require('../utils/createLog');
-const { encryptPasswordWithBcrypt } = require('../utils/passwordEncrypt');
+} from '../utils/emailService';
+import createAppLog from '../utils/createLog';
+import encryptPasswordWithBcrypt from '../utils/passwordEncrypt';
+import { Request, Response } from 'express';
 
 // POST: Request Password Reset
-const ForgotPassword = async (req, res) => {
+const ForgotPassword = async (req: Request, res: Response): Promise<void> => {
   const { email } = req.body;
 
   if (!email) {
-    return res.status(400).json({ message: 'Please enter a valid email' });
+    res.status(400).json({ message: 'Please enter a valid email' });
+    return;
   }
 
   try {
     // Find user by email
     const user = await User.findOne({ email });
     if (!user) {
-      return res.status(400).json({ message: 'This email does not exists.' });
+      res.status(400).json({ message: 'This email does not exists.' });
+      return;
     }
 
     // Generate reset token
@@ -48,23 +50,23 @@ const ForgotPassword = async (req, res) => {
     // Send reset link via email
     const resetUrl = `${process.env.FRONTEND_URL}?token=${resetToken}&email=${email}`;
 
-    console.log(resetUrl);
-
     await passwordResetEmail(email, resetUrl);
     res.status(200).json({ message: 'Reset link sent successfully!' });
-  } catch (error) {
-    createAppLog(JSON.stringify({ Error: error.message }));
-    res.status(500).json({ Error: error.message });
+  } catch (err: any) {
+    createAppLog(JSON.stringify({ Error: err.message }));
+    res.status(500).json({ Error: err.message });
   }
 };
 
 // PUT: Reset password
-const ResetPassword = async (req, res) => {
+const ResetPassword = async (req: Request, res: Response): Promise<void> => {
   // The frontend page parses the token and email from the URL.
   const { token, email, password } = req.body;
 
-  if (!token || !email || !password)
-    return res.status(400).json({ message: 'No credentials provided!' });
+  if (!token || !email || !password) {
+    res.status(400).json({ message: 'No credentials provided!' });
+    return;
+  }
 
   try {
     // ResetPassword - Hash the token with SHA-256 before comparison
@@ -78,7 +80,8 @@ const ResetPassword = async (req, res) => {
     });
 
     if (!user) {
-      return res.status(400).json({ message: 'Invalid or expired token.' });
+      res.status(400).json({ message: 'Invalid or expired token.' });
+      return;
     }
 
     // Hash new password
@@ -94,13 +97,14 @@ const ResetPassword = async (req, res) => {
     await ConfirmPasswordResetEmail(email);
     await createAppLog('Password reset successful!');
     res.status(200).json({ message: 'Password reset successful!' });
-  } catch (error) {
-    await createAppLog({ message: error.message });
-    res.status(500).json({ message: 'Server error, please try again later.' });
+  } catch (err: any) {
+    await createAppLog('Error reseting password: ' + err.message);
+    res.status(500).json({
+      status: 'E00',
+      success: false,
+      message: 'Server error, please try again later: ' + err.message
+    });
   }
 };
 
-module.exports = {
-  ForgotPassword,
-  ResetPassword
-};
+export { ForgotPassword, ResetPassword };

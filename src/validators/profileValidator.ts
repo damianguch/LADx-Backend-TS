@@ -1,4 +1,4 @@
-const Joi = require('joi');
+import Joi from 'joi';
 
 const profileUpdateSchema = Joi.object({
   fullname: Joi.string()
@@ -24,4 +24,4 @@ const profileUpdateSchema = Joi.object({
   })
 });
 
-module.exports = { profileUpdateSchema };
+export { profileUpdateSchema };

@@ -45,14 +45,12 @@ interface RequestData {
 }
 
 // POST: Request Delivery
-const RequestDetails = async (req: Request, res: Response) => {
+const RequestDetails = async (req: Request, res: Response): Promise<void> => {
   // Get user ID from an authenticated token
   const userId = req.id;
 
   if (!userId)
-    return res
-      .status(400)
-      .json({ status: 'E00', message: 'User id is required.' });
+    res.status(400).json({ status: 'E00', message: 'User id is required.' });
 
   // Get file upload
   const requestItemsImages = (req.files as Express.Multer.File[]) || [];
@@ -93,7 +91,7 @@ const RequestDetails = async (req: Request, res: Response) => {
 
     for (let field of requiredFields) {
       if (!sanitizedData[field]) {
-        return res.status(400).json({
+        res.status(400).json({
           status: 'E00',
           success: false,
           message: `${field.replace('_', ' ')} is required.`
@@ -103,7 +101,7 @@ const RequestDetails = async (req: Request, res: Response) => {
 
     // Ensure multiple files upload check
     if (!requestItemsImages || requestItemsImages.length === 0) {
-      return res.status(400).json({
+      res.status(400).json({
         status: 'E00',
         success: false,
         message: 'At least one Image upload is required.'
@@ -131,7 +129,7 @@ const RequestDetails = async (req: Request, res: Response) => {
     await logRequestDetails.save();
 
     createAppLog('Request details saved Successfully!');
-    return res.status(200).json({
+    res.status(200).json({
       status: '00',
       success: true,
       message: 'Request details saved Successfully!',
@@ -139,7 +137,7 @@ const RequestDetails = async (req: Request, res: Response) => {
     });
   } catch (err: any) {
     createAppLog(JSON.stringify({ Error: err.message }));
-    return res.status(500).json({
+    res.status(500).json({
       status: 'E00',
       success: false,
       message: 'Internal Server Error: ' + err.message
@@ -148,11 +146,14 @@ const RequestDetails = async (req: Request, res: Response) => {
 };
 
 // PUT: Update(Partial) request details
-const UpdateRequestDetails = async (req: Request, res: Response) => {
+const UpdateRequestDetails = async (
+  req: Request,
+  res: Response
+): Promise<void> => {
   // Get the user ID from the authenticated token
   const userId = req.id;
   if (!userId)
-    return res.status(400).json({
+    res.status(400).json({
       status: 'E00',
       success: false,
       message: 'User ID is required for request update.'
@@ -203,7 +204,7 @@ const UpdateRequestDetails = async (req: Request, res: Response) => {
       requestDetails.reciever_phone_number &&
       isNaN(requestDetails.reciever_phone_number)
     ) {
-      return res.status(400).json({
+      res.status(400).json({
         status: 'E00',
         success: false,
         message: 'Receiver phone number must be a number.'
@@ -222,7 +223,7 @@ const UpdateRequestDetails = async (req: Request, res: Response) => {
     );
 
     if (!updatedRequestDetails) {
-      return res.status(404).json({
+      res.status(404).json({
         status: 'E00',
         success: false,
         message: `Request details with user ID ${userId} not found.`
@@ -238,7 +239,7 @@ const UpdateRequestDetails = async (req: Request, res: Response) => {
     await logRequestDetailsUpdate.save();
 
     // Return success response
-    return res.status(200).json({
+    res.status(200).json({
       status: '00',
       success: true,
       message: 'Request details updated successfully!',
@@ -246,7 +247,7 @@ const UpdateRequestDetails = async (req: Request, res: Response) => {
     });
   } catch (err: any) {
     createAppLog(JSON.stringify({ Error: err.message }));
-    return res.status(500).json({
+    res.status(500).json({
       status: 'E00',
       success: false,
       message: 'Internal Server Error: ' + err.message

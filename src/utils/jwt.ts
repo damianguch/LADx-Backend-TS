@@ -76,10 +76,12 @@ export const verifyTokenFromCookie = (
   req: Request,
   res: Response,
   next: NextFunction
-) => {
+): void => {
   const token = req.cookies.token;
-  if (!token)
-    return res.status(401).json({ message: 'Unauthorized Please login!' });
+  if (!token) {
+    res.status(401).json({ message: 'Unauthorized Please login!' });
+    return;
+  }
 
   try {
     const decoded = jwt.verify(token, process.env.JWT_SECRET_KEY!);
@@ -88,11 +90,12 @@ export const verifyTokenFromCookie = (
 
     // Check if id is a valid ObjectId
     if (!mongoose.Types.ObjectId.isValid(id)) {
-      return res.status(400).json({
+      res.status(400).json({
         status: 'E00',
         success: false,
         message: 'Invalid user ID format'
       });
+      return;
     }
 
     req.id = id; // Attach user info to the request

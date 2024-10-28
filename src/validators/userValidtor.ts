@@ -1,4 +1,5 @@
-const Joi = require('joi');
+import { NextFunction, Request, Response } from 'express';
+import Joi from 'joi';
 
 const userSignupSchema = Joi.object({
   fullname: Joi.string().trim().required().messages({
@@ -28,13 +29,20 @@ const userSignupSchema = Joi.object({
   })
 });
 
-const validateUserSignup = (req, res, next) => {
+// Express middleware functions generally don’t return a value
+// Simply set the return type to void and return nothing explicitly
+const validateUserSignup = (
+  req: Request,
+  res: Response<any, Record<string, any>>,
+  next: NextFunction
+): void => {
   const { error } = userSignupSchema.validate(req.body, { abortEarly: false });
   if (error) {
     const errors = error.details.map((detail) => detail.message);
-    return res.status(400).json({ status: 'E00', errors });
+    res.status(400).json({ status: 'E00', errors });
+    return;
   }
   next();
 };
 
-module.exports = { validateUserSignup };
+export { validateUserSignup };

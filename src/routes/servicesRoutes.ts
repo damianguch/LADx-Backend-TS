@@ -1,29 +1,23 @@
 import csrf from 'csurf';
 import { Router } from 'express';
+import { validateKYC } from '../controllers/kyc';
 const router = Router();
 
-const { Login, SignUp, verifyOTP, Logout } = require('../controllers/auth');
-const { UpdateProfilePhoto, upload } = require('../controllers/profilePhoto');
-const { UpdateProfile, GetUserProfile } = require('../controllers/profile');
-const { verifyTokenFromCookie } = require('../utils/jwt');
-const {
-  ForgotPassword,
-  ResetPassword
-} = require('../controllers/forgotPassword');
-const { GetProfilePhoto } = require('../controllers/getProfilePhoto');
-const { UploadKYC, identityUpload } = require('../controllers/kyc');
-const {
-  TravelDetails,
-  UpdateTravelDetails,
-  travelUpload
-} = require('../controllers/traveller');
-const {
+import { Login, SignUp, verifyOTP, Logout } from '../controllers/auth';
+import { UpdateProfilePhoto, upload } from '../controllers/profilePhoto';
+import { UpdateProfile, GetUserProfile } from '../controllers/profile';
+import { verifyTokenFromCookie } from '../utils/jwt';
+import { ForgotPassword, ResetPassword } from '../controllers/forgotPassword';
+import { GetProfilePhoto } from '../controllers/getProfilePhoto';
+import { UploadKYC, identityUpload } from '../controllers/kyc';
+import { TravelDetails, UpdateTravelDetails } from '../controllers/traveller';
+import {
   RequestDetails,
   requestItemsImageUpload,
   UpdateRequestDetails
-} = require('../controllers/sender');
-const { uploadErrorHandler } = require('../utils/multerError');
-const { validateUserSignup } = require('../validators/userValidtor');
+} from '../controllers/sender';
+import { uploadErrorHandler } from '../utils/multerError';
+import { validateUserSignup } from '../validators/userValidtor';
 
 // Middleware for CSRF protection
 const csrfProtection = csrf({
@@ -82,6 +76,7 @@ router.post(
   verifyTokenFromCookie,
   identityUpload.single('identity'),
   uploadErrorHandler,
+  validateKYC,
   UploadKYC
 );
 
