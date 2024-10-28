@@ -1,5 +1,4 @@
-const mongoose = require('mongoose');
-const { Schema } = mongoose;
+import mongoose, { Schema } from 'mongoose';
 
 // userSchema outlines the structure of the documents to be stored
 // in the Users collection.
@@ -70,4 +69,4 @@ const senderSchema = new Schema(
 );
 
 const Sender = mongoose.model('Sender', senderSchema);
-module.exports = Sender;
+export { Sender };

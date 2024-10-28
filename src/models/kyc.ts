@@ -1,5 +1,4 @@
-const mongoose = require('mongoose');
-const { Schema } = mongoose;
+import mongoose, { Schema } from 'mongoose';
 
 // The kycSchema outlines the structure of the documents to be stored
 // in the Kyc collection.
@@ -31,4 +30,4 @@ const kycSchema = new Schema(
 
 const Kyc = mongoose.model('Kyc', kycSchema);
 
-module.exports = Kyc;
+export { Kyc };

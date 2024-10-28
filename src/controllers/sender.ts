@@ -5,14 +5,15 @@
  * Date: 26-10-2024
  ***********************************************************************/
 
-const multer = require('multer');
-const { CloudinaryStorage } = require('multer-storage-cloudinary');
-const cloudinary = require('../utils/cloudinaryConfig');
-const LogFile = require('../models/LogFile');
-const Sender = require('../models/sender');
-const { createAppLog } = require('../utils/createLog');
-const { currentDate } = require('../utils/date');
-const { escape, isNumeric } = require('validator');
+import multer from 'multer';
+import { CloudinaryStorage } from 'multer-storage-cloudinary';
+import { cloudinary } from '../utils/cloudinaryConfig';
+import LogFile from '../models/LogFile';
+import { Sender } from '../models/sender';
+import createAppLog from '../utils/createLog';
+import currentDate from '../utils/date';
+import { escape, isNumeric } from 'validator';
+import { Request, Response } from 'express';
 
 // Configure Cloudinary storage for Multer
 const storage = new CloudinaryStorage({
@@ -22,7 +23,7 @@ const storage = new CloudinaryStorage({
     allowed_formats: ['jpg', 'png', 'jpeg'],
     // Resize image if needed
     transformation: { width: 150, height: 150, crop: 'limit', quality: 'auto' }
-  }
+  } as any
 });
 
 const requestItemsImageUpload = multer({
@@ -30,8 +31,21 @@ const requestItemsImageUpload = multer({
   limits: { fileSize: 1 * 1024 * 1024 } // Limit file size to 1MB
 }).array('itemPics', 5); // Adjust the limit of files as needed
 
+interface RequestData {
+  package_details: string;
+  package_name: string;
+  item_description: string;
+  package_value: string;
+  quantity: string;
+  price: string;
+  address_from: string;
+  address_to: string;
+  reciever_name: string;
+  reciever_phone_number: string;
+}
+
 // POST: Request Delivery
-const RequestDetails = async (req, res) => {
+const RequestDetails = async (req: Request, res: Response) => {
   // Get user ID from an authenticated token
   const userId = req.id;
 
@@ -41,10 +55,10 @@ const RequestDetails = async (req, res) => {
       .json({ status: 'E00', message: 'User id is required.' });
 
   // Get file upload
-  const requestItemsImages = req.files;
+  const requestItemsImages = (req.files as Express.Multer.File[]) || [];
 
   // Helper function to sanitize and validate input data
-  const sanitizeInputData = (data) => ({
+  const sanitizeInputData = (data: RequestData) => ({
     package_details: escape(data.package_details),
     package_name: escape(data.package_name),
     item_description: escape(data.item_description),
@@ -61,7 +75,7 @@ const RequestDetails = async (req, res) => {
 
   try {
     // Sanitize and validate the input
-    const sanitizedData = sanitizeInputData(req.body);
+    const sanitizedData: { [key: string]: any } = sanitizeInputData(req.body);
 
     // Validate required fields
     const requiredFields = [
@@ -123,7 +137,7 @@ const RequestDetails = async (req, res) => {
       message: 'Request details saved Successfully!',
       requestDetails
     });
-  } catch (err) {
+  } catch (err: any) {
     createAppLog(JSON.stringify({ Error: err.message }));
     return res.status(500).json({
       status: 'E00',
@@ -134,7 +148,7 @@ const RequestDetails = async (req, res) => {
 };
 
 // PUT: Update(Partial) request details
-const UpdateRequestDetails = async (req, res) => {
+const UpdateRequestDetails = async (req: Request, res: Response) => {
   // Get the user ID from the authenticated token
   const userId = req.id;
   if (!userId)
@@ -145,10 +159,10 @@ const UpdateRequestDetails = async (req, res) => {
     });
 
   // Get uploaded files (array of images)
-  const requestItemsImages = req.files;
+  const requestItemsImages = (req.files as Express.Multer.File[]) || [];
 
   try {
-    let newImageUrls = [];
+    let newImageUrls: string[] = [];
 
     // If images were uploaded, replace the existing image URLs
     if (requestItemsImages && requestItemsImages.length > 0) {
@@ -230,7 +244,7 @@ const UpdateRequestDetails = async (req, res) => {
       message: 'Request details updated successfully!',
       updatedRequestDetails
     });
-  } catch (err) {
+  } catch (err: any) {
     createAppLog(JSON.stringify({ Error: err.message }));
     return res.status(500).json({
       status: 'E00',
@@ -240,8 +254,4 @@ const UpdateRequestDetails = async (req, res) => {
   }
 };
 
-module.exports = {
-  UpdateRequestDetails,
-  RequestDetails,
-  requestItemsImageUpload
-};
+export { UpdateRequestDetails, RequestDetails, requestItemsImageUpload };
