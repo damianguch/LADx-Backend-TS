@@ -59,6 +59,7 @@ app.use(
 );
 
 app.use(cookieParser());
+app.set('trust proxy', 1);
 
 // Configure the session middleware
 app.use(

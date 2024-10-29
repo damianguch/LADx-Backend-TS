@@ -1,5 +1,6 @@
 import { SESClient, SendEmailCommand } from '@aws-sdk/client-ses';
 import createAppLog from './createLog';
+import nodemailer from 'nodemailer';
 
 const credentials = {
   accessKeyId: process.env.AWS_ACCESS_KEY || '',
@@ -14,10 +15,40 @@ const SES_Config = {
 
 const client = new SESClient(SES_Config);
 
+const transporter = nodemailer.createTransport({
+  port: Number(process.env.SMTP_PORT),
+  host: process.env.SMTP_HOST,
+  auth: {
+    user: process.env.SMTP_USER,
+    pass: process.env.SMTP_PASSWORD
+  },
+  secure: true
+});
+
+// Send OTP via Email
+export const sendOTPEmail = async (email: string, otp: number) => {
+  // Send OTP
+  const mailOptions = {
+    from: 'clickviralng@gmail.com',
+    to: email,
+    subject: 'Your OTP Code',
+    text: `Your OTP code is ${otp}`
+  };
+
+  try {
+    await transporter.sendMail(mailOptions);
+    await createAppLog(JSON.stringify('OTP sent to your email'));
+    return { message: 'OTP sent to your email' };
+  } catch (error) {
+    await createAppLog(JSON.stringify('Error sending OTP'));
+    throw new Error('Error sending OTP');
+  }
+};
+
 export { client };
 
 // Send OTP Email
-export const sendOTPEmail = async (email: string, otp: string) => {
+export const sendOTPEmailAWS = async (email: string, otp: string) => {
   const params = {
     Source: 'ladxofficial@gmail.com',
     Destination: {
