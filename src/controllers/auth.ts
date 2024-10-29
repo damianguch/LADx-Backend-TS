@@ -16,6 +16,7 @@ import encryptPasswordWithBcrypt from '../utils/passwordEncrypt';
 import currentDate from '../utils/date';
 import { sanitizeSignUpInput } from '../utils/sanitize';
 import { Request, Response } from 'express';
+import { sendOTPEmail } from '../utils/emailService';
 
 const otpStore = new Map(); // More scalable and secure in-memory store
 
@@ -63,7 +64,7 @@ export const SignUp = async (req: Request, res: Response): Promise<void> => {
     req.session.tempUser = tempUser;
 
     // Optionally send OTP via email
-    // await sendOTPEmail(email, otp);
+    await sendOTPEmail(email, otp);
 
     console.log(otp);
 

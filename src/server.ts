@@ -32,6 +32,9 @@ redisClient
 // Use Helmet for various security headers
 app.use(helmet());
 
+// Trust the first proxy
+app.set('trust proxy', true);
+
 app.use(
   helmet({
     xContentTypeOptions: false // Disables 'X-Content-Type-Options: nosniff'
@@ -59,7 +62,6 @@ app.use(
 );
 
 app.use(cookieParser());
-app.set('trust proxy', 1);
 
 // Configure the session middleware
 app.use(
