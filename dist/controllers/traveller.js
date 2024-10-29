@@ -31,7 +31,7 @@ const TravelDetails = (req, res) => __awaiter(void 0, void 0, void 0, function* 
     // Get user id from an authenticated token
     const userId = req.id;
     if (!userId) {
-        return res.status(400).json({
+        res.status(400).json({
             status: 'E00',
             success: false,
             message: 'User ID is required for travel details submission.'
@@ -43,7 +43,7 @@ const TravelDetails = (req, res) => __awaiter(void 0, void 0, void 0, function* 
         stripUnknown: true
     });
     if (error) {
-        return res.status(400).json({
+        res.status(400).json({
             status: 'E00',
             success: false,
             message: 'Validation errors occurred',
@@ -62,7 +62,7 @@ const TravelDetails = (req, res) => __awaiter(void 0, void 0, void 0, function* 
             AddedOn: date_1.default
         });
         yield logEntry.save();
-        return res.status(200).json({
+        res.status(200).json({
             status: '00',
             success: true,
             message: 'Travel details saved Successfully!',
@@ -71,7 +71,7 @@ const TravelDetails = (req, res) => __awaiter(void 0, void 0, void 0, function* 
     }
     catch (err) {
         (0, createLog_1.default)(`Error saving travel details: ${err.message}`);
-        return res.status(500).json({
+        res.status(500).json({
             status: 'E00',
             success: false,
             message: 'Internal Server Error: ' + err.message
@@ -84,7 +84,7 @@ const UpdateTravelDetails = (req, res) => __awaiter(void 0, void 0, void 0, func
     // Get the user ID from the authenticated token
     const userId = req.id;
     if (!userId)
-        return res.status(400).json({
+        res.status(400).json({
             status: 'E00',
             success: false,
             message: 'User ID is required for request update.'
@@ -113,14 +113,14 @@ const UpdateTravelDetails = (req, res) => __awaiter(void 0, void 0, void 0, func
         // Validate dates and number fields before proceeding
         if (isNaN(travelDetails.departure_date) ||
             isNaN(travelDetails.destination_date)) {
-            return res.status(400).json({
+            res.status(400).json({
                 status: 'E00',
                 success: false,
                 message: 'Invalid date format for departure or destination date.'
             });
         }
         if (travelDetails.item_weight && isNaN(travelDetails.item_weight)) {
-            return res.status(400).json({
+            res.status(400).json({
                 status: 'E00',
                 success: false,
                 message: 'Item weight must be a number.'
@@ -130,7 +130,7 @@ const UpdateTravelDetails = (req, res) => __awaiter(void 0, void 0, void 0, func
         // const id = existingTravelDetails.id;
         const updatedTravelDetails = yield traveller_1.default.findOneAndUpdate({ userId }, { $set: travelDetails }, { new: true });
         if (!updatedTravelDetails) {
-            return res.status(404).json({
+            res.status(404).json({
                 status: 'E00',
                 success: false,
                 message: `Travel details with user ID ${userId} not found.`
@@ -143,7 +143,7 @@ const UpdateTravelDetails = (req, res) => __awaiter(void 0, void 0, void 0, func
             AddedOn: date_1.default
         });
         yield logUpdate.save();
-        return res.status(200).json({
+        res.status(200).json({
             status: '00',
             success: true,
             message: 'Travel details updated successfully!',
@@ -152,7 +152,7 @@ const UpdateTravelDetails = (req, res) => __awaiter(void 0, void 0, void 0, func
     }
     catch (err) {
         (0, createLog_1.default)(JSON.stringify({ Error: err.message }));
-        return res.status(500).json({
+        res.status(500).json({
             status: 'E00',
             success: false,
             message: 'Internal Server Error: ' + err.message

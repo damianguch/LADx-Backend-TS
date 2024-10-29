@@ -53,19 +53,22 @@ function verifyToken(req, res, next) {
 // Middleware to check JWT token in cookie
 const verifyTokenFromCookie = (req, res, next) => {
     const token = req.cookies.token;
-    if (!token)
-        return res.status(401).json({ message: 'Unauthorized Please login!' });
+    if (!token) {
+        res.status(401).json({ message: 'Unauthorized Please login!' });
+        return;
+    }
     try {
         const decoded = jsonwebtoken_1.default.verify(token, process.env.JWT_SECRET_KEY);
         // Check if decoded is of type JwtPayload and access `id` if so
         const id = decoded.id;
         // Check if id is a valid ObjectId
         if (!mongoose_1.default.Types.ObjectId.isValid(id)) {
-            return res.status(400).json({
+            res.status(400).json({
                 status: 'E00',
                 success: false,
                 message: 'Invalid user ID format'
             });
+            return;
         }
         req.id = id; // Attach user info to the request
         next();

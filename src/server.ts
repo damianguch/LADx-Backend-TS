@@ -1,8 +1,7 @@
 import dotenv from 'dotenv';
 dotenv.config();
 import express, { Application, Request, Response, NextFunction } from 'express';
-import https from 'https';
-import fs from 'fs';
+import http from 'http';
 import path from 'path';
 import helmet from 'helmet';
 import rateLimit from 'express-rate-limit';
@@ -159,21 +158,8 @@ if (process.env.NODE_ENV === 'production') {
 
 const PORT = process.env.PORT || 1337;
 
-// Path to SSL key and certificate files
-const privatekey = fs.readFileSync(
-  path.join(__dirname, 'SSL', 'privatekey.pem')
-);
-const certificate = fs.readFileSync(
-  path.join(__dirname, 'SSL', 'certificate.pem')
-);
-
-const credentials = {
-  key: privatekey,
-  cert: certificate
-};
-
 // Start the HTTPS server
-const httpsServer = https.createServer(credentials, app);
+const httpServer = http.createServer(app);
 
 (req: Request, res: Response, next: NextFunction) => {
   res.writeHead(200);
@@ -192,6 +178,8 @@ process.on('SIGINT', async () => {
   }
 });
 
-httpsServer.listen(PORT, () => {
+const host: string = '0.0.0.0';
+
+httpServer.listen({ port: PORT, host }, () => {
   console.log(`HTTPS Server running on port ${PORT}...`);
 });

@@ -21,7 +21,10 @@ const updateProfile = async () => {
       {
         method: 'PUT',
         body: formData,
-        credentials: 'include'
+        credentials: 'include',
+        headers: {
+          'CSRF-Token': csrfToken // Insert the token dynamically
+        }
       }
     );
 
@@ -48,3 +51,12 @@ formUpload.addEventListener('submit', (e) => {
   e.preventDefault();
   updateProfile();
 });
+
+// Fetch CSRF token and set it in the hidden input
+const baseURL = 'https://localhost:1337';
+fetch(`${baseURL}/api/v1/csrf-token`)
+  .then((response) => response.json())
+  .then((data) => {
+    document.getElementById('csrfToken').value = data.csrfToken;
+  })
+  .catch((error) => console.error('Error fetching CSRF token:', error));

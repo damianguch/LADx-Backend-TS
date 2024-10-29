@@ -19,7 +19,7 @@ import { Request, Response } from 'express';
 
 const otpStore = new Map(); // More scalable and secure in-memory store
 
-// POST: SignUp
+// @POST: SignUp Route
 export const SignUp = async (req: Request, res: Response): Promise<void> => {
   try {
     // Get request body
@@ -65,6 +65,8 @@ export const SignUp = async (req: Request, res: Response): Promise<void> => {
     // Optionally send OTP via email
     // await sendOTPEmail(email, otp);
 
+    console.log(otp);
+
     res.status(200).json({
       status: '00',
       success: true,
@@ -80,7 +82,7 @@ export const SignUp = async (req: Request, res: Response): Promise<void> => {
   }
 };
 
-// OTP Verification Route
+// @POST: OTP Verification Route
 export const verifyOTP = async (req: Request, res: Response): Promise<void> => {
   const { otp } = req.body; // Get otp from request body
   const email = req.session.email; // Retrieve email from session
@@ -143,13 +145,13 @@ export const verifyOTP = async (req: Request, res: Response): Promise<void> => {
     await otpVerificationLog.save();
 
     // Log the new user creation activity
-    const userCreationLog = new LogFile({
+    const logEntry = new LogFile({
       fullname: tempUser.fullname,
       email: tempUser.email,
       ActivityName: `New user created with email: ${tempUser.email}`,
       AddedOn: currentDate
     });
-    await userCreationLog.save();
+    await logEntry.save();
 
     // Clear session and temp user data after successful verification
     req.session.destroy((err: any) => {
@@ -182,7 +184,7 @@ export const verifyOTP = async (req: Request, res: Response): Promise<void> => {
   }
 };
 
-// User Login
+// @POST: User Login
 export const Login = async (req: Request, res: Response): Promise<void> => {
   try {
     const { email, password } = req.body;

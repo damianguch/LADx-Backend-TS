@@ -15,8 +15,7 @@ Object.defineProperty(exports, "__esModule", { value: true });
 const dotenv_1 = __importDefault(require("dotenv"));
 dotenv_1.default.config();
 const express_1 = __importDefault(require("express"));
-const https_1 = __importDefault(require("https"));
-const fs_1 = __importDefault(require("fs"));
+const http_1 = __importDefault(require("http"));
 const path_1 = __importDefault(require("path"));
 const helmet_1 = __importDefault(require("helmet"));
 const express_rate_limit_1 = __importDefault(require("express-rate-limit"));
@@ -121,15 +120,8 @@ if (process.env.NODE_ENV === 'production') {
     app.use(express_1.default.static('build'));
 }
 const PORT = process.env.PORT || 1337;
-// Path to SSL key and certificate files
-const privatekey = fs_1.default.readFileSync(path_1.default.join(__dirname, 'SSL', 'privatekey.pem'));
-const certificate = fs_1.default.readFileSync(path_1.default.join(__dirname, 'SSL', 'certificate.pem'));
-const credentials = {
-    key: privatekey,
-    cert: certificate
-};
 // Start the HTTPS server
-const httpsServer = https_1.default.createServer(credentials, app);
+const httpServer = http_1.default.createServer(app);
 (req, res, next) => {
     res.writeHead(200);
     res.setHeader('Content-Type', 'application/javascript');
@@ -146,6 +138,7 @@ process.on('SIGINT', () => __awaiter(void 0, void 0, void 0, function* () {
         process.exit(1);
     }
 }));
-httpsServer.listen(PORT, () => {
+const host = '0.0.0.0';
+httpServer.listen({ port: PORT, host }, () => {
     console.log(`HTTPS Server running on port ${PORT}...`);
 });

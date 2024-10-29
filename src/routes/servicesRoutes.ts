@@ -1,8 +1,6 @@
 import csrf from 'csurf';
 import { Router } from 'express';
 import { validateKYC } from '../controllers/kyc';
-const router = Router();
-
 import { Login, SignUp, verifyOTP, Logout } from '../controllers/auth';
 import { UpdateProfilePhoto, upload } from '../controllers/profilePhoto';
 import { UpdateProfile, GetUserProfile } from '../controllers/profile';
@@ -19,6 +17,8 @@ import {
 import { uploadErrorHandler } from '../utils/multerError';
 import { validateUserSignup } from '../validators/userValidtor';
 
+const router = Router();
+
 // Middleware for CSRF protection
 const csrfProtection = csrf({
   cookie: {
@@ -28,14 +28,9 @@ const csrfProtection = csrf({
   }
 });
 
-// Apply CSRF protection globally but exclude specific routes
-// router.use((req, res, next) => {
-//   if (req.method === 'GET' || req.path === '/login' || req.path === '/logout') {
-//     return next(); // Skip CSRF protection for these routes
-//   }
-
-//   csrfProtection(req, res, next); // Apply CSRF protection
-// });
+router.get('/csrf-token', csrfProtection, (req, res) => {
+  res.json({ csrfToken: req.csrfToken() });
+});
 
 router.post('/signup', validateUserSignup, SignUp);
 router.post('/verify-otp', verifyOTP);

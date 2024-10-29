@@ -30,20 +30,22 @@ const passwordEncrypt_1 = __importDefault(require("../utils/passwordEncrypt"));
 const date_1 = __importDefault(require("../utils/date"));
 const sanitize_1 = require("../utils/sanitize");
 const otpStore = new Map(); // More scalable and secure in-memory store
-// POST: SignUp
-const SignUp = (req, res, next) => __awaiter(void 0, void 0, void 0, function* () {
+// @POST: SignUp Route
+const SignUp = (req, res) => __awaiter(void 0, void 0, void 0, function* () {
     try {
         // Get request body
         const sanitizedData = (0, sanitize_1.sanitizeSignUpInput)(req.body);
         let { fullname, email, country, state, phone, password } = sanitizedData;
         // Check if email is already registered
         const existingUser = yield user_1.default.findOne({ email });
-        if (existingUser)
-            return res.status(400).json({
+        if (existingUser) {
+            res.status(400).json({
                 status: 'E00',
                 success: false,
                 message: 'Email already registered'
             });
+            return;
+        }
         // Hash password for later use (only after OTP verification)
         const encryptedPassword = yield (0, passwordEncrypt_1.default)(password);
         // Save user info temporarily
@@ -66,7 +68,8 @@ const SignUp = (req, res, next) => __awaiter(void 0, void 0, void 0, function* (
         req.session.tempUser = tempUser;
         // Optionally send OTP via email
         // await sendOTPEmail(email, otp);
-        return res.status(200).json({
+        console.log(otp);
+        res.status(200).json({
             status: '00',
             success: true,
             message: 'OTP sent to your email'
@@ -74,8 +77,7 @@ const SignUp = (req, res, next) => __awaiter(void 0, void 0, void 0, function* (
     }
     catch (err) {
         (0, createLog_1.default)(JSON.stringify({ Error: err.message }));
-        next(err);
-        return res.status(500).json({
+        res.status(500).json({
             status: 'E00',
             success: false,
             message: 'Internal Server Error: ' + err.message
@@ -83,18 +85,20 @@ const SignUp = (req, res, next) => __awaiter(void 0, void 0, void 0, function* (
     }
 });
 exports.SignUp = SignUp;
-// OTP Verification Route
+// @POST: OTP Verification Route
 const verifyOTP = (req, res) => __awaiter(void 0, void 0, void 0, function* () {
     const { otp } = req.body; // Get otp from request body
     const email = req.session.email; // Retrieve email from session
     if (!otp || !email) {
-        return res.status(400).json({ message: 'OTP or email not found' });
+        res.status(400).json({ message: 'OTP or email not found' });
+        return;
     }
     try {
         // Fetch stored OTP from session
         const storedOTPData = req.session.otpData;
         if (!storedOTPData) {
-            return res.status(400).json({ message: 'OTP not found or expired' });
+            res.status(400).json({ message: 'OTP not found or expired' });
+            return;
         }
         const { hashedOTP, expiresAt } = storedOTPData;
         // Check if OTP has expired
@@ -104,19 +108,22 @@ const verifyOTP = (req, res) => __awaiter(void 0, void 0, void 0, function* () {
                     (0, createLog_1.default)(JSON.stringify({ Error: err.message }));
                 }
             }); // Clear session data
-            return res.status(400).json({ message: 'OTP expired' });
+            res.status(400).json({ message: 'OTP expired' });
+            return;
         }
         // Verify OTP
         const isMatch = yield bcrypt_1.default.compare(otp, hashedOTP);
         if (!isMatch) {
-            return res.status(400).json({ message: 'Invalid OTP' });
+            res.status(400).json({ message: 'Invalid OTP' });
+            return;
         }
         // Fetch temp user data from otpStore
         // const tempUser = otpStore.get(`${email}_tempUser`);
         // Fetch tempUser data from session in-memory storage(Redis)
         const tempUser = req.session.tempUser;
         if (!tempUser) {
-            return res.status(400).json({ message: 'User not found' });
+            res.status(400).json({ message: 'User not found' });
+            return;
         }
         // Create the user in the database
         const newUser = new user_1.default(tempUser);
@@ -130,13 +137,13 @@ const verifyOTP = (req, res) => __awaiter(void 0, void 0, void 0, function* () {
         });
         yield otpVerificationLog.save();
         // Log the new user creation activity
-        const userCreationLog = new LogFile_1.default({
+        const logEntry = new LogFile_1.default({
             fullname: tempUser.fullname,
             email: tempUser.email,
             ActivityName: `New user created with email: ${tempUser.email}`,
             AddedOn: date_1.default
         });
-        yield userCreationLog.save();
+        yield logEntry.save();
         // Clear session and temp user data after successful verification
         req.session.destroy((err) => {
             if (err) {
@@ -147,7 +154,7 @@ const verifyOTP = (req, res) => __awaiter(void 0, void 0, void 0, function* () {
         // Generate JWT token with the user payload
         const token = (0, jwt_1.generateToken)({ email: user.email, id: user.id });
         yield (0, createLog_1.default)(JSON.stringify('OTP verified successfully. User account created.'));
-        return res
+        res
             .cookie('token', token, {
             httpOnly: true, // Prevent JavaScript access
             secure: process.env.NODE_ENV === 'production' ? true : false, // Only send cookie over HTTPS in production
@@ -161,52 +168,54 @@ const verifyOTP = (req, res) => __awaiter(void 0, void 0, void 0, function* () {
     }
     catch (err) {
         (0, createLog_1.default)(JSON.stringify({ Error: err.message }));
-        return res
-            .status(500)
-            .json({ message: 'Internal Server Error: ' + err.message });
+        res.status(500).json({ message: 'Internal Server Error: ' + err.message });
     }
 });
 exports.verifyOTP = verifyOTP;
-// User Login
+// @POST: User Login
 const Login = (req, res) => __awaiter(void 0, void 0, void 0, function* () {
     try {
         const { email, password } = req.body;
         yield (0, createLog_1.default)('Login information' + JSON.stringify(email));
         if (!email) {
             yield (0, createLog_1.default)('Email Required!');
-            return res.status(400).json({
+            res.status(400).json({
                 status: 'E00',
                 success: false,
                 message: 'Email Required!'
             });
+            return;
         }
         if (!password) {
             yield (0, createLog_1.default)('Password Required!');
-            return res.status(400).json({
+            res.status(400).json({
                 status: 'E00',
                 success: false,
                 message: 'Password Required!'
             });
+            return;
         }
         // Verify user login info(Find user by email)
         const user = yield user_1.default.findOne({ email });
         if (!user) {
             yield (0, createLog_1.default)('This email is not registered');
-            return res.status(401).json({
+            res.status(401).json({
                 status: 'E00',
                 success: false,
                 message: 'This email is not registered'
             });
+            return;
         }
         // Compare hashed password
         const isPasswordValid = yield bcrypt_1.default.compare(password, user.password);
         if (!isPasswordValid) {
             yield (0, createLog_1.default)('Wrong password.');
-            return res.status(400).json({
+            res.status(400).json({
                 status: 'E00',
                 success: false,
                 message: 'Wrong password.'
             });
+            return;
         }
         // Generate JWT token with the user payload
         const token = (0, jwt_1.generateToken)({ email: user.email, id: user.id });
@@ -219,7 +228,7 @@ const Login = (req, res) => __awaiter(void 0, void 0, void 0, function* () {
         });
         yield log.save();
         // Store token in HTTP-only, secure cookie
-        return res
+        res
             .cookie('token', token, {
             httpOnly: true, // Prevent JavaScript access
             secure: process.env.NODE_ENV === 'production' ? true : false, // Only send cookie over HTTPS in production
@@ -235,7 +244,7 @@ const Login = (req, res) => __awaiter(void 0, void 0, void 0, function* () {
     }
     catch (err) {
         yield (0, createLog_1.default)('Error: ' + err.message);
-        return res.status(500).json({
+        res.status(500).json({
             status: 'E00',
             success: false,
             message: 'Internal Server error: ' + err.message
@@ -248,7 +257,8 @@ const Logout = (req, res) => __awaiter(void 0, void 0, void 0, function* () {
     const token = req.cookies.token;
     if (!token) {
         yield (0, createLog_1.default)(`No token found!`);
-        return res.status(401).json({ message: 'No token provided' });
+        res.status(401).json({ message: 'No token provided' });
+        return;
     }
     const decoded = jsonwebtoken_1.default.verify(token, process.env.JWT_SECRET_KEY);
     // Log the logout activity
@@ -259,7 +269,7 @@ const Logout = (req, res) => __awaiter(void 0, void 0, void 0, function* () {
     });
     yield log.save();
     yield (0, createLog_1.default)(`User ${decoded.email} logged out!`);
-    return res
+    res
         .clearCookie('token')
         .clearCookie('csrfToken')
         .json({ message: 'User Logged out' });
