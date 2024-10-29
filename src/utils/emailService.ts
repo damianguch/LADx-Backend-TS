@@ -14,6 +14,7 @@ const SES_Config = {
 };
 
 const client = new SESClient(SES_Config);
+export { client };
 
 const transporter = nodemailer.createTransport({
   port: Number(process.env.SMTP_PORT),
@@ -26,7 +27,7 @@ const transporter = nodemailer.createTransport({
 });
 
 // Send OTP via Email
-export const sendOTPEmail = async (email: string, otp: number) => {
+export const sendOTPEmail = async (email: string, otp: string) => {
   // Send OTP
   const mailOptions = {
     from: 'clickviralng@gmail.com',
@@ -44,8 +45,6 @@ export const sendOTPEmail = async (email: string, otp: number) => {
     throw new Error('Error sending OTP');
   }
 };
-
-export { client };
 
 // Send OTP Email
 export const sendOTPEmailAWS = async (email: string, otp: string) => {

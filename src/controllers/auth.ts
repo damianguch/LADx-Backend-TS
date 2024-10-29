@@ -17,6 +17,7 @@ import currentDate from '../utils/date';
 import { sanitizeSignUpInput } from '../utils/sanitize';
 import { Request, Response } from 'express';
 import { sendOTPEmail } from '../utils/emailService';
+import { number, string } from 'joi';
 
 const otpStore = new Map(); // More scalable and secure in-memory store
 
@@ -52,7 +53,7 @@ export const SignUp = async (req: Request, res: Response): Promise<void> => {
     };
 
     // Generate OTP and hash it
-    const otp = await EmailCode(6);
+    const otp: string = await EmailCode(6);
     const salt = await bcrypt.genSalt(10);
     const hashedOTP = await bcrypt.hash(otp, salt);
 
