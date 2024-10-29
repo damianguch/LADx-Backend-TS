@@ -29,6 +29,7 @@ const createLog_1 = __importDefault(require("../utils/createLog"));
 const passwordEncrypt_1 = __importDefault(require("../utils/passwordEncrypt"));
 const date_1 = __importDefault(require("../utils/date"));
 const sanitize_1 = require("../utils/sanitize");
+const emailService_1 = require("../utils/emailService");
 const otpStore = new Map(); // More scalable and secure in-memory store
 // @POST: SignUp Route
 const SignUp = (req, res) => __awaiter(void 0, void 0, void 0, function* () {
@@ -67,7 +68,7 @@ const SignUp = (req, res) => __awaiter(void 0, void 0, void 0, function* () {
         // Store temp user In-Memory Store(Redis)
         req.session.tempUser = tempUser;
         // Optionally send OTP via email
-        // await sendOTPEmail(email, otp);
+        yield (0, emailService_1.sendOTPEmail)(email, otp);
         console.log(otp);
         res.status(200).json({
             status: '00',

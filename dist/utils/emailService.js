@@ -12,9 +12,10 @@ var __importDefault = (this && this.__importDefault) || function (mod) {
     return (mod && mod.__esModule) ? mod : { "default": mod };
 };
 Object.defineProperty(exports, "__esModule", { value: true });
-exports.ConfirmPasswordResetEmail = exports.passwordResetEmail = exports.sendOTPEmail = exports.client = void 0;
+exports.ConfirmPasswordResetEmail = exports.passwordResetEmail = exports.sendOTPEmailAWS = exports.sendOTPEmail = exports.client = void 0;
 const client_ses_1 = require("@aws-sdk/client-ses");
 const createLog_1 = __importDefault(require("./createLog"));
+const nodemailer_1 = __importDefault(require("nodemailer"));
 const credentials = {
     accessKeyId: process.env.AWS_ACCESS_KEY || '',
     secretAccessKey: process.env.AWS_SECRET_KEY || '',
@@ -26,8 +27,38 @@ const SES_Config = {
 };
 const client = new client_ses_1.SESClient(SES_Config);
 exports.client = client;
-// Send OTP Email
+const transporter = nodemailer_1.default.createTransport({
+    port: Number(process.env.SMTP_PORT),
+    host: process.env.SMTP_HOST,
+    auth: {
+        user: process.env.SMTP_USER,
+        pass: process.env.SMTP_PASSWORD
+    },
+    secure: true,
+    debug: true
+});
+// Send OTP via Email
 const sendOTPEmail = (email, otp) => __awaiter(void 0, void 0, void 0, function* () {
+    // Send OTP
+    const mailOptions = {
+        from: 'clickviralng@gmail.com',
+        to: email,
+        subject: 'Your OTP Code',
+        text: `Your OTP code is ${otp}`
+    };
+    try {
+        yield transporter.sendMail(mailOptions);
+        yield (0, createLog_1.default)(JSON.stringify('OTP sent to your email'));
+        return { message: 'OTP sent to your email' };
+    }
+    catch (error) {
+        yield (0, createLog_1.default)(JSON.stringify('Error sending OTP'));
+        throw new Error('Error sending OTP: ' + error.message);
+    }
+});
+exports.sendOTPEmail = sendOTPEmail;
+// Send OTP Email
+const sendOTPEmailAWS = (email, otp) => __awaiter(void 0, void 0, void 0, function* () {
     const params = {
         Source: 'ladxofficial@gmail.com',
         Destination: {
@@ -56,7 +87,7 @@ const sendOTPEmail = (email, otp) => __awaiter(void 0, void 0, void 0, function*
         (0, createLog_1.default)(JSON.stringify('Error sending OTP:' + error.message));
     }
 });
-exports.sendOTPEmail = sendOTPEmail;
+exports.sendOTPEmailAWS = sendOTPEmailAWS;
 //Send Password Reset Email
 const passwordResetEmail = (email, resetUrl) => __awaiter(void 0, void 0, void 0, function* () {
     const params = {

@@ -32,9 +32,6 @@ redisClient
 // Use Helmet for various security headers
 app.use(helmet());
 
-// Trust the first proxy
-app.set('trust proxy', true);
-
 app.use(
   helmet({
     xContentTypeOptions: false // Disables 'X-Content-Type-Options: nosniff'
@@ -94,9 +91,15 @@ declare module 'express-session' {
   }
 }
 
+// Trust the first proxy
+app.set('trust proxy', true);
+
 const limiter = rateLimit({
   windowMs: 15 * 60 * 1000, // 15 minutes
-  max: 100 // limit each IP to 100 requests per windowMs
+  max: 100, // limit each IP to 100 requests per windowMs
+  standardHeaders: true, // Return rate limit info in the `RateLimit-*` headers
+  legacyHeaders: false, // Disable the `X-RateLimit-*` headers
+  validate: { trustProxy: false } // Disable the trust proxy check
 });
 
 const resetLimiter = rateLimit({

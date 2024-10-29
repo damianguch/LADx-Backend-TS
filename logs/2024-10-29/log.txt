@@ -1,0 +1,5 @@
+Time logged: (7:45:37 PM):-  Message: "Error sending OTP"
+Time logged: (7:45:37 PM):-  Message: {"Error":"Error sending OTP"}
+Time logged: (7:54:11 PM):-  Message: "Error sending OTP"
+Time logged: (7:54:11 PM):-  Message: {"Error":"Error sending OTP: getaddrinfo ENOTFOUND http://smtp.gmail.com"}
+Time logged: (7:57:10 PM):-  Message: "OTP sent to your email"

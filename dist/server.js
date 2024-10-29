@@ -68,9 +68,14 @@ app.use((0, express_session_1.default)({
     saveUninitialized: true,
     cookie: { secure: true }
 }));
+// Trust the first proxy
+app.set('trust proxy', true);
 const limiter = (0, express_rate_limit_1.default)({
     windowMs: 15 * 60 * 1000, // 15 minutes
-    max: 100 // limit each IP to 100 requests per windowMs
+    max: 100, // limit each IP to 100 requests per windowMs
+    standardHeaders: true, // Return rate limit info in the `RateLimit-*` headers
+    legacyHeaders: false, // Disable the `X-RateLimit-*` headers
+    validate: { trustProxy: false } // Disable the trust proxy check
 });
 const resetLimiter = (0, express_rate_limit_1.default)({
     windowMs: 15 * 60 * 1000, // 15 minutes

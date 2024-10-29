@@ -23,7 +23,8 @@ const transporter = nodemailer.createTransport({
     user: process.env.SMTP_USER,
     pass: process.env.SMTP_PASSWORD
   },
-  secure: true
+  secure: true,
+  debug: true
 });
 
 // Send OTP via Email
@@ -40,9 +41,9 @@ export const sendOTPEmail = async (email: string, otp: string) => {
     await transporter.sendMail(mailOptions);
     await createAppLog(JSON.stringify('OTP sent to your email'));
     return { message: 'OTP sent to your email' };
-  } catch (error) {
+  } catch (error: any) {
     await createAppLog(JSON.stringify('Error sending OTP'));
-    throw new Error('Error sending OTP');
+    throw new Error('Error sending OTP: ' + error.message);
   }
 };
 
