@@ -17,7 +17,6 @@ import currentDate from '../utils/date';
 import { sanitizeSignUpInput } from '../utils/sanitize';
 import { Request, Response } from 'express';
 import { sendOTPEmail } from '../utils/emailService';
-import { number, string } from 'joi';
 
 const otpStore = new Map(); // More scalable and secure in-memory store
 
@@ -65,9 +64,10 @@ export const SignUp = async (req: Request, res: Response): Promise<void> => {
     req.session.tempUser = tempUser;
 
     // Optionally send OTP via email
-    await sendOTPEmail(email, otp);
+    await sendOTPEmail({ email, otp });
 
     console.log(otp);
+    console.log(email);
 
     res.status(200).json({
       status: '00',
@@ -139,12 +139,12 @@ export const verifyOTP = async (req: Request, res: Response): Promise<void> => {
     const user = await newUser.save();
 
     // Log the OTP verification activity
-    const otpVerificationLog = new LogFile({
+    const otpLog = new LogFile({
       email: tempUser.email,
       ActivityName: 'User Verified OTP',
       AddedOn: currentDate
     });
-    await otpVerificationLog.save();
+    await otpLog.save();
 
     // Log the new user creation activity
     const logEntry = new LogFile({

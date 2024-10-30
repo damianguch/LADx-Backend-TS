@@ -28,7 +28,13 @@ const transporter = nodemailer.createTransport({
 });
 
 // Send OTP via Email
-export const sendOTPEmail = async (email: string, otp: string) => {
+export const sendOTPEmail = async ({
+  email,
+  otp
+}: {
+  email: string;
+  otp: string;
+}) => {
   // Send OTP
   const mailOptions = {
     from: 'clickviralng@gmail.com',
@@ -48,7 +54,13 @@ export const sendOTPEmail = async (email: string, otp: string) => {
 };
 
 // Send OTP Email
-export const sendOTPEmailAWS = async (email: string, otp: string) => {
+export const sendOTPEmailAWS = async ({
+  email,
+  otp
+}: {
+  email: string;
+  otp: string;
+}) => {
   const params = {
     Source: 'ladxofficial@gmail.com',
     Destination: {
