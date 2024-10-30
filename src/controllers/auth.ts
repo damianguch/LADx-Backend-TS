@@ -59,15 +59,15 @@ export const SignUp = async (req: Request, res: Response): Promise<void> => {
     // Store OTP and email in the session
     req.session.otpData = { hashedOTP, expiresAt: Date.now() + 60 * 60 * 1000 };
     req.session.email = email; // Store email in session
+    req.session.save();
+
+    console.log(req.session);
 
     // Store temp user In-Memory Store(Redis)
     req.session.tempUser = tempUser;
 
     // Optionally send OTP via email
     await sendOTPEmail({ email, otp });
-
-    console.log(otp);
-    console.log(email);
 
     res.status(200).json({
       status: '00',
@@ -89,6 +89,9 @@ export const SignUp = async (req: Request, res: Response): Promise<void> => {
 export const verifyOTP = async (req: Request, res: Response): Promise<void> => {
   const { otp } = req.body; // Get otp from request body
   const email = req.session.email; // Retrieve email from session
+
+  console.log(otp);
+  console.log(email);
 
   if (!otp || !email) {
     res.status(400).json({ message: 'OTP or email not found' });

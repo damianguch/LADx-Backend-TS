@@ -38,7 +38,7 @@ const transporter = nodemailer_1.default.createTransport({
     debug: true
 });
 // Send OTP via Email
-const sendOTPEmail = (email, otp) => __awaiter(void 0, void 0, void 0, function* () {
+const sendOTPEmail = (_a) => __awaiter(void 0, [_a], void 0, function* ({ email, otp }) {
     // Send OTP
     const mailOptions = {
         from: 'clickviralng@gmail.com',
@@ -58,7 +58,7 @@ const sendOTPEmail = (email, otp) => __awaiter(void 0, void 0, void 0, function*
 });
 exports.sendOTPEmail = sendOTPEmail;
 // Send OTP Email
-const sendOTPEmailAWS = (email, otp) => __awaiter(void 0, void 0, void 0, function* () {
+const sendOTPEmailAWS = (_a) => __awaiter(void 0, [_a], void 0, function* ({ email, otp }) {
     const params = {
         Source: 'ladxofficial@gmail.com',
         Destination: {

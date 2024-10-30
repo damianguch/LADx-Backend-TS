@@ -59,6 +59,12 @@ app.use(helmet_1.default.contentSecurityPolicy({
     }
 }));
 app.use((0, cookie_parser_1.default)());
+// Log App activities on console
+app.use((0, morgan_1.default)('common'));
+//For parsing application/x-www-form-urlencoded data
+app.use(express_1.default.urlencoded({ extended: true }));
+// Middleware to parse the request body as JSON data
+app.use(express_1.default.json());
 // Configure the session middleware
 app.use((0, express_session_1.default)({
     // session data will be stored in Redis
@@ -66,7 +72,10 @@ app.use((0, express_session_1.default)({
     secret: process.env.SECRET_KEY,
     resave: false,
     saveUninitialized: true,
-    cookie: { secure: true }
+    cookie: {
+        secure: process.env.NODE_ENV === 'production' ? true : false,
+        maxAge: 60 * 60 * 1000
+    }
 }));
 // Trust the first proxy
 app.set('trust proxy', true);
@@ -93,12 +102,6 @@ const corsOptions = {
     allowedHeaders: ['Authorization', 'Content-Type']
 };
 app.use((0, cors_1.default)(corsOptions));
-// Log App activities on console
-app.use((0, morgan_1.default)('common'));
-// Middleware to parse the request body as JSON data
-app.use(express_1.default.json());
-//For parsing application/x-www-form-urlencoded data
-app.use(express_1.default.urlencoded({ extended: true }));
 // Serve static files from the 'public' folder
 app.use(express_1.default.static(path_1.default.join(__dirname, 'public')));
 app.use(express_1.default.static('public', {

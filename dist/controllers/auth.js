@@ -65,16 +65,18 @@ const SignUp = (req, res) => __awaiter(void 0, void 0, void 0, function* () {
         // Store OTP and email in the session
         req.session.otpData = { hashedOTP, expiresAt: Date.now() + 60 * 60 * 1000 };
         req.session.email = email; // Store email in session
+        req.session.save();
+        console.log(req.session);
         // Store temp user In-Memory Store(Redis)
         req.session.tempUser = tempUser;
         // Optionally send OTP via email
-        yield (0, emailService_1.sendOTPEmail)(email, otp);
-        console.log(otp);
+        yield (0, emailService_1.sendOTPEmail)({ email, otp });
         res.status(200).json({
             status: '00',
             success: true,
             message: 'OTP sent to your email'
         });
+        return;
     }
     catch (err) {
         (0, createLog_1.default)(JSON.stringify({ Error: err.message }));
@@ -90,6 +92,8 @@ exports.SignUp = SignUp;
 const verifyOTP = (req, res) => __awaiter(void 0, void 0, void 0, function* () {
     const { otp } = req.body; // Get otp from request body
     const email = req.session.email; // Retrieve email from session
+    console.log(otp);
+    console.log(email);
     if (!otp || !email) {
         res.status(400).json({ message: 'OTP or email not found' });
         return;
@@ -131,12 +135,12 @@ const verifyOTP = (req, res) => __awaiter(void 0, void 0, void 0, function* () {
         yield user_1.default.init(); // Ensure indexes are created before saving
         const user = yield newUser.save();
         // Log the OTP verification activity
-        const otpVerificationLog = new LogFile_1.default({
+        const otpLog = new LogFile_1.default({
             email: tempUser.email,
             ActivityName: 'User Verified OTP',
             AddedOn: date_1.default
         });
-        yield otpVerificationLog.save();
+        yield otpLog.save();
         // Log the new user creation activity
         const logEntry = new LogFile_1.default({
             fullname: tempUser.fullname,
