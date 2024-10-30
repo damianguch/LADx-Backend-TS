@@ -61,7 +61,10 @@ export const SignUp = async (req: Request, res: Response): Promise<void> => {
     req.session.email = email; // Store email in session
     // Store temp user In-Memory Store(Redis)
     req.session.tempUser = tempUser;
-    req.session.save();
+
+    req.session.save(() => {
+      console.log('Session after setting tempUser:', req.session);
+    });
 
     console.log(req.session);
 
