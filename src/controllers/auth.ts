@@ -59,7 +59,6 @@ export const SignUp = async (req: Request, res: Response): Promise<void> => {
     // Store OTP and email in the session
     req.session.otpData = { hashedOTP, expiresAt: Date.now() + 60 * 60 * 1000 };
     req.session.email = email; // Store email in session
-    req.session.save();
 
     console.log(req.session);
 
@@ -74,7 +73,6 @@ export const SignUp = async (req: Request, res: Response): Promise<void> => {
       success: true,
       message: 'OTP sent to your email'
     });
-    return;
   } catch (err: any) {
     createAppLog(JSON.stringify({ Error: err.message }));
     res.status(500).json({

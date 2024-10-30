@@ -10,24 +10,15 @@ import cookieParser from 'cookie-parser';
 import morgan from 'morgan';
 import session from 'express-session';
 import RedisStore from 'connect-redis';
-import { createClient } from 'redis';
 import db from './dbconnect/db';
 const app: Application = express();
-
 import router from './routes/servicesRoutes';
+import redisClient, { connectRedis } from './utils/redisClient';
 
-const redisClient = createClient({
-  url: 'redis://localhost:6379',
-  socket: {
-    host: 'localhost', // Or Redis server IP
-    port: 6379 // Default Redis port
-  }
-});
-
-redisClient
-  .connect()
-  .then(() => console.log('Connected to redis!'))
-  .catch((error: Error) => console.error(error.message));
+// Initialize Redis client on server startup
+(async () => {
+  await connectRedis();
+})();
 
 // Use Helmet for various security headers
 app.use(helmet());
@@ -73,9 +64,11 @@ app.use(
     secret: process.env.SECRET_KEY!,
     resave: false,
     saveUninitialized: true,
+    rolling: false, // Reset session expiration on each request
     cookie: {
       secure: process.env.NODE_ENV === 'production' ? true : false,
-      maxAge: 60 * 60 * 1000
+      maxAge: 60 * 60 * 1000,
+      sameSite: 'none'
     }
   })
 );
