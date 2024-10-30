@@ -74,6 +74,7 @@ export const SignUp = async (req: Request, res: Response): Promise<void> => {
       success: true,
       message: 'OTP sent to your email'
     });
+    return;
   } catch (err: any) {
     createAppLog(JSON.stringify({ Error: err.message }));
     res.status(500).json({
