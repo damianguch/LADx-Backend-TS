@@ -2,7 +2,7 @@
 import { createClient } from 'redis';
 
 const redisClient = createClient({
-  url: process.env.REDIS_URL
+  url: 'redis://red-csh5vv5umphs7386efkg:6379'
   //   socket: {
   //     host: 'localhost',
   //     port: 6379
