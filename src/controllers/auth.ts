@@ -59,6 +59,7 @@ export const SignUp = async (req: Request, res: Response): Promise<void> => {
     // Store OTP and email in the session
     req.session.otpData = { hashedOTP, expiresAt: Date.now() + 60 * 60 * 1000 };
     req.session.email = email; // Store email in session
+
     // Store temp user In-Memory Store(Redis)
     req.session.tempUser = tempUser;
 
@@ -67,8 +68,6 @@ export const SignUp = async (req: Request, res: Response): Promise<void> => {
       else
         console.log('Session saved successfully with tempUser:', req.session);
     });
-
-    console.log(req.session);
 
     // Optionally send OTP via email
     await sendOTPEmail({ email, otp });

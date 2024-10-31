@@ -1,0 +1,2 @@
+Time logged: (4:11:14 AM):-  Message: "OTP sent to your email"
+Time logged: (4:17:17 AM):-  Message: "OTP verified successfully. User account created."

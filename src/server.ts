@@ -11,9 +11,10 @@ import morgan from 'morgan';
 import session from 'express-session';
 import RedisStore from 'connect-redis';
 import db from './dbconnect/db';
-const app: Application = express();
 import router from './routes/servicesRoutes';
 import redisClient, { connectRedis } from './utils/redisClient';
+
+const app: Application = express();
 
 // Initialize Redis client on server startup
 (async () => {

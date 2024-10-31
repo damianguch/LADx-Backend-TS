@@ -48,9 +48,9 @@ const morgan_1 = __importDefault(require("morgan"));
 const express_session_1 = __importDefault(require("express-session"));
 const connect_redis_1 = __importDefault(require("connect-redis"));
 const db_1 = __importDefault(require("./dbconnect/db"));
-const app = (0, express_1.default)();
 const servicesRoutes_1 = __importDefault(require("./routes/servicesRoutes"));
 const redisClient_1 = __importStar(require("./utils/redisClient"));
+const app = (0, express_1.default)();
 // Initialize Redis client on server startup
 (() => __awaiter(void 0, void 0, void 0, function* () {
     yield (0, redisClient_1.connectRedis)();

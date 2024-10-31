@@ -65,9 +65,14 @@ const SignUp = (req, res) => __awaiter(void 0, void 0, void 0, function* () {
         // Store OTP and email in the session
         req.session.otpData = { hashedOTP, expiresAt: Date.now() + 60 * 60 * 1000 };
         req.session.email = email; // Store email in session
-        console.log(req.session);
         // Store temp user In-Memory Store(Redis)
         req.session.tempUser = tempUser;
+        req.session.save((err) => {
+            if (err)
+                console.error('Session save error:', err);
+            else
+                console.log('Session saved successfully with tempUser:', req.session);
+        });
         // Optionally send OTP via email
         yield (0, emailService_1.sendOTPEmail)({ email, otp });
         res.status(200).json({
