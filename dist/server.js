@@ -117,7 +117,8 @@ app.use('/api/v1', limiter);
 const corsOptions = {
     origin: true,
     methods: ['GET', 'POST', 'PUT'],
-    allowedHeaders: ['Authorization', 'Content-Type']
+    allowedHeaders: ['Authorization', 'Content-Type'],
+    credentials: true
 };
 app.use((0, cors_1.default)(corsOptions));
 // Serve static files from the 'public' folder
