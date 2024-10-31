@@ -50,6 +50,7 @@ const connect_redis_1 = __importDefault(require("connect-redis"));
 const db_1 = __importDefault(require("./dbconnect/db"));
 const servicesRoutes_1 = __importDefault(require("./routes/servicesRoutes"));
 const redisClient_1 = __importStar(require("./utils/redisClient"));
+const logger_1 = __importDefault(require("./logger/logger"));
 const app = (0, express_1.default)();
 // Initialize Redis client on server startup
 (() => __awaiter(void 0, void 0, void 0, function* () {
@@ -173,5 +174,7 @@ process.on('SIGINT', () => __awaiter(void 0, void 0, void 0, function* () {
 }));
 const host = '0.0.0.0';
 httpServer.listen({ port: PORT, host }, () => {
-    console.log(`HTTPS Server running on port ${PORT}...`);
+    logger_1.default.info(`HTTPS Server running on port ${PORT}...`, {
+        timestamp: new Date().toISOString()
+    });
 });

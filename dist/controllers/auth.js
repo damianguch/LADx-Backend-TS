@@ -70,10 +70,17 @@ const SignUp = (req, res) => __awaiter(void 0, void 0, void 0, function* () {
         // Store temp user In-Memory Store(Redis)
         req.session.tempUser = tempUser;
         req.session.save((err) => {
-            if (err)
-                console.error('Session save error:', err);
+            if (err) {
+                // Info level logging
+                logger_1.default.error(`Session save error`, {
+                    timestamp: new Date().toISOString()
+                });
+            }
+            // Info level logging
             else
-                console.log('Session saved successfully with tempUser:', req.session);
+                logger_1.default.info('Session saved successfully with tempUser', {
+                    timestamp: new Date().toISOString()
+                });
         });
         // Optionally send OTP via email
         yield (0, emailService_1.sendOTPEmail)({ email, otp });
@@ -162,7 +169,7 @@ const verifyOTP = (req, res) => __awaiter(void 0, void 0, void 0, function* () {
         // Generate JWT token with the user payload
         const token = (0, jwt_1.generateToken)({ email: user.email, id: user.id });
         yield (0, createLog_1.default)(JSON.stringify('OTP verified successfully. User account created.'));
-        // Errorlevel logging
+        // Info level logging
         logger_1.default.info(`User account created. - ${email}`, {
             timestamp: new Date().toISOString()
         });

@@ -1,10 +1,15 @@
 import mongoose from 'mongoose';
+import logger from '../logger/logger';
 
 mongoose
   .connect(process.env.DB_CONNECTION!)
-  .then(() => console.log('Connected to database!'))
+  .then(() =>
+    logger.success(`Connected to database!`, {
+      timestamp: new Date().toISOString()
+    })
+  )
   .catch((error) => {
-    console.error('Database connection error:', error.message);
+    console.error(`Database connection error: ${error.message}`);
     process.exit(1);
   });
 

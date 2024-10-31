@@ -13,6 +13,7 @@ import RedisStore from 'connect-redis';
 import db from './dbconnect/db';
 import router from './routes/servicesRoutes';
 import redisClient, { connectRedis } from './utils/redisClient';
+import logger from './logger/logger';
 
 const app: Application = express();
 
@@ -191,5 +192,7 @@ process.on('SIGINT', async () => {
 const host: string = '0.0.0.0';
 
 httpServer.listen({ port: PORT, host }, () => {
-  console.log(`HTTPS Server running on port ${PORT}...`);
+  logger.info(`HTTPS Server running on port ${PORT}...`, {
+    timestamp: new Date().toISOString()
+  });
 });

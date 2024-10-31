@@ -4,11 +4,14 @@ var __importDefault = (this && this.__importDefault) || function (mod) {
 };
 Object.defineProperty(exports, "__esModule", { value: true });
 const mongoose_1 = __importDefault(require("mongoose"));
+const logger_1 = __importDefault(require("../logger/logger"));
 mongoose_1.default
     .connect(process.env.DB_CONNECTION)
-    .then(() => console.log('Connected to database!'))
+    .then(() => logger_1.default.success(`Connected to database!`, {
+    timestamp: new Date().toISOString()
+}))
     .catch((error) => {
-    console.error('Database connection error:', error.message);
+    console.error(`Database connection error: ${error.message}`);
     process.exit(1);
 });
 // Connection object to communicate with database

@@ -75,9 +75,18 @@ export const SignUp = async (req: Request, res: Response): Promise<void> => {
     req.session.tempUser = tempUser;
 
     req.session.save((err) => {
-      if (err) console.error('Session save error:', err);
+      if (err) {
+        // Info level logging
+        logger.error(`Session save error`, {
+          timestamp: new Date().toISOString()
+        });
+      }
+
+      // Info level logging
       else
-        console.log('Session saved successfully with tempUser:', req.session);
+        logger.info('Session saved successfully with tempUser', {
+          timestamp: new Date().toISOString()
+        });
     });
 
     // Optionally send OTP via email
@@ -184,7 +193,7 @@ export const verifyOTP = async (req: Request, res: Response): Promise<void> => {
       JSON.stringify('OTP verified successfully. User account created.')
     );
 
-    // Errorlevel logging
+    // Info level logging
     logger.info(`User account created. - ${email}`, {
       timestamp: new Date().toISOString()
     });
