@@ -113,7 +113,7 @@ const limiter = (0, express_rate_limit_1.default)({
 const resetLimiter = (0, express_rate_limit_1.default)({
     windowMs: 15 * 60 * 1000, // 15 minutes
     max: 5, // Limit each IP to 5 requests per window
-    message: 'Too many password reset requests, please try again after 15 minutes.'
+    message: 'Too many password reset attempts, please try again after 15 minutes.'
 });
 // Apply rate limit to password reset
 app.use('/api/v1/forgot-password', resetLimiter);

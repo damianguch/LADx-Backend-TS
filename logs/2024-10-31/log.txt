@@ -1,2 +1,11 @@
 Time logged: (4:11:14 AM):-  Message: "OTP sent to your email"
 Time logged: (4:17:17 AM):-  Message: "OTP verified successfully. User account created."
+Time logged: (2:23:22 PM):-  Message: Login attempt for email: eguchealadi@yahoo.com
+Time logged: (2:23:24 PM):-  Message: Login failed: Email not registered - eguchealadi@yahoo.com
+Time logged: (2:23:54 PM):-  Message: Login attempt for email: damain_oguche@yahoo.com
+Time logged: (2:23:54 PM):-  Message: Login failed: Email not registered - damain_oguche@yahoo.com
+Time logged: (2:24:07 PM):-  Message: Login attempt for email: damian_oguche@yahoo.com
+Time logged: (2:24:07 PM):-  Message: User logged in successfully: damian_oguche@yahoo.com
+Time logged: (2:26:01 PM):-  Message: Login validation error: {"status":"E00","success":false,"message":"Validation failed","errors":[{"code":"too_small","minimum":1,"type":"string","inclusive":true,"exact":false,"message":"Email cannot be empty","path":["email"]},{"validation":"email","code":"invalid_string","message":"Invalid email format. Please enter a valid email address","path":["email"]}]}
+Time logged: (2:26:47 PM):-  Message: Login attempt for email: damian_oguche@yahoo.com
+Time logged: (2:26:47 PM):-  Message: User logged in successfully: damian_oguche@yahoo.com

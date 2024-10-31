@@ -17,8 +17,18 @@ import currentDate from '../utils/date';
 import { sanitizeSignUpInput } from '../utils/sanitize';
 import { Request, Response } from 'express';
 import { sendOTPEmail } from '../utils/emailService';
+import { loginSchema } from '../validators/userValidtor';
+import { z } from 'zod';
 
 const otpStore = new Map(); // More scalable and secure in-memory store
+
+// Custom error response interface
+interface ErrorResponse {
+  status: string;
+  success: boolean;
+  message: string;
+  errors?: z.ZodError['errors'];
+}
 
 // @POST: SignUp Route
 export const SignUp = async (req: Request, res: Response): Promise<void> => {
@@ -195,39 +205,40 @@ export const verifyOTP = async (req: Request, res: Response): Promise<void> => {
 // @POST: User Login
 export const Login = async (req: Request, res: Response): Promise<void> => {
   try {
-    const { email, password } = req.body;
+    // Validate request body using Zod
+    const validationResult = loginSchema.safeParse(req.body);
 
-    await createAppLog('Login information' + JSON.stringify(email));
-
-    if (!email) {
-      await createAppLog('Email Required!');
-      res.status(400).json({
+    // If validation fails, return detailed error response
+    if (!validationResult.success) {
+      const errorResponse: ErrorResponse = {
         status: 'E00',
         success: false,
-        message: 'Email Required!'
-      });
+        message: 'Validation failed',
+        errors: validationResult.error.errors
+      };
+
+      await createAppLog(
+        `Login validation error: ${JSON.stringify(errorResponse)}`
+      );
+      res.status(400).json(errorResponse);
       return;
     }
 
-    if (!password) {
-      await createAppLog('Password Required!');
-      res.status(400).json({
-        status: 'E00',
-        success: false,
-        message: 'Password Required!'
-      });
-      return;
-    }
+    const { email, password } = validationResult.data;
 
-    // Verify user login info(Find user by email)
-    const user = await User.findOne({ email });
+    // Log login attempt
+    await createAppLog(`Login attempt for email: ${email}`);
 
+    // Find user by email with select to explicitly choose fields
+    const user = await User.findOne({ email }).select('+password');
+
+    // Check if user exists
     if (!user) {
-      await createAppLog('This email is not registered');
+      await createAppLog(`Login failed: Email not registered - ${email}`);
       res.status(401).json({
         status: 'E00',
         success: false,
-        message: 'This email is not registered'
+        message: 'Invalid credentials'
       });
       return;
     }
@@ -236,8 +247,8 @@ export const Login = async (req: Request, res: Response): Promise<void> => {
     const isPasswordValid = await bcrypt.compare(password, user.password);
 
     if (!isPasswordValid) {
-      await createAppLog('Wrong password.');
-      res.status(400).json({
+      await createAppLog(`Login failed: Incorrect password - ${email}`);
+      res.status(401).json({
         status: 'E00',
         success: false,
         message: 'Wrong password.'
@@ -246,19 +257,22 @@ export const Login = async (req: Request, res: Response): Promise<void> => {
     }
 
     // Generate JWT token with the user payload
-    const token = generateToken({ email: user.email, id: user.id });
+    const token = generateToken({
+      email: user.email,
+      id: user.id
+    });
 
     // Log the login activity
-    await createAppLog('User logged in successfully');
+    await createAppLog(`User logged in successfully: ${email}`);
     const log = new LogFile({
       email: user.email,
-      ActivityName: 'Logged in with credential: ' + user.email,
+      ActivityName: 'User Login',
       AddedOn: currentDate
     });
 
     await log.save();
 
-    // Store token in HTTP-only, secure cookie
+    // Set secure, HTTP-only cookie
     res
       .cookie('token', token, {
         httpOnly: true, // Prevent JavaScript access
@@ -273,11 +287,11 @@ export const Login = async (req: Request, res: Response): Promise<void> => {
         email: user.email
       });
   } catch (err: any) {
-    await createAppLog('Error: ' + err.message);
+    await createAppLog(`Login Error:  ${err.message}`);
     res.status(500).json({
       status: 'E00',
       success: false,
-      message: 'Internal Server error: ' + err.message
+      message: `Internal Server error: ${err.message}`
     });
   }
 };

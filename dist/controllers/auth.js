@@ -30,6 +30,7 @@ const passwordEncrypt_1 = __importDefault(require("../utils/passwordEncrypt"));
 const date_1 = __importDefault(require("../utils/date"));
 const sanitize_1 = require("../utils/sanitize");
 const emailService_1 = require("../utils/emailService");
+const userValidtor_1 = require("../validators/userValidtor");
 const otpStore = new Map(); // More scalable and secure in-memory store
 // @POST: SignUp Route
 const SignUp = (req, res) => __awaiter(void 0, void 0, void 0, function* () {
@@ -183,42 +184,40 @@ exports.verifyOTP = verifyOTP;
 // @POST: User Login
 const Login = (req, res) => __awaiter(void 0, void 0, void 0, function* () {
     try {
-        const { email, password } = req.body;
-        yield (0, createLog_1.default)('Login information' + JSON.stringify(email));
-        if (!email) {
-            yield (0, createLog_1.default)('Email Required!');
-            res.status(400).json({
+        // Validate request body using Zod
+        const validationResult = userValidtor_1.loginSchema.safeParse(req.body);
+        // If validation fails, return detailed error response
+        if (!validationResult.success) {
+            const errorResponse = {
                 status: 'E00',
                 success: false,
-                message: 'Email Required!'
-            });
+                message: 'Validation failed',
+                errors: validationResult.error.errors
+            };
+            yield (0, createLog_1.default)(`Login validation error: ${JSON.stringify(errorResponse)}`);
+            res.status(400).json(errorResponse);
             return;
         }
-        if (!password) {
-            yield (0, createLog_1.default)('Password Required!');
-            res.status(400).json({
-                status: 'E00',
-                success: false,
-                message: 'Password Required!'
-            });
-            return;
-        }
-        // Verify user login info(Find user by email)
-        const user = yield user_1.default.findOne({ email });
+        const { email, password } = validationResult.data;
+        // Log login attempt
+        yield (0, createLog_1.default)(`Login attempt for email: ${email}`);
+        // Find user by email with select to explicitly choose fields
+        const user = yield user_1.default.findOne({ email }).select('+password');
+        // Check if user exists
         if (!user) {
-            yield (0, createLog_1.default)('This email is not registered');
+            yield (0, createLog_1.default)(`Login failed: Email not registered - ${email}`);
             res.status(401).json({
                 status: 'E00',
                 success: false,
-                message: 'This email is not registered'
+                message: 'Invalid credentials'
             });
             return;
         }
         // Compare hashed password
         const isPasswordValid = yield bcrypt_1.default.compare(password, user.password);
         if (!isPasswordValid) {
-            yield (0, createLog_1.default)('Wrong password.');
-            res.status(400).json({
+            yield (0, createLog_1.default)(`Login failed: Incorrect password - ${email}`);
+            res.status(401).json({
                 status: 'E00',
                 success: false,
                 message: 'Wrong password.'
@@ -226,16 +225,19 @@ const Login = (req, res) => __awaiter(void 0, void 0, void 0, function* () {
             return;
         }
         // Generate JWT token with the user payload
-        const token = (0, jwt_1.generateToken)({ email: user.email, id: user.id });
+        const token = (0, jwt_1.generateToken)({
+            email: user.email,
+            id: user.id
+        });
         // Log the login activity
-        yield (0, createLog_1.default)('User logged in successfully');
+        yield (0, createLog_1.default)(`User logged in successfully: ${email}`);
         const log = new LogFile_1.default({
             email: user.email,
-            ActivityName: 'Logged in with credential: ' + user.email,
+            ActivityName: 'User Login',
             AddedOn: date_1.default
         });
         yield log.save();
-        // Store token in HTTP-only, secure cookie
+        // Set secure, HTTP-only cookie
         res
             .cookie('token', token, {
             httpOnly: true, // Prevent JavaScript access
@@ -251,11 +253,11 @@ const Login = (req, res) => __awaiter(void 0, void 0, void 0, function* () {
         });
     }
     catch (err) {
-        yield (0, createLog_1.default)('Error: ' + err.message);
+        yield (0, createLog_1.default)(`Login Error:  ${err.message}`);
         res.status(500).json({
             status: 'E00',
             success: false,
-            message: 'Internal Server error: ' + err.message
+            message: `Internal Server error: ${err.message}`
         });
     }
 });

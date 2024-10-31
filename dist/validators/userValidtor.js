@@ -3,7 +3,8 @@ var __importDefault = (this && this.__importDefault) || function (mod) {
     return (mod && mod.__esModule) ? mod : { "default": mod };
 };
 Object.defineProperty(exports, "__esModule", { value: true });
-exports.validateUserSignup = void 0;
+exports.loginSchema = exports.validateUserSignup = void 0;
+const zod_1 = require("zod");
 const joi_1 = __importDefault(require("joi"));
 const userSignupSchema = joi_1.default.object({
     fullname: joi_1.default.string().trim().required().messages({
@@ -44,3 +45,26 @@ const validateUserSignup = (req, res, next) => {
     next();
 };
 exports.validateUserSignup = validateUserSignup;
+// Enhanced input validation schema with detailed error messages
+const loginSchema = zod_1.z.object({
+    email: zod_1.z
+        .string({
+        required_error: 'Email is required',
+        invalid_type_error: 'Email must be a string'
+    })
+        .min(1, 'Email cannot be empty')
+        .email({
+        message: 'Invalid email format. Please enter a valid email address'
+    })
+        .trim()
+        .toLowerCase(),
+    password: zod_1.z
+        .string({
+        required_error: 'Password is required',
+        invalid_type_error: 'Password must be a string'
+    })
+        .min(1, 'Password cannot be empty')
+        .min(6, 'Password must be at least 6 characters')
+        .max(100, 'Password is too long')
+});
+exports.loginSchema = loginSchema;

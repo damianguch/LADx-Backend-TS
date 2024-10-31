@@ -1,4 +1,5 @@
 import { NextFunction, Request, Response } from 'express';
+import { z } from 'zod';
 import Joi from 'joi';
 
 const userSignupSchema = Joi.object({
@@ -45,4 +46,28 @@ const validateUserSignup = (
   next();
 };
 
-export { validateUserSignup };
+// Enhanced input validation schema with detailed error messages
+const loginSchema = z.object({
+  email: z
+    .string({
+      required_error: 'Email is required',
+      invalid_type_error: 'Email must be a string'
+    })
+    .min(1, 'Email cannot be empty')
+    .email({
+      message: 'Invalid email format. Please enter a valid email address'
+    })
+    .trim()
+    .toLowerCase(),
+
+  password: z
+    .string({
+      required_error: 'Password is required',
+      invalid_type_error: 'Password must be a string'
+    })
+    .min(1, 'Password cannot be empty')
+    .min(6, 'Password must be at least 6 characters')
+    .max(100, 'Password is too long')
+});
+
+export { validateUserSignup, loginSchema };
