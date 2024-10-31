@@ -31,6 +31,7 @@ const date_1 = __importDefault(require("../utils/date"));
 const sanitize_1 = require("../utils/sanitize");
 const emailService_1 = require("../utils/emailService");
 const userValidtor_1 = require("../validators/userValidtor");
+const logger_1 = __importDefault(require("../logger/logger"));
 const otpStore = new Map(); // More scalable and secure in-memory store
 // @POST: SignUp Route
 const SignUp = (req, res) => __awaiter(void 0, void 0, void 0, function* () {
@@ -96,8 +97,6 @@ exports.SignUp = SignUp;
 const verifyOTP = (req, res) => __awaiter(void 0, void 0, void 0, function* () {
     const { otp } = req.body; // Get otp from request body
     const email = req.session.email; // Retrieve email from session
-    console.log(otp);
-    console.log(email);
     if (!otp || !email) {
         res.status(400).json({ message: 'OTP or email not found' });
         return;
@@ -128,7 +127,7 @@ const verifyOTP = (req, res) => __awaiter(void 0, void 0, void 0, function* () {
         }
         // Fetch temp user data from otpStore
         // const tempUser = otpStore.get(`${email}_tempUser`);
-        // Fetch tempUser data from session in-memory storage(Redis)
+        // Fetch tempUser data from session storage(Redis)
         const tempUser = req.session.tempUser;
         if (!tempUser) {
             res.status(400).json({ message: 'User not found' });
@@ -163,6 +162,10 @@ const verifyOTP = (req, res) => __awaiter(void 0, void 0, void 0, function* () {
         // Generate JWT token with the user payload
         const token = (0, jwt_1.generateToken)({ email: user.email, id: user.id });
         yield (0, createLog_1.default)(JSON.stringify('OTP verified successfully. User account created.'));
+        // Errorlevel logging
+        logger_1.default.info(`User account created. - ${email}`, {
+            timestamp: new Date().toISOString()
+        });
         res
             .cookie('token', token, {
             httpOnly: true, // Prevent JavaScript access
@@ -201,11 +204,19 @@ const Login = (req, res) => __awaiter(void 0, void 0, void 0, function* () {
         const { email, password } = validationResult.data;
         // Log login attempt
         yield (0, createLog_1.default)(`Login attempt for email: ${email}`);
+        // Info level logging
+        logger_1.default.info(`Login attempt for email: ${email}`, {
+            timestamp: new Date().toISOString()
+        });
         // Find user by email with select to explicitly choose fields
         const user = yield user_1.default.findOne({ email }).select('+password');
         // Check if user exists
         if (!user) {
             yield (0, createLog_1.default)(`Login failed: Email not registered - ${email}`);
+            // Errorlevel logging
+            logger_1.default.error(`Login failed: Email not registered - ${email}`, {
+                timestamp: new Date().toISOString()
+            });
             res.status(401).json({
                 status: 'E00',
                 success: false,
@@ -231,12 +242,12 @@ const Login = (req, res) => __awaiter(void 0, void 0, void 0, function* () {
         });
         // Log the login activity
         yield (0, createLog_1.default)(`User logged in successfully: ${email}`);
-        const log = new LogFile_1.default({
+        const logEntry = new LogFile_1.default({
             email: user.email,
             ActivityName: 'User Login',
             AddedOn: date_1.default
         });
-        yield log.save();
+        yield logEntry.save();
         // Set secure, HTTP-only cookie
         res
             .cookie('token', token, {
@@ -272,12 +283,12 @@ const Logout = (req, res) => __awaiter(void 0, void 0, void 0, function* () {
     }
     const decoded = jsonwebtoken_1.default.verify(token, process.env.JWT_SECRET_KEY);
     // Log the logout activity
-    const log = new LogFile_1.default({
+    const logExit = new LogFile_1.default({
         email: decoded.email,
         ActivityName: `User ${decoded.email} Logged out of the system`,
         AddedOn: date_1.default
     });
-    yield log.save();
+    yield logExit.save();
     yield (0, createLog_1.default)(`User ${decoded.email} logged out!`);
     res
         .clearCookie('token')

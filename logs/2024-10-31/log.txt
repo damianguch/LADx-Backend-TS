@@ -9,3 +9,23 @@ Time logged: (2:24:07 PM):-  Message: User logged in successfully: damian_oguche
 Time logged: (2:26:01 PM):-  Message: Login validation error: {"status":"E00","success":false,"message":"Validation failed","errors":[{"code":"too_small","minimum":1,"type":"string","inclusive":true,"exact":false,"message":"Email cannot be empty","path":["email"]},{"validation":"email","code":"invalid_string","message":"Invalid email format. Please enter a valid email address","path":["email"]}]}
 Time logged: (2:26:47 PM):-  Message: Login attempt for email: damian_oguche@yahoo.com
 Time logged: (2:26:47 PM):-  Message: User logged in successfully: damian_oguche@yahoo.com
+Time logged: (3:35:36 PM):-  Message: Login attempt for email: damian_oguche@yahoo.com
+Time logged: (3:35:37 PM):-  Message: User logged in successfully: damian_oguche@yahoo.com
+Time logged: (3:47:56 PM):-  Message: Login attempt for email: damian_oguche@yahoo.com
+Time logged: (3:47:56 PM):-  Message: User logged in successfully: damian_oguche@yahoo.com
+Time logged: (3:55:12 PM):-  Message: Login attempt for email: damian_oguche@yahoo.com
+Time logged: (3:55:12 PM):-  Message: User logged in successfully: damian_oguche@yahoo.com
+Time logged: (4:16:40 PM):-  Message: Login attempt for email: damian_oguche@yahoo.com
+Time logged: (4:16:40 PM):-  Message: User logged in successfully: damian_oguche@yahoo.com
+Time logged: (4:17:47 PM):-  Message: Login attempt for email: damian_oguche@yahoo.com
+Time logged: (4:17:47 PM):-  Message: User logged in successfully: damian_oguche@yahoo.com
+Time logged: (4:22:56 PM):-  Message: Login attempt for email: damian_oguche@yahoo.com
+Time logged: (4:22:56 PM):-  Message: User logged in successfully: damian_oguche@yahoo.com
+Time logged: (4:24:26 PM):-  Message: Login attempt for email: damian_oguche@yahoo.com
+Time logged: (4:24:36 PM):-  Message: Login Error:  Operation `users.findOne()` buffering timed out after 10000ms
+Time logged: (4:36:08 PM):-  Message: Login attempt for email: damian_oguche@yahoo.com
+Time logged: (4:36:15 PM):-  Message: User logged in successfully: damian_oguche@yahoo.com
+Time logged: (4:39:51 PM):-  Message: Login attempt for email: damian_oguche@yahoo.com
+Time logged: (4:39:51 PM):-  Message: User logged in successfully: damian_oguche@yahoo.com
+Time logged: (4:42:10 PM):-  Message: Login attempt for email: damian_oguche@yahoo.om
+Time logged: (4:42:19 PM):-  Message: Login failed: Email not registered - damian_oguche@yahoo.om

@@ -19,6 +19,7 @@ import { Request, Response } from 'express';
 import { sendOTPEmail } from '../utils/emailService';
 import { loginSchema } from '../validators/userValidtor';
 import { z } from 'zod';
+import logger from '../logger/logger';
 
 const otpStore = new Map(); // More scalable and secure in-memory store
 
@@ -102,9 +103,6 @@ export const verifyOTP = async (req: Request, res: Response): Promise<void> => {
   const { otp } = req.body; // Get otp from request body
   const email = req.session.email; // Retrieve email from session
 
-  console.log(otp);
-  console.log(email);
-
   if (!otp || !email) {
     res.status(400).json({ message: 'OTP or email not found' });
     return;
@@ -142,7 +140,7 @@ export const verifyOTP = async (req: Request, res: Response): Promise<void> => {
     // Fetch temp user data from otpStore
     // const tempUser = otpStore.get(`${email}_tempUser`);
 
-    // Fetch tempUser data from session in-memory storage(Redis)
+    // Fetch tempUser data from session storage(Redis)
     const tempUser = req.session.tempUser;
     if (!tempUser) {
       res.status(400).json({ message: 'User not found' });
@@ -185,6 +183,12 @@ export const verifyOTP = async (req: Request, res: Response): Promise<void> => {
     await createAppLog(
       JSON.stringify('OTP verified successfully. User account created.')
     );
+
+    // Errorlevel logging
+    logger.info(`User account created. - ${email}`, {
+      timestamp: new Date().toISOString()
+    });
+
     res
       .cookie('token', token, {
         httpOnly: true, // Prevent JavaScript access
@@ -229,12 +233,21 @@ export const Login = async (req: Request, res: Response): Promise<void> => {
     // Log login attempt
     await createAppLog(`Login attempt for email: ${email}`);
 
+    // Info level logging
+    logger.info(`Login attempt for email: ${email}`, {
+      timestamp: new Date().toISOString()
+    });
+
     // Find user by email with select to explicitly choose fields
     const user = await User.findOne({ email }).select('+password');
 
     // Check if user exists
     if (!user) {
       await createAppLog(`Login failed: Email not registered - ${email}`);
+      // Errorlevel logging
+      logger.error(`Login failed: Email not registered - ${email}`, {
+        timestamp: new Date().toISOString()
+      });
       res.status(401).json({
         status: 'E00',
         success: false,
@@ -264,13 +277,13 @@ export const Login = async (req: Request, res: Response): Promise<void> => {
 
     // Log the login activity
     await createAppLog(`User logged in successfully: ${email}`);
-    const log = new LogFile({
+    const logEntry = new LogFile({
       email: user.email,
       ActivityName: 'User Login',
       AddedOn: currentDate
     });
 
-    await log.save();
+    await logEntry.save();
 
     // Set secure, HTTP-only cookie
     res
@@ -309,13 +322,13 @@ export const Logout = async (req: Request, res: Response): Promise<void> => {
   const decoded = jwt.verify(token, process.env.JWT_SECRET_KEY!) as JwtPayload;
 
   // Log the logout activity
-  const log = new LogFile({
+  const logExit = new LogFile({
     email: decoded.email,
     ActivityName: `User ${decoded.email} Logged out of the system`,
     AddedOn: currentDate
   });
 
-  await log.save();
+  await logExit.save();
 
   await createAppLog(`User ${decoded.email} logged out!`);
   res
