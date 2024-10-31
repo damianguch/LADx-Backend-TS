@@ -19,6 +19,13 @@ const app: Application = express();
 // Initialize Redis client on server startup
 (async () => {
   await connectRedis();
+
+  // Keep Redis connection alive
+  setInterval(async () => {
+    if (redisClient.isOpen) {
+      await redisClient.ping();
+    }
+  }, 6000); // Ping every 60 seconds
 })();
 
 // Use Helmet for various security headers

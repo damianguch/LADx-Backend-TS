@@ -54,6 +54,12 @@ const app = (0, express_1.default)();
 // Initialize Redis client on server startup
 (() => __awaiter(void 0, void 0, void 0, function* () {
     yield (0, redisClient_1.connectRedis)();
+    // Keep Redis connection alive
+    setInterval(() => __awaiter(void 0, void 0, void 0, function* () {
+        if (redisClient_1.default.isOpen) {
+            yield redisClient_1.default.ping();
+        }
+    }), 6000); // Ping every 60 seconds
 }))();
 // Use Helmet for various security headers
 app.use((0, helmet_1.default)());
