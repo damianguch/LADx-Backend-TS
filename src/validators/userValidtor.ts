@@ -2,7 +2,7 @@ import { NextFunction, Request, Response } from 'express';
 import { z } from 'zod';
 import Joi from 'joi';
 
-const userSignupSchema = Joi.object({
+const signupSchema = Joi.object({
   fullname: Joi.string().trim().required().messages({
     'any.required': 'Full name is required'
   }),
@@ -37,7 +37,7 @@ const validateUserSignup = (
   res: Response<any, Record<string, any>>,
   next: NextFunction
 ): void => {
-  const { error } = userSignupSchema.validate(req.body, { abortEarly: false });
+  const { error } = signupSchema.validate(req.body, { abortEarly: false });
   if (error) {
     const errors = error.details.map((detail) => detail.message);
     res.status(400).json({ status: 'E00', errors });

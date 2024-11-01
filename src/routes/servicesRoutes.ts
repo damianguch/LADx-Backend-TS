@@ -8,7 +8,7 @@ import { verifyTokenFromCookie } from '../utils/jwt';
 import { ForgotPassword, ResetPassword } from '../controllers/forgotPassword';
 import { GetProfilePhoto } from '../controllers/getProfilePhoto';
 import { UploadKYC, identityUpload } from '../controllers/kyc';
-import { TravelDetails, UpdateTravelDetails } from '../controllers/traveller';
+import { TravelDetails, UpdateTravelDetails } from '../controllers/traveler';
 import {
   RequestDetails,
   requestItemsImageUpload,

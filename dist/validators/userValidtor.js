@@ -6,7 +6,7 @@ Object.defineProperty(exports, "__esModule", { value: true });
 exports.loginSchema = exports.validateUserSignup = void 0;
 const zod_1 = require("zod");
 const joi_1 = __importDefault(require("joi"));
-const userSignupSchema = joi_1.default.object({
+const signupSchema = joi_1.default.object({
     fullname: joi_1.default.string().trim().required().messages({
         'any.required': 'Full name is required'
     }),
@@ -36,7 +36,7 @@ const userSignupSchema = joi_1.default.object({
 // Express middleware functions generally don’t return a value
 // Simply set the return type to void and return nothing explicitly
 const validateUserSignup = (req, res, next) => {
-    const { error } = userSignupSchema.validate(req.body, { abortEarly: false });
+    const { error } = signupSchema.validate(req.body, { abortEarly: false });
     if (error) {
         const errors = error.details.map((detail) => detail.message);
         res.status(400).json({ status: 'E00', errors });

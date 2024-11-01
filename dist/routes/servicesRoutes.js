@@ -13,7 +13,7 @@ const jwt_1 = require("../utils/jwt");
 const forgotPassword_1 = require("../controllers/forgotPassword");
 const getProfilePhoto_1 = require("../controllers/getProfilePhoto");
 const kyc_2 = require("../controllers/kyc");
-const traveller_1 = require("../controllers/traveller");
+const traveler_1 = require("../controllers/traveler");
 const sender_1 = require("../controllers/sender");
 const multerError_1 = require("../utils/multerError");
 const userValidtor_1 = require("../validators/userValidtor");
@@ -47,9 +47,9 @@ router.put('/users/profile', jwt_1.verifyTokenFromCookie, profilePhoto_1.upload.
 // KYC upload route
 router.post('/kyc', jwt_1.verifyTokenFromCookie, kyc_2.identityUpload.single('identity'), multerError_1.uploadErrorHandler, kyc_1.validateKYC, kyc_2.UploadKYC);
 // Create traveller's details route
-router.post('/users/travel-details', jwt_1.verifyTokenFromCookie, traveller_1.TravelDetails);
+router.post('/users/travel-details', jwt_1.verifyTokenFromCookie, traveler_1.TravelDetails);
 // Update traveller's request details route
-router.put('/users/travel-details', jwt_1.verifyTokenFromCookie, traveller_1.UpdateTravelDetails);
+router.put('/users/travel-details', jwt_1.verifyTokenFromCookie, traveler_1.UpdateTravelDetails);
 // Create senders request details route
 router.post('/users/request-details', jwt_1.verifyTokenFromCookie, sender_1.requestItemsImageUpload, // Handles multiple images
 multerError_1.uploadErrorHandler, sender_1.RequestDetails);
