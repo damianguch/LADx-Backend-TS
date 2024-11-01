@@ -84,18 +84,18 @@ export const SignUp = async (req: Request, res: Response): Promise<void> => {
 
       // Info level logging
       else
-        logger.info('Session saved successfully with tempUser', {
+        logger.info('Session saved successfully', {
           timestamp: new Date().toISOString()
         });
     });
 
-    // Optionally send OTP via email
-    await sendOTPEmail({ email, otp });
+    // Send OTP via email
+    const result = await sendOTPEmail({ email, otp });
 
     res.status(200).json({
       status: '00',
       success: true,
-      message: 'OTP sent to your email'
+      message: result.message
     });
   } catch (err: any) {
     createAppLog(JSON.stringify({ Error: err.message }));
