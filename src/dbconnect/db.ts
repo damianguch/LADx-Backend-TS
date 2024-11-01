@@ -9,7 +9,9 @@ mongoose
     })
   )
   .catch((error) => {
-    console.error(`Database connection error: ${error.message}`);
+    logger.error(`Database connection error: ${error.message}`, {
+      timestamp: new Date().toISOString()
+    });
     process.exit(1);
   });
 

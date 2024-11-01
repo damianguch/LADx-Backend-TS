@@ -22,7 +22,7 @@ addColors(customLevels.colors);
 
 const logger = createLogger({
   levels: customLevels.levels,
-  level: 'info',
+  level: 'debug',
   format: format.combine(format.timestamp({ format: 'YYYY-MM-DD HH:mm:ss' })),
   transports: [
     new transports.Console({

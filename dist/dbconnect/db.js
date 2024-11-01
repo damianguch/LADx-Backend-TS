@@ -11,7 +11,9 @@ mongoose_1.default
     timestamp: new Date().toISOString()
 }))
     .catch((error) => {
-    console.error(`Database connection error: ${error.message}`);
+    logger_1.default.error(`Database connection error: ${error.message}`, {
+        timestamp: new Date().toISOString()
+    });
     process.exit(1);
 });
 // Connection object to communicate with database

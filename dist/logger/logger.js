@@ -21,7 +21,7 @@ const customLevels = {
 (0, winston_1.addColors)(customLevels.colors);
 const logger = (0, winston_1.createLogger)({
     levels: customLevels.levels,
-    level: 'info',
+    level: 'debug',
     format: winston_1.format.combine(winston_1.format.timestamp({ format: 'YYYY-MM-DD HH:mm:ss' })),
     transports: [
         new winston_1.transports.Console({
