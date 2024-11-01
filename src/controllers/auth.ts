@@ -139,7 +139,7 @@ export const verifyOTP = async (req: Request, res: Response): Promise<void> => {
       return;
     }
 
-    // Verify OTP
+    // Verify OTP (Compare otp from req.body and session)
     const isMatch = await bcrypt.compare(otp, hashedOTP);
     if (!isMatch) {
       res.status(400).json({ message: 'Invalid OTP' });

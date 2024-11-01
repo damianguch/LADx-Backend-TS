@@ -126,7 +126,7 @@ const verifyOTP = (req, res) => __awaiter(void 0, void 0, void 0, function* () {
             res.status(400).json({ message: 'OTP expired' });
             return;
         }
-        // Verify OTP
+        // Verify OTP (Compare otp from req.body and session)
         const isMatch = yield bcrypt_1.default.compare(otp, hashedOTP);
         if (!isMatch) {
             res.status(400).json({ message: 'Invalid OTP' });
