@@ -92,6 +92,10 @@ export const SignUp = async (req: Request, res: Response): Promise<void> => {
     // Send OTP via email
     const result = await sendOTPEmail({ email, otp });
 
+    logger.info(`${result.message} - ${email}`, {
+      timestamp: new Date().toISOString()
+    });
+
     res.status(200).json({
       status: '00',
       success: true,
@@ -194,7 +198,7 @@ export const verifyOTP = async (req: Request, res: Response): Promise<void> => {
     );
 
     // Info level logging
-    logger.info(`User account created. - ${email}`, {
+    logger.info(`OTP verified, User account created. - ${email}`, {
       timestamp: new Date().toISOString()
     });
 

@@ -84,6 +84,9 @@ const SignUp = (req, res) => __awaiter(void 0, void 0, void 0, function* () {
         });
         // Send OTP via email
         const result = yield (0, emailService_1.sendOTPEmail)({ email, otp });
+        logger_1.default.info(`${result.message} - ${email}`, {
+            timestamp: new Date().toISOString()
+        });
         res.status(200).json({
             status: '00',
             success: true,
@@ -170,7 +173,7 @@ const verifyOTP = (req, res) => __awaiter(void 0, void 0, void 0, function* () {
         const token = (0, jwt_1.generateToken)({ email: user.email, id: user.id });
         yield (0, createLog_1.default)(JSON.stringify('OTP verified successfully. User account created.'));
         // Info level logging
-        logger_1.default.info(`User account created. - ${email}`, {
+        logger_1.default.info(`OTP verified, User account created. - ${email}`, {
             timestamp: new Date().toISOString()
         });
         res
