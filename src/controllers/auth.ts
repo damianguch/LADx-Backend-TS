@@ -200,9 +200,9 @@ export const verifyOTP = async (req: Request, res: Response): Promise<void> => {
       }
     });
 
-    // Clear temp user and OTP from otpStore after successful verification
-    otpStore.delete(`emailKey`);
-    otpStore.delete(`otpKey`);
+    // Clear tempUser and OTP from otpStore after successful verification
+    // otpStore.delete(`${email}_tempUser`);
+    // otpStore.delete(`${email}_otpData`);
 
     // Generate JWT token with the user payload
     const token = generateToken({ email: user.email, id: user.id });
