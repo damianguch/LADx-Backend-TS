@@ -21,7 +21,8 @@ import { loginSchema } from '../validators/userValidtor';
 import { z } from 'zod';
 import logger from '../logger/logger';
 
-const otpStore = new Map(); // More scalable and secure in-memory store
+// More scalable and secure in-memory store
+const otpStore = new Map<string, any>();
 
 // Custom error response interface
 interface ErrorResponse {
@@ -89,6 +90,15 @@ export const SignUp = async (req: Request, res: Response): Promise<void> => {
         });
     });
 
+    // Store temp user and OTP in otpStore
+    // const emailKey = `${email}_tempUser`;
+    // const otpKey = `${email}_otpData`;
+
+    // Store the temp user and OTP
+    // const otpData = { hashedOTP, expiresAt: Date.now() + 60 * 60 * 1000 };
+    // otpStore.set(emailKey, tempUser);
+    // otpStore.set(otpKey, otpData);
+
     // Send OTP via email
     const result = await sendOTPEmail({ email, otp });
 
@@ -151,7 +161,8 @@ export const verifyOTP = async (req: Request, res: Response): Promise<void> => {
     }
 
     // Fetch temp user data from otpStore
-    // const tempUser = otpStore.get(`${email}_tempUser`);
+    // const storedTempUser = otpStore.get(`${email}_tempUser`);
+    // const storedOTPData = otpStore.get(`${email}_otpData`);
 
     // Fetch tempUser data from session storage(Redis)
     const tempUser = req.session.tempUser;
@@ -187,8 +198,11 @@ export const verifyOTP = async (req: Request, res: Response): Promise<void> => {
       if (err) {
         createAppLog(JSON.stringify({ Error: err.message }));
       }
-      otpStore.delete(`${email}_tempUser`);
-    }); // Clear session data
+    });
+
+    // Clear temp user and OTP from otpStore after successful verification
+    otpStore.delete(`emailKey`);
+    otpStore.delete(`otpKey`);
 
     // Generate JWT token with the user payload
     const token = generateToken({ email: user.email, id: user.id });
