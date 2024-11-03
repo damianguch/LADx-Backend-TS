@@ -7,7 +7,7 @@
 
 import { Request, Response } from 'express';
 import LogFile from '../models/LogFile';
-import User from '../models/user';
+import User, { IUser } from '../models/user';
 import createAppLog from '../utils/createLog';
 import currentDate from '../utils/date';
 import { sanitizeProfileInput } from '../utils/sanitize';
@@ -19,7 +19,7 @@ const GetUserProfile = async (req: Request, res: Response): Promise<void> => {
 
   try {
     // Automatically casts id to an ObjectId
-    const user = await User.findById(id);
+    const user: IUser = await User.findById(id);
 
     if (!user) {
       await createAppLog('User profile not found!');
@@ -78,7 +78,7 @@ const UpdateProfile = async (req: Request, res: Response): Promise<void> => {
 
     const id = req.id;
     // fetch user info by id
-    const user = await User.findById(id);
+    const user: IUser = await User.findById(id);
 
     if (!user) {
       await createAppLog(`User not found - ID: ${id}`);

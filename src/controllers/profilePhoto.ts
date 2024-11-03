@@ -10,7 +10,7 @@ import multer from 'multer';
 import { CloudinaryStorage } from 'multer-storage-cloudinary';
 import { cloudinary } from '../utils/cloudinaryConfig';
 import LogFile from '../models/LogFile';
-import User from '../models/user';
+import User, { IUser } from '../models/user';
 import createAppLog from '../utils/createLog';
 import currentDate from '../utils/date';
 
@@ -60,7 +60,9 @@ const UpdateProfilePhoto = async (
     profilePhoto.profilePicPublicId = profilePic.filename; // Cloudinary publicId
 
     // Update user profile photo in database
-    const user = await User.findByIdAndUpdate(id, { $set: profilePhoto });
+    const user: IUser = await User.findByIdAndUpdate(id, {
+      $set: profilePhoto
+    });
 
     if (!user) {
       await createAppLog('User profile not found!');

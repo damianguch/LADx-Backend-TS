@@ -5,7 +5,7 @@
  * Date: 02-10-2024
  **************************************************************************/
 
-import User from '../models/user';
+import User, { IUser } from '../models/user';
 import bcrypt from 'bcrypt';
 import jwt, { JwtPayload } from 'jsonwebtoken';
 import { generateToken } from '../utils/jwt';
@@ -266,7 +266,7 @@ export const Login = async (req: Request, res: Response): Promise<void> => {
     });
 
     // Find user by email with select to explicitly choose fields
-    const user = await User.findOne({ email }).select('+password');
+    const user: IUser = await User.findOne({ email }).select('+password');
 
     // Check if user exists
     if (!user) {

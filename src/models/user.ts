@@ -1,5 +1,25 @@
 const mongoose = require('mongoose');
+import { Document } from 'mongoose';
 const { Schema } = mongoose;
+
+export interface IUser extends Document {
+  role: 'sender' | 'traveler';
+  fullname: string;
+  email: string;
+  country: string;
+  state: string;
+  phone: number;
+  password: string;
+  confirm_password?: string;
+  email_verification_code?: string;
+  profilePicUrl?: string;
+  profilePicPublicId?: string;
+  is_email_verified: number;
+  resetPasswordToken?: string;
+  resetPasswordExpires?: Date;
+  createdAt?: Date;
+  updatedAt?: Date;
+}
 
 // userSchema outlines the structure of the documents to be stored
 // in the Users collection.
@@ -51,8 +71,8 @@ const userSchema = new Schema(
 
     role: {
       type: String,
-      enum: ['user', 'admin'],
-      default: 'user'
+      enum: ['traveler', 'sender'],
+      default: 'sender'
     },
 
     resetPasswordToken: String,
