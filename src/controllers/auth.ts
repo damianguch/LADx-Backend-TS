@@ -174,7 +174,7 @@ export const verifyOTP = async (req: Request, res: Response): Promise<void> => {
     // Create the user in the database
     const newUser = new User(tempUser);
     await User.init(); // Ensure indexes are created before saving
-    const user = await newUser.save();
+    const user: IUser = await newUser.save();
 
     // Log the OTP verification activity
     const otpLog = new LogFile({

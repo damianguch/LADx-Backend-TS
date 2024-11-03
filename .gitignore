@@ -3,6 +3,4 @@ node_modules
 valid.txt
 package-lock.json
 checks.js
-SSL/certificate.pem
-SSL/certrequest.csr
-SSL/privatekey.pem
+src/services/authService.ts
