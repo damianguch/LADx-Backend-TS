@@ -16,6 +16,7 @@ import {
 } from '../controllers/sender';
 import { uploadErrorHandler } from '../utils/multerError';
 import { validateUserSignup } from '../validators/userValidtor';
+import { UpdateRole } from '../controllers/role';
 
 const router = Router();
 
@@ -97,5 +98,8 @@ router.put(
   requestItemsImageUpload,
   UpdateRequestDetails
 );
+
+// Update User role
+router.patch('/user/role', verifyTokenFromCookie, UpdateRole);
 
 export default router;

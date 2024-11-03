@@ -32,7 +32,8 @@ const sanitize_1 = require("../utils/sanitize");
 const emailService_1 = require("../utils/emailService");
 const userValidtor_1 = require("../validators/userValidtor");
 const logger_1 = __importDefault(require("../logger/logger"));
-const otpStore = new Map(); // More scalable and secure in-memory store
+// More scalable and secure in-memory store
+const otpStore = new Map();
 // @POST: SignUp Route
 const SignUp = (req, res) => __awaiter(void 0, void 0, void 0, function* () {
     try {
@@ -82,6 +83,13 @@ const SignUp = (req, res) => __awaiter(void 0, void 0, void 0, function* () {
                     timestamp: new Date().toISOString()
                 });
         });
+        // Store temp user and OTP in otpStore
+        // const emailKey = `${email}_tempUser`;
+        // const otpKey = `${email}_otpData`;
+        // Store the temp user and OTP
+        // const otpData = { hashedOTP, expiresAt: Date.now() + 60 * 60 * 1000 };
+        // otpStore.set(emailKey, tempUser);
+        // otpStore.set(otpKey, otpData);
         // Send OTP via email
         const result = yield (0, emailService_1.sendOTPEmail)({ email, otp });
         logger_1.default.info(`${result.message} - ${email}`, {
@@ -136,7 +144,8 @@ const verifyOTP = (req, res) => __awaiter(void 0, void 0, void 0, function* () {
             return;
         }
         // Fetch temp user data from otpStore
-        // const tempUser = otpStore.get(`${email}_tempUser`);
+        // const storedTempUser = otpStore.get(`${email}_tempUser`);
+        // const storedOTPData = otpStore.get(`${email}_otpData`);
         // Fetch tempUser data from session storage(Redis)
         const tempUser = req.session.tempUser;
         if (!tempUser) {
@@ -167,8 +176,10 @@ const verifyOTP = (req, res) => __awaiter(void 0, void 0, void 0, function* () {
             if (err) {
                 (0, createLog_1.default)(JSON.stringify({ Error: err.message }));
             }
-            otpStore.delete(`${email}_tempUser`);
-        }); // Clear session data
+        });
+        // Clear tempUser and OTP from otpStore after successful verification
+        // otpStore.delete(`${email}_tempUser`);
+        // otpStore.delete(`${email}_otpData`);
         // Generate JWT token with the user payload
         const token = (0, jwt_1.generateToken)({ email: user.email, id: user.id });
         yield (0, createLog_1.default)(JSON.stringify('OTP verified successfully. User account created.'));

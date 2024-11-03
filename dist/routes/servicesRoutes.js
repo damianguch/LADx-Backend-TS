@@ -17,6 +17,7 @@ const traveler_1 = require("../controllers/traveler");
 const sender_1 = require("../controllers/sender");
 const multerError_1 = require("../utils/multerError");
 const userValidtor_1 = require("../validators/userValidtor");
+const role_1 = require("../controllers/role");
 const router = (0, express_1.Router)();
 // Middleware for CSRF protection
 const csrfProtection = (0, csurf_1.default)({
@@ -55,4 +56,6 @@ router.post('/users/request-details', jwt_1.verifyTokenFromCookie, sender_1.requ
 multerError_1.uploadErrorHandler, sender_1.RequestDetails);
 // Update sender's request details route
 router.put('/users/request-details', jwt_1.verifyTokenFromCookie, sender_1.requestItemsImageUpload, sender_1.UpdateRequestDetails);
+// Update User role
+router.patch('/user/role', jwt_1.verifyTokenFromCookie, role_1.UpdateRole);
 exports.default = router;

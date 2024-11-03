@@ -60,7 +60,9 @@ const UpdateProfilePhoto = (req, res) => __awaiter(void 0, void 0, void 0, funct
         // Get the publicId
         profilePhoto.profilePicPublicId = profilePic.filename; // Cloudinary publicId
         // Update user profile photo in database
-        const user = yield user_1.default.findByIdAndUpdate(id, { $set: profilePhoto });
+        const user = yield user_1.default.findByIdAndUpdate(id, {
+            $set: profilePhoto
+        });
         if (!user) {
             yield (0, createLog_1.default)('User profile not found!');
             res.status(400).json({
