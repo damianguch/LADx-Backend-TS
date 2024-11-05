@@ -10,7 +10,7 @@ import Traveller from '../models/traveller';
 import createAppLog from '../utils/createLog';
 import currentDate from '../utils/date';
 import { escape } from 'validator';
-import { travelDetailsSchema } from '../validators/traveDetailsValidator';
+import { travelDetailsSchema } from '../schema/travel.schema';
 import { sanitizedTraveldetails } from '../utils/sanitize';
 import { Request, Response } from 'express';
 

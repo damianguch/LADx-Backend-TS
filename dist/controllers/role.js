@@ -15,6 +15,7 @@ Object.defineProperty(exports, "__esModule", { value: true });
 exports.UpdateRole = void 0;
 const user_1 = __importDefault(require("../models/user"));
 const createLog_1 = __importDefault(require("../utils/createLog"));
+const logger_1 = __importDefault(require("../logger/logger"));
 const UpdateRole = (req, res) => __awaiter(void 0, void 0, void 0, function* () {
     const { role } = req.body;
     const userId = req.id;
@@ -36,6 +37,10 @@ const UpdateRole = (req, res) => __awaiter(void 0, void 0, void 0, function* () 
                 .json({ status: 'E00', success: false, message: 'User not found' });
             return;
         }
+        // Info level logging
+        logger_1.default.info('Role Updated Successfully', {
+            timestamp: new Date().toISOString()
+        });
         res.status(200).json({
             status: '00',
             success: true,

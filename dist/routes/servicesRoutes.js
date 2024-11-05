@@ -16,7 +16,7 @@ const kyc_2 = require("../controllers/kyc");
 const traveler_1 = require("../controllers/traveler");
 const sender_1 = require("../controllers/sender");
 const multerError_1 = require("../utils/multerError");
-const userValidtor_1 = require("../validators/userValidtor");
+const user_schema_1 = require("../schema/user.schema");
 const role_1 = require("../controllers/role");
 const router = (0, express_1.Router)();
 // Middleware for CSRF protection
@@ -30,7 +30,7 @@ const csrfProtection = (0, csurf_1.default)({
 router.get('/csrf-token', csrfProtection, (req, res) => {
     res.json({ csrfToken: req.csrfToken() });
 });
-router.post('/signup', userValidtor_1.validateUserSignup, auth_1.SignUp);
+router.post('/signup', user_schema_1.validateUserSignup, auth_1.SignUp);
 router.post('/verify-otp', auth_1.verifyOTP);
 //Use multer to handle multipart/form-data requests.
 router.post('/login', profilePhoto_1.upload.none(), auth_1.Login);

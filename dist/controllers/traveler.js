@@ -24,7 +24,7 @@ const traveller_1 = __importDefault(require("../models/traveller"));
 const createLog_1 = __importDefault(require("../utils/createLog"));
 const date_1 = __importDefault(require("../utils/date"));
 const validator_1 = require("validator");
-const traveDetailsValidator_1 = require("../validators/traveDetailsValidator");
+const travel_schema_1 = require("../schema/travel.schema");
 const sanitize_1 = require("../utils/sanitize");
 // @POST: Upload travel details
 const TravelDetails = (req, res) => __awaiter(void 0, void 0, void 0, function* () {
@@ -38,7 +38,7 @@ const TravelDetails = (req, res) => __awaiter(void 0, void 0, void 0, function* 
         });
     }
     // Validate request body against schema
-    const { error, value } = traveDetailsValidator_1.travelDetailsSchema.validate(req.body, {
+    const { error, value } = travel_schema_1.travelDetailsSchema.validate(req.body, {
         abortEarly: false,
         stripUnknown: true
     });

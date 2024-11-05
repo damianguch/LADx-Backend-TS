@@ -17,12 +17,10 @@ import currentDate from '../utils/date';
 import { sanitizeSignUpInput } from '../utils/sanitize';
 import { Request, Response } from 'express';
 import { sendOTPEmail } from '../utils/emailService';
-import { loginSchema } from '../validators/userValidtor';
+import { loginSchema } from '../schema/user.schema';
 import { z } from 'zod';
 import logger from '../logger/logger';
-
-// More scalable and secure in-memory store
-const otpStore = new Map<string, any>();
+import { verifyOTPSchema } from '../schema/otp.schema';
 
 // Custom error response interface
 interface ErrorResponse {
@@ -68,6 +66,8 @@ export const SignUp = async (req: Request, res: Response): Promise<void> => {
     const salt = await bcrypt.genSalt(10);
     const hashedOTP = await bcrypt.hash(otp, salt);
 
+    console.log(otp);
+
     // Store OTP and email in the session
     req.session.otpData = { hashedOTP, expiresAt: Date.now() + 60 * 60 * 1000 };
     req.session.email = email; // Store email in session
@@ -89,15 +89,6 @@ export const SignUp = async (req: Request, res: Response): Promise<void> => {
           timestamp: new Date().toISOString()
         });
     });
-
-    // Store temp user and OTP in otpStore
-    // const emailKey = `${email}_tempUser`;
-    // const otpKey = `${email}_otpData`;
-
-    // Store the temp user and OTP
-    // const otpData = { hashedOTP, expiresAt: Date.now() + 60 * 60 * 1000 };
-    // otpStore.set(emailKey, tempUser);
-    // otpStore.set(otpKey, otpData);
 
     // Send OTP via email
     const result = await sendOTPEmail({ email, otp });
@@ -123,7 +114,8 @@ export const SignUp = async (req: Request, res: Response): Promise<void> => {
 
 // @POST: OTP Verification Route
 export const verifyOTP = async (req: Request, res: Response): Promise<void> => {
-  const { otp } = req.body; // Get otp from request body
+  // Validate the request body using Zod
+  const { otp } = verifyOTPSchema.parse(req.body);
   const email = req.session.email; // Retrieve email from session
 
   if (!otp || !email) {
@@ -160,10 +152,6 @@ export const verifyOTP = async (req: Request, res: Response): Promise<void> => {
       return;
     }
 
-    // Fetch temp user data from otpStore
-    // const storedTempUser = otpStore.get(`${email}_tempUser`);
-    // const storedOTPData = otpStore.get(`${email}_otpData`);
-
     // Fetch tempUser data from session storage(Redis)
     const tempUser = req.session.tempUser;
     if (!tempUser) {
@@ -199,10 +187,6 @@ export const verifyOTP = async (req: Request, res: Response): Promise<void> => {
         createAppLog(JSON.stringify({ Error: err.message }));
       }
     });
-
-    // Clear tempUser and OTP from otpStore after successful verification
-    // otpStore.delete(`${email}_tempUser`);
-    // otpStore.delete(`${email}_otpData`);
 
     // Generate JWT token with the user payload
     const token = generateToken({ email: user.email, id: user.id });

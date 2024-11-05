@@ -15,7 +15,7 @@ import {
   UpdateRequestDetails
 } from '../controllers/sender';
 import { uploadErrorHandler } from '../utils/multerError';
-import { validateUserSignup } from '../validators/userValidtor';
+import { validateUserSignup } from '../schema/user.schema';
 import { UpdateRole } from '../controllers/role';
 
 const router = Router();

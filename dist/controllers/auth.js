@@ -30,10 +30,9 @@ const passwordEncrypt_1 = __importDefault(require("../utils/passwordEncrypt"));
 const date_1 = __importDefault(require("../utils/date"));
 const sanitize_1 = require("../utils/sanitize");
 const emailService_1 = require("../utils/emailService");
-const userValidtor_1 = require("../validators/userValidtor");
+const user_schema_1 = require("../schema/user.schema");
 const logger_1 = __importDefault(require("../logger/logger"));
-// More scalable and secure in-memory store
-const otpStore = new Map();
+const otp_schema_1 = require("../schema/otp.schema");
 // @POST: SignUp Route
 const SignUp = (req, res) => __awaiter(void 0, void 0, void 0, function* () {
     try {
@@ -65,6 +64,7 @@ const SignUp = (req, res) => __awaiter(void 0, void 0, void 0, function* () {
         const otp = yield (0, randomNumbers_1.default)(6);
         const salt = yield bcrypt_1.default.genSalt(10);
         const hashedOTP = yield bcrypt_1.default.hash(otp, salt);
+        console.log(otp);
         // Store OTP and email in the session
         req.session.otpData = { hashedOTP, expiresAt: Date.now() + 60 * 60 * 1000 };
         req.session.email = email; // Store email in session
@@ -83,13 +83,6 @@ const SignUp = (req, res) => __awaiter(void 0, void 0, void 0, function* () {
                     timestamp: new Date().toISOString()
                 });
         });
-        // Store temp user and OTP in otpStore
-        // const emailKey = `${email}_tempUser`;
-        // const otpKey = `${email}_otpData`;
-        // Store the temp user and OTP
-        // const otpData = { hashedOTP, expiresAt: Date.now() + 60 * 60 * 1000 };
-        // otpStore.set(emailKey, tempUser);
-        // otpStore.set(otpKey, otpData);
         // Send OTP via email
         const result = yield (0, emailService_1.sendOTPEmail)({ email, otp });
         logger_1.default.info(`${result.message} - ${email}`, {
@@ -113,7 +106,8 @@ const SignUp = (req, res) => __awaiter(void 0, void 0, void 0, function* () {
 exports.SignUp = SignUp;
 // @POST: OTP Verification Route
 const verifyOTP = (req, res) => __awaiter(void 0, void 0, void 0, function* () {
-    const { otp } = req.body; // Get otp from request body
+    // Validate the request body using Zod
+    const { otp } = otp_schema_1.verifyOTPSchema.parse(req.body);
     const email = req.session.email; // Retrieve email from session
     if (!otp || !email) {
         res.status(400).json({ message: 'OTP or email not found' });
@@ -143,9 +137,6 @@ const verifyOTP = (req, res) => __awaiter(void 0, void 0, void 0, function* () {
             res.status(400).json({ message: 'Invalid OTP' });
             return;
         }
-        // Fetch temp user data from otpStore
-        // const storedTempUser = otpStore.get(`${email}_tempUser`);
-        // const storedOTPData = otpStore.get(`${email}_otpData`);
         // Fetch tempUser data from session storage(Redis)
         const tempUser = req.session.tempUser;
         if (!tempUser) {
@@ -177,9 +168,6 @@ const verifyOTP = (req, res) => __awaiter(void 0, void 0, void 0, function* () {
                 (0, createLog_1.default)(JSON.stringify({ Error: err.message }));
             }
         });
-        // Clear tempUser and OTP from otpStore after successful verification
-        // otpStore.delete(`${email}_tempUser`);
-        // otpStore.delete(`${email}_otpData`);
         // Generate JWT token with the user payload
         const token = (0, jwt_1.generateToken)({ email: user.email, id: user.id });
         yield (0, createLog_1.default)(JSON.stringify('OTP verified successfully. User account created.'));
@@ -209,7 +197,7 @@ exports.verifyOTP = verifyOTP;
 const Login = (req, res) => __awaiter(void 0, void 0, void 0, function* () {
     try {
         // Validate request body using Zod
-        const validationResult = userValidtor_1.loginSchema.safeParse(req.body);
+        const validationResult = user_schema_1.loginSchema.safeParse(req.body);
         // If validation fails, return detailed error response
         if (!validationResult.success) {
             const errorResponse = {

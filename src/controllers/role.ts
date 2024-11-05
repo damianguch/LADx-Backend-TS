@@ -1,6 +1,7 @@
 import { Request, Response } from 'express';
 import User, { IUser } from '../models/user';
 import createAppLog from '../utils/createLog';
+import logger from '../logger/logger';
 
 // Define a specific type for the request body
 interface RoleUpdateRequest extends Request {
@@ -39,6 +40,11 @@ const UpdateRole = async (
         .json({ status: 'E00', success: false, message: 'User not found' });
       return;
     }
+
+    // Info level logging
+    logger.info('Role Updated Successfully', {
+      timestamp: new Date().toISOString()
+    });
 
     res.status(200).json({
       status: '00',

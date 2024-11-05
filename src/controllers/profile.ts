@@ -11,7 +11,7 @@ import User, { IUser } from '../models/user';
 import createAppLog from '../utils/createLog';
 import currentDate from '../utils/date';
 import { sanitizeProfileInput } from '../utils/sanitize';
-import { profileUpdateSchema } from '../validators/profileValidator';
+import { profileUpdateSchema } from '../schema/profile.schema';
 
 // Get User Profile
 const GetUserProfile = async (req: Request, res: Response): Promise<void> => {

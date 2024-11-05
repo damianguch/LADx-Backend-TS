@@ -24,7 +24,7 @@ const user_1 = __importDefault(require("../models/user"));
 const createLog_1 = __importDefault(require("../utils/createLog"));
 const date_1 = __importDefault(require("../utils/date"));
 const sanitize_1 = require("../utils/sanitize");
-const profileValidator_1 = require("../validators/profileValidator");
+const profile_schema_1 = require("../schema/profile.schema");
 // Get User Profile
 const GetUserProfile = (req, res) => __awaiter(void 0, void 0, void 0, function* () {
     const id = req.id;
@@ -66,7 +66,7 @@ exports.GetUserProfile = GetUserProfile;
 const UpdateProfile = (req, res) => __awaiter(void 0, void 0, void 0, function* () {
     try {
         // Validate incoming data
-        const { error, value } = profileValidator_1.profileUpdateSchema.validate(req.body);
+        const { error, value } = profile_schema_1.profileUpdateSchema.validate(req.body);
         // Validation fails, error object contains the check failures
         if (error) {
             res.status(400).json({
