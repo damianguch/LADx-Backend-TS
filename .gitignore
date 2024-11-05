@@ -3,4 +3,4 @@ node_modules
 valid.txt
 package-lock.json
 checks.js
-src/services/authService.ts
+app.log

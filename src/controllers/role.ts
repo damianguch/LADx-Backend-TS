@@ -2,30 +2,22 @@ import { Request, Response } from 'express';
 import User, { IUser } from '../models/user';
 import createAppLog from '../utils/createLog';
 import logger from '../logger/logger';
+import { roleSchema } from '../schema/role.schema';
+import { z } from 'zod';
 
-// Define a specific type for the request body
-interface RoleUpdateRequest extends Request {
-  body: {
-    role: 'sender' | 'traveler';
-  };
-}
+// Type inference from Zod schema
+type RoleUpdateRequest = Request & {
+  body: z.infer<typeof roleSchema>;
+};
 
 const UpdateRole = async (
   req: RoleUpdateRequest,
   res: Response
 ): Promise<void> => {
-  const { role } = req.body;
+  // Validate request body using Zod
+  const validatedData = roleSchema.parse(req.body);
+  const { role } = validatedData;
   const userId = req.id;
-
-  // Validate that the role is valid
-  if (!['sender', 'traveler'].includes(role)) {
-    res.status(400).json({
-      status: 'E00',
-      success: false,
-      message: 'Invalid role selected'
-    });
-    return;
-  }
 
   try {
     // Update the user’s role in the database
@@ -34,15 +26,20 @@ const UpdateRole = async (
       { role },
       { new: true }
     );
+
     if (!user) {
-      res
-        .status(404)
-        .json({ status: 'E00', success: false, message: 'User not found' });
+      res.status(404).json({
+        status: 'E00',
+        success: false,
+        message: 'User not found'
+      });
       return;
     }
 
     // Info level logging
     logger.info('Role Updated Successfully', {
+      userId,
+      role,
       timestamp: new Date().toISOString()
     });
 
