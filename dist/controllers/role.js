@@ -18,9 +18,23 @@ const createLog_1 = __importDefault(require("../utils/createLog"));
 const logger_1 = __importDefault(require("../logger/logger"));
 const role_schema_1 = require("../schema/role.schema");
 const UpdateRole = (req, res) => __awaiter(void 0, void 0, void 0, function* () {
+    var _a;
     // Validate request body using Zod
-    const validatedData = role_schema_1.roleSchema.parse(req.body);
-    const { role } = validatedData;
+    const parseResult = role_schema_1.roleSchema.safeParse(req.body);
+    if (!parseResult.success) {
+        const errorMessage = ((_a = parseResult.error.issues[0]) === null || _a === void 0 ? void 0 : _a.message) || 'Validation error';
+        res.status(400).json({
+            status: 'E00',
+            success: false,
+            message: errorMessage
+        });
+        // Info level logging
+        logger_1.default.info(errorMessage, {
+            timestamp: new Date().toISOString()
+        });
+        return;
+    }
+    const { role } = parseResult.data;
     const userId = req.id;
     try {
         // Update the user’s role in the database
@@ -35,8 +49,6 @@ const UpdateRole = (req, res) => __awaiter(void 0, void 0, void 0, function* () 
         }
         // Info level logging
         logger_1.default.info('Role Updated Successfully', {
-            userId,
-            role,
             timestamp: new Date().toISOString()
         });
         res.status(200).json({

@@ -3,20 +3,37 @@ import User, { IUser } from '../models/user';
 import createAppLog from '../utils/createLog';
 import logger from '../logger/logger';
 import { roleSchema } from '../schema/role.schema';
-import { z } from 'zod';
 
-// Type inference from Zod schema
-type RoleUpdateRequest = Request & {
-  body: z.infer<typeof roleSchema>;
-};
+interface RoleUpdateRequest extends Request {
+  body: {
+    role?: 'sender' | 'traveler';
+  };
+}
 
 const UpdateRole = async (
   req: RoleUpdateRequest,
   res: Response
 ): Promise<void> => {
   // Validate request body using Zod
-  const validatedData = roleSchema.parse(req.body);
-  const { role } = validatedData;
+  const parseResult = roleSchema.safeParse(req.body);
+
+  if (!parseResult.success) {
+    const errorMessage =
+      parseResult.error.issues[0]?.message || 'Validation error';
+    res.status(400).json({
+      status: 'E00',
+      success: false,
+      message: errorMessage
+    });
+
+    // Info level logging
+    logger.info(errorMessage, {
+      timestamp: new Date().toISOString()
+    });
+    return;
+  }
+
+  const { role } = parseResult.data;
   const userId = req.id;
 
   try {
@@ -38,8 +55,6 @@ const UpdateRole = async (
 
     // Info level logging
     logger.info('Role Updated Successfully', {
-      userId,
-      role,
       timestamp: new Date().toISOString()
     });
 
