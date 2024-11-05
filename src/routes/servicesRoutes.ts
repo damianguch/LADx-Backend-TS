@@ -1,11 +1,10 @@
 import csrf from 'csurf';
 import { Router } from 'express';
 import { validateKYC } from '../controllers/kyc';
-import { Login, SignUp, verifyOTP, Logout, getUserDetails  } from '../controllers/auth';
+import { getUserDetails } from '../controllers/auth';
 import { UpdateProfilePhoto, upload } from '../controllers/profilePhoto';
 import { UpdateProfile, GetUserProfile } from '../controllers/profile';
 import { verifyTokenFromCookie } from '../utils/jwt';
-import { ForgotPassword, ResetPassword } from '../controllers/forgotPassword';
 import { GetProfilePhoto } from '../controllers/getProfilePhoto';
 import { UploadKYC, identityUpload } from '../controllers/kyc';
 import { TravelDetails, UpdateTravelDetails } from '../controllers/traveler';
@@ -15,7 +14,6 @@ import {
   UpdateRequestDetails
 } from '../controllers/sender';
 import { uploadErrorHandler } from '../utils/multerError';
-import { validateUserSignup } from '../schema/user.schema';
 import { UpdateRole } from '../controllers/role';
 
 const router = Router();
@@ -32,16 +30,6 @@ const csrfProtection = csrf({
 router.get('/csrf-token', csrfProtection, (req, res) => {
   res.json({ csrfToken: req.csrfToken() });
 });
-
-router.post('/signup', validateUserSignup, SignUp);
-router.post('/verify-otp', verifyOTP);
-
-//Use multer to handle multipart/form-data requests.
-router.post('/login', upload.none(), Login);
-
-router.post('/logout', Logout);
-router.post('/forgot-password', ForgotPassword);
-router.put('/reset-password', ResetPassword);
 
 // Handling Image Upload in Request
 router.put(

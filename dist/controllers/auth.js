@@ -18,7 +18,7 @@ var __importDefault = (this && this.__importDefault) || function (mod) {
     return (mod && mod.__esModule) ? mod : { "default": mod };
 };
 Object.defineProperty(exports, "__esModule", { value: true });
-exports.Logout = exports.Login = exports.verifyOTP = exports.SignUp = void 0;
+exports.getUserDetails = exports.Logout = exports.Login = exports.verifyOTP = exports.SignUp = void 0;
 const user_1 = __importDefault(require("../models/user"));
 const bcrypt_1 = __importDefault(require("bcrypt"));
 const jsonwebtoken_1 = __importDefault(require("jsonwebtoken"));
@@ -305,3 +305,39 @@ const Logout = (req, res) => __awaiter(void 0, void 0, void 0, function* () {
         .json({ message: 'User Logged out' });
 });
 exports.Logout = Logout;
+// @GET: Get User Details
+const getUserDetails = (req, res) => __awaiter(void 0, void 0, void 0, function* () {
+    try {
+        const token = req.cookies.token;
+        // Verify the token
+        if (!token) {
+            res.status(401).json({ message: 'No token provided' });
+            return;
+        }
+        const decoded = jsonwebtoken_1.default.verify(token, process.env.JWT_SECRET_KEY);
+        // Find user by ID and select only necessary fields
+        const user = yield user_1.default.findById(decoded.id).select('fullname email country state phone role');
+        if (!user) {
+            res.status(404).json({ message: 'User not found' });
+            return;
+        }
+        res.status(200).json({
+            status: '200',
+            success: true,
+            user: {
+                id: user._id,
+                fullname: user.fullname,
+                email: user.email,
+                country: user.country,
+                state: user.state,
+                phone: user.phone,
+                role: user.role // Include the role here
+            }
+        });
+    }
+    catch (err) {
+        yield (0, createLog_1.default)(`Get User Details Error: ${err.message}`);
+        res.status(500).json({ message: 'Internal Server Error: ' + err.message });
+    }
+});
+exports.getUserDetails = getUserDetails;

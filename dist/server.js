@@ -51,6 +51,7 @@ const db_1 = __importDefault(require("./dbconnect/db"));
 const servicesRoutes_1 = __importDefault(require("./routes/servicesRoutes"));
 const redisClient_1 = __importStar(require("./utils/redisClient"));
 const logger_1 = __importDefault(require("./logger/logger"));
+const authRoutes_1 = require("./routes/authRoutes");
 const app = (0, express_1.default)();
 // Initialize Redis client on server startup
 (() => __awaiter(void 0, void 0, void 0, function* () {
@@ -150,6 +151,7 @@ app.use('/uploads', (req, res, next) => {
 });
 // Routes Declarations
 app.use('/api/v1', servicesRoutes_1.default);
+app.use('/api/v1', authRoutes_1.authRouter);
 if (process.env.NODE_ENV === 'production') {
     app.use(express_1.default.static('build'));
 }

@@ -10,13 +10,11 @@ const auth_1 = require("../controllers/auth");
 const profilePhoto_1 = require("../controllers/profilePhoto");
 const profile_1 = require("../controllers/profile");
 const jwt_1 = require("../utils/jwt");
-const forgotPassword_1 = require("../controllers/forgotPassword");
 const getProfilePhoto_1 = require("../controllers/getProfilePhoto");
 const kyc_2 = require("../controllers/kyc");
 const traveler_1 = require("../controllers/traveler");
 const sender_1 = require("../controllers/sender");
 const multerError_1 = require("../utils/multerError");
-const user_schema_1 = require("../schema/user.schema");
 const role_1 = require("../controllers/role");
 const router = (0, express_1.Router)();
 // Middleware for CSRF protection
@@ -30,13 +28,6 @@ const csrfProtection = (0, csurf_1.default)({
 router.get('/csrf-token', csrfProtection, (req, res) => {
     res.json({ csrfToken: req.csrfToken() });
 });
-router.post('/signup', user_schema_1.validateUserSignup, auth_1.SignUp);
-router.post('/verify-otp', auth_1.verifyOTP);
-//Use multer to handle multipart/form-data requests.
-router.post('/login', profilePhoto_1.upload.none(), auth_1.Login);
-router.post('/logout', auth_1.Logout);
-router.post('/forgot-password', forgotPassword_1.ForgotPassword);
-router.put('/reset-password', forgotPassword_1.ResetPassword);
 // Handling Image Upload in Request
 router.put('/users/profilePhoto', jwt_1.verifyTokenFromCookie, profilePhoto_1.upload.single('profilePic'), multerError_1.uploadErrorHandler, profilePhoto_1.UpdateProfilePhoto);
 // Get User profile
@@ -58,4 +49,5 @@ multerError_1.uploadErrorHandler, sender_1.RequestDetails);
 router.put('/users/request-details', jwt_1.verifyTokenFromCookie, sender_1.requestItemsImageUpload, sender_1.UpdateRequestDetails);
 // Update User role
 router.patch('/user/role', jwt_1.verifyTokenFromCookie, role_1.UpdateRole);
+router.get('/user', auth_1.getUserDetails);
 exports.default = router;

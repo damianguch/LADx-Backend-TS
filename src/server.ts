@@ -14,6 +14,7 @@ import db from './dbconnect/db';
 import router from './routes/servicesRoutes';
 import redisClient, { connectRedis } from './utils/redisClient';
 import logger from './logger/logger';
+import { authRouter } from './routes/authRoutes';
 
 const app: Application = express();
 
@@ -143,6 +144,7 @@ app.use('/uploads', (req: Request, res: Response, next: NextFunction) => {
 
 // Routes Declarations
 app.use('/api/v1', router);
+app.use('/api/v1', authRouter);
 
 if (process.env.NODE_ENV === 'production') {
   app.use(express.static('build'));
