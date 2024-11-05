@@ -347,3 +347,42 @@ export const Logout = async (req: Request, res: Response): Promise<void> => {
     .clearCookie('csrfToken')
     .json({ message: 'User Logged out' });
 };
+
+// @GET: Get User Details
+export const getUserDetails = async (req: Request, res: Response): Promise<void> => {
+    try {
+        const token = req.cookies.token;
+
+        // Verify the token
+        if (!token) {
+            return res.status(401).json({ message: 'No token provided' });
+        }
+
+        const decoded = jwt.verify(token, process.env.JWT_SECRET_KEY!) as JwtPayload;
+
+        // Find user by ID and select only necessary fields
+        const user = await User.findById(decoded.id).select('fullname email country state phone role');
+
+        if (!user) {
+            return res.status(404).json({ message: 'User not found' });
+        }
+
+        res.status(200).json({
+            status: '200',
+            success: true,
+            user: {
+                id: user._id,
+                fullname: user.fullname,
+                email: user.email,
+                country: user.country,
+                state: user.state,
+                phone: user.phone,
+                role: user.role // Include the role here
+            }
+        });
+    } catch (err: any) {
+        await createAppLog(`Get User Details Error: ${err.message}`);
+        res.status(500).json({ message: 'Internal Server Error: ' + err.message });
+    }
+};
+
