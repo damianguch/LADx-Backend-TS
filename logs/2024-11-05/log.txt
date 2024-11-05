@@ -3,3 +3,7 @@ Time logged: (5:52:52 AM):-  Message: "OTP sent to your email"
 Time logged: (5:53:23 AM):-  Message: "OTP verified successfully. User account created."
 Time logged: (6:56:47 AM):-  Message: "OTP sent to your email"
 Time logged: (6:57:29 AM):-  Message: "OTP verified successfully. User account created."
+Time logged: (5:52:30 PM):-  Message: Login attempt for email: eguche@yahoo.com
+Time logged: (5:52:31 PM):-  Message: Login failed: Email not registered - eguche@yahoo.com
+Time logged: (5:54:44 PM):-  Message: Login attempt for email: eguche@yahoo.com
+Time logged: (5:54:46 PM):-  Message: User logged in successfully: eguche@yahoo.com

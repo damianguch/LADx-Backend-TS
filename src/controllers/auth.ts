@@ -296,6 +296,11 @@ export const Login = async (req: Request, res: Response): Promise<void> => {
 
     await logEntry.save();
 
+    // Info level logging
+    logger.info(`Login successful!: ${email}`, {
+      timestamp: new Date().toISOString()
+    });
+
     // Set secure, HTTP-only cookie
     res
       .cookie('token', token, {
@@ -308,7 +313,8 @@ export const Login = async (req: Request, res: Response): Promise<void> => {
         status: '200',
         success: true,
         message: 'Login successful!',
-        email: user.email
+        email: user.email,
+        role: user.role
       });
   } catch (err: any) {
     await createAppLog(`Login Error:  ${err.message}`);

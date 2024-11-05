@@ -257,6 +257,10 @@ const Login = (req, res) => __awaiter(void 0, void 0, void 0, function* () {
             AddedOn: date_1.default
         });
         yield logEntry.save();
+        // Info level logging
+        logger_1.default.info(`Login successful!: ${email}`, {
+            timestamp: new Date().toISOString()
+        });
         // Set secure, HTTP-only cookie
         res
             .cookie('token', token, {
@@ -269,7 +273,8 @@ const Login = (req, res) => __awaiter(void 0, void 0, void 0, function* () {
             status: '200',
             success: true,
             message: 'Login successful!',
-            email: user.email
+            email: user.email,
+            role: user.role
         });
     }
     catch (err) {
