@@ -1,4 +1,4 @@
-const EmailCode = async (length: number): Promise<string> => {
+const generateOTP = async (length: number): Promise<string> => {
   const alphanumeric = '123456789';
   let result = '';
   for (let i = 0; i < length; i++) {
@@ -8,4 +8,4 @@ const EmailCode = async (length: number): Promise<string> => {
   return result;
 };
 
-export default EmailCode;
+export default generateOTP;
