@@ -123,8 +123,8 @@ export const verifyOTP = async (req: Request, res: Response): Promise<void> => {
 
   if (!otp || !email) {
     res.status(400).json({
-      otp: otp,
-      email: email,
+      otp,
+      email,
       message: 'OTP or email not found'
     });
     return;
