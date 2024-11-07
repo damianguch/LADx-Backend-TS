@@ -118,16 +118,19 @@ export const verifyOTP = async (req: Request, res: Response): Promise<void> => {
   const { otp } = verifyOTPSchema.parse(req.body);
   const email = req.session.email; // Retrieve email from session
 
-  console.log(otp);
-  console.log(email);
+  // Debug logs to help track the flow
+  console.log('OTP:', otp);
+  console.log('Email:', email);
 
   if (!otp || !email) {
-    logger.warn('No email found in session', {
+    logger.warn('No email or OTP found in session', {
       timestamp: new Date().toISOString()
     });
 
     res.status(400).json({
-      message: 'OTP or email not found'
+      status: 'E01',
+      success: false,
+      message: 'OTP or email not found in session'
     });
     return;
   }
@@ -137,7 +140,11 @@ export const verifyOTP = async (req: Request, res: Response): Promise<void> => {
     const storedOTPData = req.session.otpData;
 
     if (!storedOTPData) {
-      res.status(400).json({ message: 'OTP not found or expired' });
+      res.status(400).json({
+        status: 'E02',
+        success: false,
+        message: 'OTP data not found or expired'
+      });
       return;
     }
 
@@ -154,21 +161,21 @@ export const verifyOTP = async (req: Request, res: Response): Promise<void> => {
       return;
     }
 
-    // Verify OTP (Compare otp from req.body and session)
+    // Verify OTP (Compare OTP from req.body and session)
     const isMatch = await bcrypt.compare(otp, hashedOTP);
     if (!isMatch) {
       res.status(400).json({
-        status: 'E00',
+        status: 'E03',
         success: false,
         message: 'Invalid OTP'
       });
       return;
     }
 
-    // Fetch tempUser data from session storage(Redis)
+    // Fetch tempUser data from session storage
     const tempUser = req.session.tempUser;
     if (!tempUser) {
-      res.status(400).json({ message: 'User not found' });
+      res.status(400).json({ message: 'Temporary user data not found' });
       return;
     }
 
@@ -204,12 +211,8 @@ export const verifyOTP = async (req: Request, res: Response): Promise<void> => {
     // Generate JWT token with the user payload
     const token = generateToken({ email: user.email, id: user.id });
 
-    await createAppLog(
-      JSON.stringify('OTP verified successfully. User account created.')
-    );
-
     // Info level logging
-    logger.info(`OTP verified, User account created. - ${email}`, {
+    logger.info(`OTP verified, User account created for ${email}`, {
       timestamp: new Date().toISOString()
     });
 
@@ -234,6 +237,7 @@ export const verifyOTP = async (req: Request, res: Response): Promise<void> => {
     });
   }
 };
+
 
 // @POST Resend OTP
 export const resendOTP = async (req: Request, res: Response): Promise<void> => {
