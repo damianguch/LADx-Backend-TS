@@ -119,7 +119,11 @@ export const verifyOTP = async (req: Request, res: Response): Promise<void> => {
   const email = req.session.email; // Retrieve email from session
 
   if (!otp || !email) {
-    res.status(400).json({ message: 'OTP or email not found' });
+    res.status(400).json({
+      otp: otp,
+      email: email,
+      message: 'OTP or email not found'
+    });
     return;
   }
 
