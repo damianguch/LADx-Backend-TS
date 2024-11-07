@@ -83,6 +83,7 @@ const SignUp = (req, res) => __awaiter(void 0, void 0, void 0, function* () {
                     timestamp: new Date().toISOString()
                 });
         });
+        console.log(req.session);
         // Send OTP via email
         const result = yield (0, emailService_1.sendOTPEmail)({ email, otp });
         logger_1.default.info(`${result.message} - ${email}`, {
@@ -109,16 +110,14 @@ const verifyOTP = (req, res) => __awaiter(void 0, void 0, void 0, function* () {
     // Validate the request body using Zod
     const { otp } = otp_schema_1.verifyOTPSchema.parse(req.body);
     const email = req.session.email; // Retrieve email from session
+    console.log(req.session);
     console.log(otp);
     console.log(email);
-    // Info level logging
-    logger_1.default.info(`OTP verified ${otp} - ${email}`, {
-        timestamp: new Date().toISOString()
-    });
     if (!otp || !email) {
+        logger_1.default.warn('No email found in session', {
+            timestamp: new Date().toISOString()
+        });
         res.status(400).json({
-            otp,
-            email,
             message: 'OTP or email not found'
         });
         return;

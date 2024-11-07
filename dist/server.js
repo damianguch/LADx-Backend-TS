@@ -56,8 +56,8 @@ const app = (0, express_1.default)();
 // CORS Options definition
 const corsOptions = {
     origin: [
-        'https://ladx.africa',
         'https://ladx-frontend.netlify.app',
+        'https://ladx.africa',
         'https://www.ladx.africa',
         'https://dashboard-lyart-nine-87.vercel.app',
         'http://localhost:3000', // Frontend local development
