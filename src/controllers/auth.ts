@@ -35,17 +35,7 @@ interface ErrorResponse {
 export const SignUp = async (req: Request, res: Response): Promise<void> => {
   try {
     const sanitizedData = sanitizeSignUpInput(req.body);
-    let { fullname, email, country, state, phone, password, role } = sanitizedData;
-
-    // Validate role
-    if (!role || !['sender', 'traveler'].includes(role)) {
-      res.status(400).json({
-        status: 'E00',
-        success: false,
-        message: 'Invalid user role. Must be either sender or traveler'
-      });
-      return;
-    }
+    let { fullname, email, country, state, phone, password } = sanitizedData;
 
     // Check if email is already registered
     const existingUser = await User.findOne({ email });
@@ -58,33 +48,39 @@ export const SignUp = async (req: Request, res: Response): Promise<void> => {
       return;
     }
 
-    // Generate and hash OTP
+    // Generate OTP
     const otp = await generateOTP(6);
-    const otpExpiry = Date.now() + 10 * 60 * 1000; // 10 minutes expiry
     const hashedOTP = await bcrypt.hash(otp.toString(), 10);
 
-    // Store registration data and OTP in session
+    // Store in session
     req.session.registrationData = {
       fullname,
       email,
       country,
       state,
       phone,
-      role,
       password: await encryptPasswordWithBcrypt(password),
-      otp: hashedOTP,
-      otpExpiry
+      otpHash: hashedOTP,
+      otpExpiry: Date.now() + 10 * 60 * 1000 // 10 minutes
     };
 
-    // Send OTP via email
+    // Save session explicitly
+    await new Promise((resolve, reject) => {
+      req.session.save((err) => {
+        if (err) reject(err);
+        resolve(true);
+      });
+    });
+
+    // Send OTP
     await sendOTPEmail({
       email,
       otp,
-      template: 'registration',
-      role
+      template: 'registration'
     });
 
-    logger.info(`OTP sent to ${email} for ${role} registration`);
+    logger.info(`OTP sent to ${email}`);
+    console.log('Session after signup:', req.session); // Debug log
 
     res.status(200).json({
       status: '00',
@@ -103,10 +99,11 @@ export const SignUp = async (req: Request, res: Response): Promise<void> => {
 
 export const verifyOTP = async (req: Request, res: Response): Promise<void> => {
   try {
-    const { otp } = verifyOTPSchema.parse(req.body);
-    const registrationData = req.session.registrationData;
+    const { otp } = req.body;
+    console.log('Session during verification:', req.session); // Debug log
 
-    if (!registrationData) {
+    if (!req.session.registrationData) {
+      logger.error('No registration data in session');
       res.status(400).json({
         status: 'E00',
         success: false,
@@ -114,6 +111,8 @@ export const verifyOTP = async (req: Request, res: Response): Promise<void> => {
       });
       return;
     }
+
+    const registrationData = req.session.registrationData;
 
     // Check OTP expiry
     if (Date.now() > registrationData.otpExpiry) {
@@ -126,7 +125,7 @@ export const verifyOTP = async (req: Request, res: Response): Promise<void> => {
     }
 
     // Verify OTP
-    const isValidOTP = await bcrypt.compare(otp.toString(), registrationData.otp);
+    const isValidOTP = await bcrypt.compare(otp.toString(), registrationData.otpHash);
     if (!isValidOTP) {
       res.status(400).json({
         status: 'E00',
@@ -144,37 +143,29 @@ export const verifyOTP = async (req: Request, res: Response): Promise<void> => {
       country: registrationData.country,
       state: registrationData.state,
       phone: registrationData.phone,
-      role: registrationData.role,
-      is_email_verified: 1, // Changed to match your model
-      email_verification_code: otp // Store the last used OTP
+      is_email_verified: 1,
     });
 
     await newUser.save();
 
-    // Generate JWT token
+    // Generate token
     const token = generateToken({
       email: newUser.email,
-      id: newUser._id,
-      role: newUser.role
+      id: newUser._id
     });
 
-    // Clear session
+    // Clear session after successful verification
     req.session.destroy((err) => {
       if (err) logger.error('Session destruction error:', err);
     });
 
-    // Set cookie and send response
-    res.cookie('token', token, {
-      httpOnly: true,
-      secure: process.env.NODE_ENV === 'production',
-      sameSite: 'strict',
-      maxAge: 24 * 60 * 60 * 1000 // 24 hours
-    }).json({
+    res.status(200).json({
       status: '00',
       success: true,
       message: 'Registration successful',
-      role: newUser.role
+      token
     });
+
   } catch (error: any) {
     logger.error('OTP verification error:', error);
     res.status(500).json({
@@ -184,6 +175,61 @@ export const verifyOTP = async (req: Request, res: Response): Promise<void> => {
     });
   }
 };
+
+export const resendOTP = async (req: Request, res: Response): Promise<void> => {
+  try {
+    if (!req.session.registrationData) {
+      res.status(400).json({
+        status: 'E00',
+        success: false,
+        message: 'Registration session expired'
+      });
+      return;
+    }
+
+    const { email } = req.session.registrationData;
+
+    // Generate new OTP
+    const otp = await generateOTP(6);
+    const hashedOTP = await bcrypt.hash(otp.toString(), 10);
+
+    // Update session
+    req.session.registrationData = {
+      ...req.session.registrationData,
+      otpHash: hashedOTP,
+      otpExpiry: Date.now() + 10 * 60 * 1000
+    };
+
+    // Save session explicitly
+    await new Promise((resolve, reject) => {
+      req.session.save((err) => {
+        if (err) reject(err);
+        resolve(true);
+      });
+    });
+
+    // Send new OTP
+    await sendOTPEmail({
+      email,
+      otp,
+      template: 'resend'
+    });
+
+    res.status(200).json({
+      status: '00',
+      success: true,
+      message: 'OTP resent successfully'
+    });
+  } catch (error: any) {
+    logger.error('Resend OTP error:', error);
+    res.status(500).json({
+      status: 'E00',
+      success: false,
+      message: 'Internal Server Error'
+    });
+  }
+};
+
 
 export const Login = async (req: Request, res: Response): Promise<void> => {
   try {
