@@ -118,6 +118,9 @@ export const verifyOTP = async (req: Request, res: Response): Promise<void> => {
   const { otp } = verifyOTPSchema.parse(req.body);
   const email = req.session.email; // Retrieve email from session
 
+  console.log(otp);
+  console.log(email);
+
   if (!otp || !email) {
     res.status(400).json({
       otp: otp,
