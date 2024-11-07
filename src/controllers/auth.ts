@@ -90,8 +90,6 @@ export const SignUp = async (req: Request, res: Response): Promise<void> => {
         });
     });
 
-    console.log(req.session);
-
     // Send OTP via email
     const result = await sendOTPEmail({ email, otp });
 
@@ -120,7 +118,6 @@ export const verifyOTP = async (req: Request, res: Response): Promise<void> => {
   const { otp } = verifyOTPSchema.parse(req.body);
   const email = req.session.email; // Retrieve email from session
 
-  console.log(req.session);
   console.log(otp);
   console.log(email);
 

@@ -83,7 +83,6 @@ const SignUp = (req, res) => __awaiter(void 0, void 0, void 0, function* () {
                     timestamp: new Date().toISOString()
                 });
         });
-        console.log(req.session);
         // Send OTP via email
         const result = yield (0, emailService_1.sendOTPEmail)({ email, otp });
         logger_1.default.info(`${result.message} - ${email}`, {
@@ -110,7 +109,6 @@ const verifyOTP = (req, res) => __awaiter(void 0, void 0, void 0, function* () {
     // Validate the request body using Zod
     const { otp } = otp_schema_1.verifyOTPSchema.parse(req.body);
     const email = req.session.email; // Retrieve email from session
-    console.log(req.session);
     console.log(otp);
     console.log(email);
     if (!otp || !email) {
