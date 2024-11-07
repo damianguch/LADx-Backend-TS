@@ -22,7 +22,13 @@ import logger from '../logger/logger';
 import { verifyOTPSchema } from '../schema/otp.schema';
 import generateOTP from '../utils/randomNumbers';
 
-// Custom error response interface
+// Define user roles
+enum UserRole {
+  SENDER = 'sender',
+  TRAVELER = 'traveler',
+  ADMIN = 'admin'
+}
+
 interface ErrorResponse {
   status: string;
   success: boolean;
@@ -30,11 +36,20 @@ interface ErrorResponse {
   errors?: z.ZodError['errors'];
 }
 
-// @POST: SignUp Route
 export const SignUp = async (req: Request, res: Response): Promise<void> => {
   try {
     const sanitizedData = sanitizeSignUpInput(req.body);
-    let { fullname, email, country, state, phone, password } = sanitizedData;
+    let { fullname, email, country, state, phone, password, role } = sanitizedData;
+
+    // Validate role
+    if (!Object.values(UserRole).includes(role)) {
+      res.status(400).json({
+        status: 'E00',
+        success: false,
+        message: 'Invalid user role'
+      });
+      return;
+    }
 
     // Check if email is already registered
     const existingUser = await User.findOne({ email });
@@ -47,230 +62,277 @@ export const SignUp = async (req: Request, res: Response): Promise<void> => {
       return;
     }
 
-    // Hash password for later use (only after OTP verification)
-    const encryptedPassword = await encryptPasswordWithBcrypt(password);
+    // Generate and hash OTP
+    const otp = await generateOTP(6);
+    const otpExpiry = Date.now() + 10 * 60 * 1000; // 10 minutes expiry
+    const hashedOTP = await bcrypt.hash(otp.toString(), 10);
 
-    // Generate OTP and hash it
-    const otp: string = await generateOTP(6);
-    const salt = await bcrypt.genSalt(10);
-    const hashedOTP = await bcrypt.hash(otp, salt);
-
-    // Store OTP and email in the session with expiration
-    req.session.otpData = { hashedOTP, expiresAt: Date.now() + 60 * 60 * 1000 };
-    req.session.email = email; // Store email in session
-    req.session.tempUser = { fullname, email, phone, country, state, password: encryptedPassword };
-
-    req.session.save((err) => {
-      if (err) {
-        logger.error('Session save error', { timestamp: new Date().toISOString() });
-      }
-    });
+    // Store registration data and OTP in session
+    req.session.registrationData = {
+      fullname,
+      email,
+      country,
+      state,
+      phone,
+      role,
+      password: await encryptPasswordWithBcrypt(password),
+      otp: hashedOTP,
+      otpExpiry
+    };
 
     // Send OTP via email
-    const result = await sendOTPEmail({ email, otp });
+    await sendOTPEmail({
+      email,
+      otp,
+      template: 'registration', // You'll need to create this template
+      role
+    });
 
-    logger.info(`${result.message} - ${email}`, { timestamp: new Date().toISOString() });
+    logger.info(`OTP sent to ${email} for ${role} registration`);
 
     res.status(200).json({
       status: '00',
       success: true,
-      message: result.message
+      message: 'OTP sent successfully'
     });
-  } catch (err: any) {
-    createAppLog(JSON.stringify({ Error: err.message }));
+  } catch (error: any) {
+    logger.error('SignUp error:', error);
     res.status(500).json({
       status: 'E00',
       success: false,
-      message: 'Internal Server Error: ' + err.message
+      message: 'Internal Server Error'
     });
   }
 };
 
-// @POST: OTP Verification Route
 export const verifyOTP = async (req: Request, res: Response): Promise<void> => {
   try {
     const { otp } = verifyOTPSchema.parse(req.body);
-    const email = req.session.email;
+    const registrationData = req.session.registrationData;
 
-    if (!otp || !email) {
-      logger.warn('No email or OTP found in session', { timestamp: new Date().toISOString() });
+    if (!registrationData) {
       res.status(400).json({
-        status: 'E01',
+        status: 'E00',
         success: false,
-        message: 'OTP or email not found in session'
+        message: 'Registration session expired'
       });
       return;
     }
 
-    const storedOTPData = req.session.otpData;
-
-    if (!storedOTPData || Date.now() > storedOTPData.expiresAt) {
-      req.session.destroy((err: any) => {
-        if (err) createAppLog(JSON.stringify({ Error: err.message }));
+    // Check OTP expiry
+    if (Date.now() > registrationData.otpExpiry) {
+      res.status(400).json({
+        status: 'E00',
+        success: false,
+        message: 'OTP expired'
       });
-      res.status(400).json({ message: 'OTP expired' });
       return;
     }
 
-    const isMatch = await bcrypt.compare(otp, storedOTPData.hashedOTP);
-    if (!isMatch) {
-      res.status(400).json({ status: 'E03', success: false, message: 'Invalid OTP' });
+    // Verify OTP
+    const isValidOTP = await bcrypt.compare(otp.toString(), registrationData.otp);
+    if (!isValidOTP) {
+      res.status(400).json({
+        status: 'E00',
+        success: false,
+        message: 'Invalid OTP'
+      });
       return;
     }
 
-    // Create the user in the database
-    const tempUser = req.session.tempUser;
-    if (!tempUser) {
-      res.status(400).json({ message: 'Temporary user data not found' });
-      return;
-    }
-
-    const newUser = new User(tempUser);
-    await User.init();
-    const user: IUser = await newUser.save();
-
-    const token = generateToken({ email: user.email, id: user.id });
-
-    // Clear session and log activity
-    req.session.destroy((err: any) => {
-      if (err) createAppLog(JSON.stringify({ Error: err.message }));
+    // Create user
+    const newUser = new User({
+      fullname: registrationData.fullname,
+      email: registrationData.email,
+      password: registrationData.password,
+      country: registrationData.country,
+      state: registrationData.state,
+      phone: registrationData.phone,
+      role: registrationData.role,
+      isVerified: true
     });
 
+    await newUser.save();
+
+    // Generate JWT token
+    const token = generateToken({
+      email: newUser.email,
+      id: newUser._id,
+      role: newUser.role
+    });
+
+    // Clear session
+    req.session.destroy((err) => {
+      if (err) logger.error('Session destruction error:', err);
+    });
+
+    // Set cookie and send response
     res.cookie('token', token, {
       httpOnly: true,
       secure: process.env.NODE_ENV === 'production',
-      sameSite: 'Strict',
-      maxAge: 60 * 60 * 1000
+      sameSite: 'strict',
+      maxAge: 24 * 60 * 60 * 1000 // 24 hours
     }).json({
       status: '00',
       success: true,
-      message: 'OTP verified successfully. User account created.'
+      message: 'Registration successful',
+      role: newUser.role
     });
-  } catch (err: any) {
-    createAppLog(JSON.stringify({ Error: err.message }));
-    res.status(500).json({ status: 'E00', success: false, message: 'Internal Server Error: ' + err.message });
+  } catch (error: any) {
+    logger.error('OTP verification error:', error);
+    res.status(500).json({
+      status: 'E00',
+      success: false,
+      message: 'Internal Server Error'
+    });
   }
 };
 
-// @POST: User Login
 export const Login = async (req: Request, res: Response): Promise<void> => {
   try {
     const validationResult = loginSchema.safeParse(req.body);
-
     if (!validationResult.success) {
-      const errorResponse: ErrorResponse = {
+      res.status(400).json({
         status: 'E00',
         success: false,
-        message: 'Validation failed',
+        message: 'Invalid input',
         errors: validationResult.error.errors
-      };
-      res.status(400).json(errorResponse);
+      });
       return;
     }
 
     const { email, password } = validationResult.data;
-    const user: IUser = await User.findOne({ email }).select('+password');
+    const user = await User.findOne({ email }).select('+password');
 
     if (!user || !(await bcrypt.compare(password, user.password))) {
-      res.status(401).json({ status: 'E00', success: false, message: 'Invalid credentials' });
+      res.status(401).json({
+        status: 'E00',
+        success: false,
+        message: 'Invalid credentials'
+      });
       return;
     }
 
-    const token = generateToken({ email: user.email, id: user.id });
+    if (!user.isVerified) {
+      res.status(401).json({
+        status: 'E00',
+        success: false,
+        message: 'Email not verified'
+      });
+      return;
+    }
+
+    const token = generateToken({
+      email: user.email,
+      id: user._id,
+      role: user.role
+    });
+
+    // Log login activity
+    await new LogFile({
+      email: user.email,
+      ActivityName: `${user.role.toUpperCase()} logged in`,
+      AddedOn: currentDate
+    }).save();
 
     res.cookie('token', token, {
       httpOnly: true,
       secure: process.env.NODE_ENV === 'production',
-      sameSite: 'Strict',
-      maxAge: 60 * 60 * 1000
+      sameSite: 'strict',
+      maxAge: 24 * 60 * 60 * 1000
     }).json({
-      status: '200',
+      status: '00',
       success: true,
-      message: 'Login successful!',
-      email: user.email,
+      message: 'Login successful',
       role: user.role
     });
-  } catch (err: any) {
+  } catch (error: any) {
+    logger.error('Login error:', error);
     res.status(500).json({
       status: 'E00',
       success: false,
-      message: `Internal Server error: ${err.message}`
+      message: 'Internal Server Error'
     });
   }
 };
 
-// @POST Resend OTP
 export const resendOTP = async (req: Request, res: Response): Promise<void> => {
   try {
-    // Retrieve the email from the session
-    const email = req.session.email;
-
-    if (!email) {
-      logger.warn('No email found in session', {
-        timestamp: new Date().toISOString()
-      });
+    const registrationData = req.session.registrationData;
+    if (!registrationData) {
       res.status(400).json({
-        status: 'EOO',
+        status: 'E00',
         success: false,
-        error: 'Email is required for resending OTP.'
+        message: 'Registration session expired'
       });
-
       return;
     }
 
-    // Generate a new OTP(previous one expired or was not received)
-    const otp: string = await generateOTP(6);
-    logger.info(`Generated new OTP for ${email}`);
+    const otp = await generateOTP(6);
+    const hashedOTP = await bcrypt.hash(otp.toString(), 10);
+    const otpExpiry = Date.now() + 10 * 60 * 1000;
 
-    console.log(otp);
+    // Update session with new OTP data
+    req.session.registrationData = {
+      ...registrationData,
+      otp: hashedOTP,
+      otpExpiry
+    };
 
-    // Send OTP to user's email
-    await sendOTPEmail({ email, otp });
-    logger.info(`OTP resent successfully to email: ${email}`);
+    await sendOTPEmail({
+      email: registrationData.email,
+      otp,
+      template: 'resend',
+      role: registrationData.role
+    });
 
-    // Respond to the client
     res.status(200).json({
       status: '00',
       success: true,
-      message: 'OTP resent successfully.'
+      message: 'OTP resent successfully'
     });
-  } catch (err: any) {
-    // Log and respond to any errors
-    logger.error(`Error resending OTP: ${err.message}`);
+  } catch (error: any) {
+    logger.error('Resend OTP error:', error);
     res.status(500).json({
       status: 'E00',
-      succes: false,
-      message: `Failed to resend OTP. Please try again later: ${err.message}`
+      success: false,
+      message: 'Internal Server Error'
     });
   }
 };
 
-
-
-// User Logout
 export const Logout = async (req: Request, res: Response): Promise<void> => {
-  const token = req.cookies.token;
+  try {
+    const token = req.cookies.token;
+    if (!token) {
+      res.status(401).json({
+        status: 'E00',
+        success: false,
+        message: 'Not authenticated'
+      });
+      return;
+    }
 
-  if (!token) {
-    await createAppLog(`No token found!`);
-    res.status(401).json({ message: 'No token provided' });
-    return;
+    const decoded = jwt.verify(token, process.env.JWT_SECRET_KEY!) as JwtPayload;
+
+    // Log logout activity
+    await new LogFile({
+      email: decoded.email,
+      ActivityName: `${decoded.role?.toUpperCase()} logged out`,
+      AddedOn: currentDate
+    }).save();
+
+    res.clearCookie('token').json({
+      status: '00',
+      success: true,
+      message: 'Logged out successfully'
+    });
+  } catch (error: any) {
+    logger.error('Logout error:', error);
+    res.status(500).json({
+      status: 'E00',
+      success: false,
+      message: 'Internal Server Error'
+    });
   }
-
-  const decoded = jwt.verify(token, process.env.JWT_SECRET_KEY!) as JwtPayload;
-
-  // Log the logout activity
-  const logExit = new LogFile({
-    email: decoded.email,
-    ActivityName: `User ${decoded.email} Logged out of the system`,
-    AddedOn: currentDate
-  });
-
-  await logExit.save();
-
-  await createAppLog(`User ${decoded.email} logged out!`);
-  res
-    .clearCookie('token')
-    .clearCookie('csrfToken')
-    .json({ message: 'User Logged out' });
 };
