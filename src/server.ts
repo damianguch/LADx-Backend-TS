@@ -74,23 +74,33 @@ app.use(morgan('common'));
 // Session Configuration
 app.use(
   session({
-    store: RedisSessionStore,
+    store: new RedisStore({ 
+      client: redisClient,
+      prefix: "ladx:",
+      ttl: 60 * 10 // 10 minutes
+    }),
     secret: process.env.SECRET_KEY!,
     name: 'ladx.sid',
-    resave: false,
+    resave: true, // Changed to true
     saveUninitialized: false,
     rolling: true,
-    proxy: true,
     cookie: {
       secure: process.env.NODE_ENV === 'production',
       httpOnly: true,
       sameSite: process.env.NODE_ENV === 'production' ? 'none' : 'lax',
-      maxAge: 60 * 60 * 1000, // 1 hour
-      domain: process.env.NODE_ENV === 'production' ? '.ladx.africa' : undefined,
-      path: '/'
+      maxAge: 10 * 60 * 1000, // 10 minutes
     }
   })
 );
+
+// Add session debugging in development
+if (process.env.NODE_ENV !== 'production') {
+  app.use((req: Request, _res: Response, next: NextFunction) => {
+    console.log('Session ID:', req.sessionID);
+    console.log('Session Data:', req.session);
+    next();
+  });
+}
 
 // Security headers
 app.use(
