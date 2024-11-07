@@ -10,7 +10,6 @@ import bcrypt from 'bcrypt';
 import jwt, { JwtPayload } from 'jsonwebtoken';
 import { generateToken } from '../utils/jwt';
 import LogFile from '../models/LogFile';
-import EmailCode from '../utils/randomNumbers';
 import createAppLog from '../utils/createLog';
 import encryptPasswordWithBcrypt from '../utils/passwordEncrypt';
 import currentDate from '../utils/date';
@@ -21,6 +20,7 @@ import { loginSchema } from '../schema/user.schema';
 import { z } from 'zod';
 import logger from '../logger/logger';
 import { verifyOTPSchema } from '../schema/otp.schema';
+import generateOTP from '../utils/randomNumbers';
 
 // Custom error response interface
 interface ErrorResponse {
@@ -62,7 +62,7 @@ export const SignUp = async (req: Request, res: Response): Promise<void> => {
     };
 
     // Generate OTP and hash it
-    const otp: string = await EmailCode(6);
+    const otp: string = await generateOTP(6);
     const salt = await bcrypt.genSalt(10);
     const hashedOTP = await bcrypt.hash(otp, salt);
 
@@ -208,12 +208,59 @@ export const verifyOTP = async (req: Request, res: Response): Promise<void> => {
         maxAge: 60 * 60 * 1000 // Cookie expiration time (1 hour)
       })
       .json({
-        message: 'OTP verified successfully. User account created.',
-        status: 200
+        status: '00',
+        success: true,
+        message: 'OTP verified successfully. User account created.'
       });
   } catch (err: any) {
     createAppLog(JSON.stringify({ Error: err.message }));
     res.status(500).json({ message: 'Internal Server Error: ' + err.message });
+  }
+};
+
+// @POST Resend OTP
+export const resendOTP = async (req: Request, res: Response): Promise<void> => {
+  try {
+    // Retrieve the email from the session
+    const email = req.session.email;
+
+    if (!email) {
+      logger.warn('No email found in session', {
+        timestamp: new Date().toISOString()
+      });
+      res.status(400).json({
+        status: 'EOO',
+        success: false,
+        error: 'Email is required for resending OTP.'
+      });
+
+      return;
+    }
+
+    // Generate a new OTP(previous one expired or was not received)
+    const otp: string = await generateOTP(6);
+    logger.info(`Generated new OTP for ${email}`);
+
+    console.log(otp);
+
+    // Send OTP to user's email
+    await sendOTPEmail({ email, otp });
+    logger.info(`OTP resent successfully to email: ${email}`);
+
+    // Respond to the client
+    res.status(200).json({
+      status: '00',
+      success: true,
+      message: 'OTP resent successfully.'
+    });
+  } catch (err: any) {
+    // Log and respond to any errors
+    logger.error(`Error resending OTP: ${err.message}`);
+    res.status(500).json({
+      status: 'E00',
+      succes: false,
+      message: `Failed to resend OTP. Please try again later: ${err.message}`
+    });
   }
 };
 
@@ -352,52 +399,4 @@ export const Logout = async (req: Request, res: Response): Promise<void> => {
     .clearCookie('token')
     .clearCookie('csrfToken')
     .json({ message: 'User Logged out' });
-};
-
-// @GET: Get User Details
-export const getUserDetails = async (
-  req: Request,
-  res: Response
-): Promise<void> => {
-  try {
-    const token = req.cookies.token;
-
-    // Verify the token
-    if (!token) {
-      res.status(401).json({ message: 'No token provided' });
-      return;
-    }
-
-    const decoded = jwt.verify(
-      token,
-      process.env.JWT_SECRET_KEY!
-    ) as JwtPayload;
-
-    // Find user by ID and select only necessary fields
-    const user = await User.findById(decoded.id).select(
-      'fullname email country state phone role'
-    );
-
-    if (!user) {
-      res.status(404).json({ message: 'User not found' });
-      return;
-    }
-
-    res.status(200).json({
-      status: '200',
-      success: true,
-      user: {
-        id: user._id,
-        fullname: user.fullname,
-        email: user.email,
-        country: user.country,
-        state: user.state,
-        phone: user.phone,
-        role: user.role // Include the role here
-      }
-    });
-  } catch (err: any) {
-    await createAppLog(`Get User Details Error: ${err.message}`);
-    res.status(500).json({ message: 'Internal Server Error: ' + err.message });
-  }
 };

@@ -18,13 +18,12 @@ var __importDefault = (this && this.__importDefault) || function (mod) {
     return (mod && mod.__esModule) ? mod : { "default": mod };
 };
 Object.defineProperty(exports, "__esModule", { value: true });
-exports.getUserDetails = exports.Logout = exports.Login = exports.verifyOTP = exports.SignUp = void 0;
+exports.Logout = exports.Login = exports.resendOTP = exports.verifyOTP = exports.SignUp = void 0;
 const user_1 = __importDefault(require("../models/user"));
 const bcrypt_1 = __importDefault(require("bcrypt"));
 const jsonwebtoken_1 = __importDefault(require("jsonwebtoken"));
 const jwt_1 = require("../utils/jwt");
 const LogFile_1 = __importDefault(require("../models/LogFile"));
-const randomNumbers_1 = __importDefault(require("../utils/randomNumbers"));
 const createLog_1 = __importDefault(require("../utils/createLog"));
 const passwordEncrypt_1 = __importDefault(require("../utils/passwordEncrypt"));
 const date_1 = __importDefault(require("../utils/date"));
@@ -33,6 +32,7 @@ const emailService_1 = require("../utils/emailService");
 const user_schema_1 = require("../schema/user.schema");
 const logger_1 = __importDefault(require("../logger/logger"));
 const otp_schema_1 = require("../schema/otp.schema");
+const randomNumbers_1 = __importDefault(require("../utils/randomNumbers"));
 // @POST: SignUp Route
 const SignUp = (req, res) => __awaiter(void 0, void 0, void 0, function* () {
     try {
@@ -193,6 +193,47 @@ const verifyOTP = (req, res) => __awaiter(void 0, void 0, void 0, function* () {
     }
 });
 exports.verifyOTP = verifyOTP;
+// @POST Resend OTP
+const resendOTP = (req, res) => __awaiter(void 0, void 0, void 0, function* () {
+    try {
+        // Retrieve the email from the session
+        const email = req.session.email;
+        if (!email) {
+            logger_1.default.warn('No email found in session', {
+                timestamp: new Date().toISOString()
+            });
+            res.status(400).json({
+                status: 'EOO',
+                success: false,
+                error: 'Email is required for resending OTP.'
+            });
+            return;
+        }
+        // Generate a new OTP(previous one expired or was not received)
+        const otp = yield (0, randomNumbers_1.default)(6);
+        logger_1.default.info(`Generated new OTP for ${email}`);
+        console.log(otp);
+        // Send OTP to user's email
+        yield (0, emailService_1.sendOTPEmail)({ email, otp });
+        logger_1.default.info(`OTP resent successfully to email: ${email}`);
+        // Respond to the client
+        res.status(200).json({
+            status: '00',
+            success: true,
+            message: 'OTP resent successfully.'
+        });
+    }
+    catch (err) {
+        // Log and respond to any errors
+        logger_1.default.error(`Error resending OTP: ${err.message}`);
+        res.status(500).json({
+            status: 'E00',
+            succes: false,
+            message: `Failed to resend OTP. Please try again later: ${err.message}`
+        });
+    }
+});
+exports.resendOTP = resendOTP;
 // @POST: User Login
 const Login = (req, res) => __awaiter(void 0, void 0, void 0, function* () {
     try {
@@ -310,39 +351,3 @@ const Logout = (req, res) => __awaiter(void 0, void 0, void 0, function* () {
         .json({ message: 'User Logged out' });
 });
 exports.Logout = Logout;
-// @GET: Get User Details
-const getUserDetails = (req, res) => __awaiter(void 0, void 0, void 0, function* () {
-    try {
-        const token = req.cookies.token;
-        // Verify the token
-        if (!token) {
-            res.status(401).json({ message: 'No token provided' });
-            return;
-        }
-        const decoded = jsonwebtoken_1.default.verify(token, process.env.JWT_SECRET_KEY);
-        // Find user by ID and select only necessary fields
-        const user = yield user_1.default.findById(decoded.id).select('fullname email country state phone role');
-        if (!user) {
-            res.status(404).json({ message: 'User not found' });
-            return;
-        }
-        res.status(200).json({
-            status: '200',
-            success: true,
-            user: {
-                id: user._id,
-                fullname: user.fullname,
-                email: user.email,
-                country: user.country,
-                state: user.state,
-                phone: user.phone,
-                role: user.role // Include the role here
-            }
-        });
-    }
-    catch (err) {
-        yield (0, createLog_1.default)(`Get User Details Error: ${err.message}`);
-        res.status(500).json({ message: 'Internal Server Error: ' + err.message });
-    }
-});
-exports.getUserDetails = getUserDetails;

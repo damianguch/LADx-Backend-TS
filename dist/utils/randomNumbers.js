@@ -9,7 +9,7 @@ var __awaiter = (this && this.__awaiter) || function (thisArg, _arguments, P, ge
     });
 };
 Object.defineProperty(exports, "__esModule", { value: true });
-const EmailCode = (length) => __awaiter(void 0, void 0, void 0, function* () {
+const generateOTP = (length) => __awaiter(void 0, void 0, void 0, function* () {
     const alphanumeric = '123456789';
     let result = '';
     for (let i = 0; i < length; i++) {
@@ -18,4 +18,4 @@ const EmailCode = (length) => __awaiter(void 0, void 0, void 0, function* () {
     }
     return result;
 });
-exports.default = EmailCode;
+exports.default = generateOTP;

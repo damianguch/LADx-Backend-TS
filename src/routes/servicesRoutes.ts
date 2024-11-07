@@ -1,7 +1,6 @@
 import csrf from 'csurf';
 import { Router } from 'express';
 import { validateKYC } from '../controllers/kyc';
-import { getUserDetails } from '../controllers/auth';
 import { UpdateProfilePhoto, upload } from '../controllers/profilePhoto';
 import { UpdateProfile, GetUserProfile } from '../controllers/profile';
 import { verifyTokenFromCookie } from '../utils/jwt';
@@ -89,7 +88,5 @@ router.put(
 
 // Update User role
 router.patch('/user/role', verifyTokenFromCookie, UpdateRole);
-
-router.get('/user', getUserDetails);
 
 export default router;

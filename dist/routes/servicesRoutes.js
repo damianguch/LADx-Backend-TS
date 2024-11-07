@@ -6,7 +6,6 @@ Object.defineProperty(exports, "__esModule", { value: true });
 const csurf_1 = __importDefault(require("csurf"));
 const express_1 = require("express");
 const kyc_1 = require("../controllers/kyc");
-const auth_1 = require("../controllers/auth");
 const profilePhoto_1 = require("../controllers/profilePhoto");
 const profile_1 = require("../controllers/profile");
 const jwt_1 = require("../utils/jwt");
@@ -49,5 +48,4 @@ multerError_1.uploadErrorHandler, sender_1.RequestDetails);
 router.put('/users/request-details', jwt_1.verifyTokenFromCookie, sender_1.requestItemsImageUpload, sender_1.UpdateRequestDetails);
 // Update User role
 router.patch('/user/role', jwt_1.verifyTokenFromCookie, role_1.UpdateRole);
-router.get('/user', auth_1.getUserDetails);
 exports.default = router;

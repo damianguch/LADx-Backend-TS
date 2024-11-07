@@ -1,0 +1,8 @@
+Time logged: (11:50:06 AM):-  Message: Login attempt for email: eguche@yahoo.com
+Time logged: (11:50:08 AM):-  Message: Login failed: Email not registered - eguche@yahoo.com
+Time logged: (11:53:07 AM):-  Message: Login attempt for email: eguche@yahoo.com
+Time logged: (11:53:08 AM):-  Message: User logged in successfully: eguche@yahoo.com
+Time logged: (11:54:44 AM):-  Message: "OTP sent to your email"
+Time logged: (11:55:22 AM):-  Message: "OTP sent to your email"
+Time logged: (11:57:05 AM):-  Message: "OTP sent to your email"
+Time logged: (11:57:36 AM):-  Message: "OTP verified successfully. User account created."

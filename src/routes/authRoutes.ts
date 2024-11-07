@@ -1,4 +1,10 @@
-import { Login, SignUp, verifyOTP, Logout } from '../controllers/auth';
+import {
+  Login,
+  SignUp,
+  verifyOTP,
+  Logout,
+  resendOTP
+} from '../controllers/auth';
 import { ForgotPassword, ResetPassword } from '../controllers/forgotPassword';
 import { validateUserSignup } from '../schema/user.schema';
 import { Router } from 'express';
@@ -7,6 +13,7 @@ const authRouter = Router();
 
 authRouter.post('/signup', validateUserSignup, SignUp);
 authRouter.post('/verify-otp', verifyOTP);
+authRouter.post('/resend-otp', resendOTP);
 
 //Use multer to handle multipart/form-data requests.
 authRouter.post('/login', Login);

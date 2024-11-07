@@ -9,6 +9,7 @@ const authRouter = (0, express_1.Router)();
 exports.authRouter = authRouter;
 authRouter.post('/signup', user_schema_1.validateUserSignup, auth_1.SignUp);
 authRouter.post('/verify-otp', auth_1.verifyOTP);
+authRouter.post('/resend-otp', auth_1.resendOTP);
 //Use multer to handle multipart/form-data requests.
 authRouter.post('/login', auth_1.Login);
 authRouter.post('/logout', auth_1.Logout);
