@@ -109,8 +109,18 @@ const verifyOTP = (req, res) => __awaiter(void 0, void 0, void 0, function* () {
     // Validate the request body using Zod
     const { otp } = otp_schema_1.verifyOTPSchema.parse(req.body);
     const email = req.session.email; // Retrieve email from session
+    console.log(otp);
+    console.log(email);
+    // Info level logging
+    logger_1.default.info(`OTP verified ${otp} - ${email}`, {
+        timestamp: new Date().toISOString()
+    });
     if (!otp || !email) {
-        res.status(400).json({ message: 'OTP or email not found' });
+        res.status(400).json({
+            otp,
+            email,
+            message: 'OTP or email not found'
+        });
         return;
     }
     try {
@@ -134,7 +144,11 @@ const verifyOTP = (req, res) => __awaiter(void 0, void 0, void 0, function* () {
         // Verify OTP (Compare otp from req.body and session)
         const isMatch = yield bcrypt_1.default.compare(otp, hashedOTP);
         if (!isMatch) {
-            res.status(400).json({ message: 'Invalid OTP' });
+            res.status(400).json({
+                status: 'E00',
+                success: false,
+                message: 'Invalid OTP'
+            });
             return;
         }
         // Fetch tempUser data from session storage(Redis)
@@ -183,13 +197,18 @@ const verifyOTP = (req, res) => __awaiter(void 0, void 0, void 0, function* () {
             maxAge: 60 * 60 * 1000 // Cookie expiration time (1 hour)
         })
             .json({
-            message: 'OTP verified successfully. User account created.',
-            status: 200
+            status: '00',
+            success: true,
+            message: 'OTP verified successfully. User account created.'
         });
     }
     catch (err) {
         (0, createLog_1.default)(JSON.stringify({ Error: err.message }));
-        res.status(500).json({ message: 'Internal Server Error: ' + err.message });
+        res.status(500).json({
+            status: 'E00',
+            success: false,
+            message: 'Internal Server Error: ' + err.message
+        });
     }
 });
 exports.verifyOTP = verifyOTP;

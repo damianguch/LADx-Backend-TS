@@ -121,6 +121,11 @@ export const verifyOTP = async (req: Request, res: Response): Promise<void> => {
   console.log(otp);
   console.log(email);
 
+  // Info level logging
+  logger.info(`OTP verified ${otp} - ${email}`, {
+    timestamp: new Date().toISOString()
+  });
+
   if (!otp || !email) {
     res.status(400).json({
       otp,

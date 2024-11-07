@@ -22,15 +22,16 @@ const app: Application = express();
 const corsOptions = {
   origin: [
     'https://ladx.africa',
+    'https://ladx-frontend.netlify.app',
     'https://www.ladx.africa',
     'https://dashboard-lyart-nine-87.vercel.app',
-    'http://localhost:3000',  // Frontend local development
-    'http://localhost:3001'   // Dashboard local development
+    'http://localhost:3000', // Frontend local development
+    'http://localhost:3001' // Dashboard local development
   ],
   methods: ['GET', 'POST', 'PUT', 'PATCH', 'DELETE', 'OPTIONS'],
   allowedHeaders: [
-    'Authorization', 
-    'Content-Type', 
+    'Authorization',
+    'Content-Type',
     'X-Requested-With',
     'Accept',
     'Origin',
@@ -70,7 +71,10 @@ app.use((req: Request, res: Response, next: NextFunction) => {
     res.setHeader('Access-Control-Allow-Origin', origin);
   }
   res.setHeader('Access-Control-Allow-Credentials', 'true');
-  res.setHeader('Access-Control-Allow-Methods', 'GET, POST, PUT, PATCH, DELETE, OPTIONS');
+  res.setHeader(
+    'Access-Control-Allow-Methods',
+    'GET, POST, PUT, PATCH, DELETE, OPTIONS'
+  );
   res.setHeader(
     'Access-Control-Allow-Headers',
     'Origin, X-Requested-With, Content-Type, Accept, Authorization'
@@ -81,8 +85,8 @@ app.use((req: Request, res: Response, next: NextFunction) => {
 // Combined Helmet Configuration
 app.use(
   helmet({
-    crossOriginResourcePolicy: { policy: "cross-origin" },
-    crossOriginOpenerPolicy: { policy: "same-origin-allow-popups" },
+    crossOriginResourcePolicy: { policy: 'cross-origin' },
+    crossOriginOpenerPolicy: { policy: 'same-origin-allow-popups' },
     xContentTypeOptions: false,
     hsts: {
       maxAge: 31536000,
@@ -95,9 +99,22 @@ app.use(
         'img-src': ["'self'", 'https: data: blob:'],
         'script-src': ["'self'", "'unsafe-inline'", 'https:'],
         'style-src': ["'self'", "'unsafe-inline'", 'https:'],
-        'connect-src': ["'self'", 'https://ladx-backend-ts.onrender.com', 'https://ladx.africa', 'https://dashboard-lyart-nine-87.vercel.app'],
-        'frame-ancestors': ["'self'", 'https://ladx.africa', 'https://dashboard-lyart-nine-87.vercel.app'],
-        'form-action': ["'self'", 'https://ladx.africa', 'https://dashboard-lyart-nine-87.vercel.app']
+        'connect-src': [
+          "'self'",
+          'https://ladx-backend-ts.onrender.com',
+          'https://ladx.africa',
+          'https://dashboard-lyart-nine-87.vercel.app'
+        ],
+        'frame-ancestors': [
+          "'self'",
+          'https://ladx.africa',
+          'https://dashboard-lyart-nine-87.vercel.app'
+        ],
+        'form-action': [
+          "'self'",
+          'https://ladx.africa',
+          'https://dashboard-lyart-nine-87.vercel.app'
+        ]
       }
     }
   })
@@ -139,7 +156,8 @@ const limiter = rateLimit({
 const resetLimiter = rateLimit({
   windowMs: 15 * 60 * 1000,
   max: 5,
-  message: 'Too many password reset attempts, please try again after 15 minutes.'
+  message:
+    'Too many password reset attempts, please try again after 15 minutes.'
 });
 
 app.use('/api/v1/forgot-password', resetLimiter);
