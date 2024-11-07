@@ -25,8 +25,8 @@ const corsOptions = {
     'https://ladx.africa',
     'https://www.ladx.africa',
     'https://dashboard-lyart-nine-87.vercel.app',
-    'http://localhost:3000', // Frontend local development
-    'http://localhost:3001' // Dashboard local development
+    'http://localhost:3000',
+    'http://localhost:3001'
   ],
   methods: ['GET', 'POST', 'PUT', 'PATCH', 'DELETE', 'OPTIONS'],
   allowedHeaders: [
@@ -41,9 +41,13 @@ const corsOptions = {
     'Access-Control-Allow-Credentials'
   ],
   credentials: true,
-  maxAge: 86400, // 24 hours
+  maxAge: 86400,
   exposedHeaders: ['set-cookie']
 };
+
+// Apply CORS
+app.use(cors(corsOptions));
+app.options('*', cors(corsOptions));
 
 // Initialize Redis client on server startup
 (async () => {
@@ -60,25 +64,23 @@ const corsOptions = {
 // Trust the first proxy
 app.set('trust proxy', true);
 
-// Apply CORS
-app.use(cors(corsOptions));
-app.options('*', cors(corsOptions));
+
 
 // Add specific headers for authentication and cookies
 app.use((req: Request, res: Response, next: NextFunction) => {
   const origin = req.headers.origin;
   if (origin && corsOptions.origin.includes(origin)) {
     res.setHeader('Access-Control-Allow-Origin', origin);
+    res.setHeader('Access-Control-Allow-Credentials', 'true');
+    res.setHeader(
+      'Access-Control-Allow-Methods',
+      'GET, POST, PUT, PATCH, DELETE, OPTIONS'
+    );
+    res.setHeader(
+      'Access-Control-Allow-Headers',
+      'Origin, X-Requested-With, Content-Type, Accept, Authorization'
+    );
   }
-  res.setHeader('Access-Control-Allow-Credentials', 'true');
-  res.setHeader(
-    'Access-Control-Allow-Methods',
-    'GET, POST, PUT, PATCH, DELETE, OPTIONS'
-  );
-  res.setHeader(
-    'Access-Control-Allow-Headers',
-    'Origin, X-Requested-With, Content-Type, Accept, Authorization'
-  );
   next();
 });
 
@@ -129,21 +131,48 @@ app.use(express.json());
 // Session Configuration
 app.use(
   session({
-    store: new RedisStore({ client: redisClient }),
+    store: new RedisStore({ 
+      client: redisClient,
+      prefix: "ladx_session:",
+      ttl: 60 * 60, // 1 hour
+      disableTouch: false
+    }),
     secret: process.env.SECRET_KEY!,
+    name: 'ladx.sid', // Custom session name
     resave: false,
     saveUninitialized: false,
     rolling: true,
+    proxy: true,
     cookie: {
       secure: process.env.NODE_ENV === 'production',
       httpOnly: true,
       sameSite: process.env.NODE_ENV === 'production' ? 'none' : 'lax',
       maxAge: 60 * 60 * 1000, // 1 hour
+      path: '/',
       domain: process.env.NODE_ENV === 'production' ? '.ladx.africa' : undefined
     }
   })
 );
 
+if (process.env.NODE_ENV !== 'production') {
+  app.use((req: Request, res: Response, next: NextFunction) => {
+    logger.debug('Session ID:', req.sessionID);
+    logger.debug('Session Data:', req.session);
+    next();
+  });
+}
+
+app.use('/api/v1', (req: Request, res: Response, next: NextFunction) => {
+  if (!req.session) {
+    logger.error('No session found');
+    return res.status(500).json({
+      status: 'E00',
+      success: false,
+      message: 'Session error'
+    });
+  }
+  next();
+});
 // Rate Limiters
 const limiter = rateLimit({
   windowMs: 15 * 60 * 1000,
