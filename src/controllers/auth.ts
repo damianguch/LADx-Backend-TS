@@ -23,11 +23,7 @@ import { verifyOTPSchema } from '../schema/otp.schema';
 import generateOTP from '../utils/randomNumbers';
 
 // Define user roles
-enum UserRole {
-  SENDER = 'sender',
-  TRAVELER = 'traveler',
-  ADMIN = 'admin'
-}
+type UserRole = 'sender' | 'traveler';
 
 interface ErrorResponse {
   status: string;
@@ -42,11 +38,11 @@ export const SignUp = async (req: Request, res: Response): Promise<void> => {
     let { fullname, email, country, state, phone, password, role } = sanitizedData;
 
     // Validate role
-    if (!Object.values(UserRole).includes(role)) {
+    if (!role || !['sender', 'traveler'].includes(role)) {
       res.status(400).json({
         status: 'E00',
         success: false,
-        message: 'Invalid user role'
+        message: 'Invalid user role. Must be either sender or traveler'
       });
       return;
     }
@@ -84,7 +80,7 @@ export const SignUp = async (req: Request, res: Response): Promise<void> => {
     await sendOTPEmail({
       email,
       otp,
-      template: 'registration', // You'll need to create this template
+      template: 'registration',
       role
     });
 
@@ -149,7 +145,8 @@ export const verifyOTP = async (req: Request, res: Response): Promise<void> => {
       state: registrationData.state,
       phone: registrationData.phone,
       role: registrationData.role,
-      isVerified: true
+      is_email_verified: 1, // Changed to match your model
+      email_verification_code: otp // Store the last used OTP
     });
 
     await newUser.save();
@@ -213,7 +210,7 @@ export const Login = async (req: Request, res: Response): Promise<void> => {
       return;
     }
 
-    if (!user.isVerified) {
+    if (user.is_email_verified !== 1) { // Changed to match your model
       res.status(401).json({
         status: 'E00',
         success: false,
@@ -322,7 +319,20 @@ export const Logout = async (req: Request, res: Response): Promise<void> => {
       AddedOn: currentDate
     }).save();
 
-    res.clearCookie('token').json({
+    // Clear cookies and session
+    res.clearCookie('token', {
+      httpOnly: true,
+      secure: process.env.NODE_ENV === 'production',
+      sameSite: 'strict'
+    });
+
+    if (req.session) {
+      req.session.destroy((err) => {
+        if (err) logger.error('Session destruction error:', err);
+      });
+    }
+
+    res.status(200).json({
       status: '00',
       success: true,
       message: 'Logged out successfully'
