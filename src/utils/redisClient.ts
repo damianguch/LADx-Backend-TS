@@ -2,23 +2,31 @@ import { createClient } from 'redis';
 import logger from '../logger/logger';
 
 const redisClient = createClient({
-  url: process.env.REDIS_URL
+  url: process.env.REDIS_URL,
+  socket: {
+    reconnectStrategy: (retries) => {
+      if (retries > 10) {
+        return new Error('Redis retry attempts exhausted');
+      }
+      return Math.min(retries * 100, 3000);
+    }
+  }
 });
 
-redisClient.on('connect', () =>
-  logger.info(`Connected to redis`, {
-    timestamp: new Date().toISOString()
-  })
-);
-redisClient.on('error', (error) =>
-  logger.error(`Redis connection error, ${error.message}`, {
-    timestamp: new Date().toISOString()
-  })
-);
+redisClient.on('error', (err) => {
+  logger.error('Redis Client Error:', err);
+});
+
+redisClient.on('connect', () => {
+  logger.info('Redis Client Connected');
+});
 
 export const connectRedis = async () => {
-  if (!redisClient.isOpen) {
+  try {
     await redisClient.connect();
+  } catch (error) {
+    logger.error('Redis Connection Error:', error);
+    process.exit(1);
   }
 };
 
