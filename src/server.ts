@@ -20,125 +20,63 @@ const app: Application = express();
 
 // CORS Options definition
 const corsOptions = {
-  origin: [
-    'https://ladx-frontend.netlify.app',
-    'https://ladx.africa',
-    'https://www.ladx.africa',
-    'https://dashboard-lyart-nine-87.vercel.app',
-    'http://localhost:3000',
-    'http://localhost:3001'
-  ],
+  origin: process.env.NODE_ENV === 'production' 
+    ? [
+        'https://ladx.africa',
+        'https://www.ladx.africa',
+      ]
+    : ['http://localhost:3000'],
+  credentials: true,
   methods: ['GET', 'POST', 'PUT', 'PATCH', 'DELETE', 'OPTIONS'],
   allowedHeaders: [
-    'Authorization',
     'Content-Type',
+    'Authorization',
     'X-Requested-With',
     'Accept',
-    'Origin',
-    'Access-Control-Allow-Origin',
-    'Access-Control-Allow-Headers',
-    'Access-Control-Allow-Methods',
-    'Access-Control-Allow-Credentials'
+    'Origin'
   ],
-  credentials: true,
-  maxAge: 86400,
   exposedHeaders: ['set-cookie']
 };
 
-// Apply CORS
-app.use(cors(corsOptions));
-app.options('*', cors(corsOptions));
-
-// Initialize Redis client on server startup
-(async () => {
-  await connectRedis();
-
-  // Keep Redis connection alive
-  setInterval(async () => {
-    if (redisClient.isOpen) {
-      await redisClient.ping();
-    }
-  }, 6000); // Ping every 60 seconds
-})();
-
-// Trust the first proxy
-app.set('trust proxy', true);
-
-
-
-// Add specific headers for authentication and cookies
-app.use((req: Request, res: Response, next: NextFunction) => {
-  const origin = req.headers.origin;
-  if (origin && corsOptions.origin.includes(origin)) {
-    res.setHeader('Access-Control-Allow-Origin', origin);
-    res.setHeader('Access-Control-Allow-Credentials', 'true');
-    res.setHeader(
-      'Access-Control-Allow-Methods',
-      'GET, POST, PUT, PATCH, DELETE, OPTIONS'
-    );
-    res.setHeader(
-      'Access-Control-Allow-Headers',
-      'Origin, X-Requested-With, Content-Type, Accept, Authorization'
-    );
-  }
-  next();
+// Initialize Redis and Session store
+const RedisSessionStore = new RedisStore({ 
+  client: redisClient,
+  prefix: "ladx_session:",
+  ttl: 60 * 60 // 1 hour
 });
 
-// Combined Helmet Configuration
-app.use(
-  helmet({
-    crossOriginResourcePolicy: { policy: 'cross-origin' },
-    crossOriginOpenerPolicy: { policy: 'same-origin-allow-popups' },
-    xContentTypeOptions: false,
-    hsts: {
-      maxAge: 31536000,
-      includeSubDomains: true,
-      preload: true
-    },
-    contentSecurityPolicy: {
-      useDefaults: true,
-      directives: {
-        'img-src': ["'self'", 'https: data: blob:'],
-        'script-src': ["'self'", "'unsafe-inline'", 'https:'],
-        'style-src': ["'self'", "'unsafe-inline'", 'https:'],
-        'connect-src': [
-          "'self'",
-          'https://ladx-backend-ts.onrender.com',
-          'https://ladx.africa',
-          'https://dashboard-lyart-nine-87.vercel.app'
-        ],
-        'frame-ancestors': [
-          "'self'",
-          'https://ladx.africa',
-          'https://dashboard-lyart-nine-87.vercel.app'
-        ],
-        'form-action': [
-          "'self'",
-          'https://ladx.africa',
-          'https://dashboard-lyart-nine-87.vercel.app'
-        ]
+// Initialize Redis client
+(async () => {
+  try {
+    await connectRedis();
+    logger.info('Redis client connected successfully');
+    
+    // Keep Redis connection alive
+    setInterval(async () => {
+      if (redisClient.isOpen) {
+        await redisClient.ping();
       }
-    }
-  })
-);
+    }, 30000);
+  } catch (error) {
+    logger.error('Redis connection error:', error);
+    process.exit(1);
+  }
+})();
 
-// Basic middleware
-app.use(cookieParser());
-app.use(morgan('common'));
-app.use(express.urlencoded({ extended: true }));
+// Apply initial middleware
+app.set('trust proxy', 1);
+app.use(cors(corsOptions));
 app.use(express.json());
+app.use(express.urlencoded({ extended: true }));
+app.use(cookieParser(process.env.SECRET_KEY));
+app.use(morgan('common'));
 
 // Session Configuration
 app.use(
   session({
-    store: new RedisStore({ 
-      client: redisClient,
-      prefix: "ladx_session:",
-      ttl: 60 * 60, // 1 hour
-      disableTouch: false
-    }),
+    store: RedisSessionStore,
     secret: process.env.SECRET_KEY!,
-    name: 'ladx.sid', // Custom session name
+    name: 'ladx.sid',
     resave: false,
     saveUninitialized: false,
     rolling: true,
@@ -148,101 +86,110 @@ app.use(
       httpOnly: true,
       sameSite: process.env.NODE_ENV === 'production' ? 'none' : 'lax',
       maxAge: 60 * 60 * 1000, // 1 hour
-      path: '/',
-      domain: process.env.NODE_ENV === 'production' ? '.ladx.africa' : undefined
+      domain: process.env.NODE_ENV === 'production' ? '.ladx.africa' : undefined,
+      path: '/'
     }
   })
 );
 
-if (process.env.NODE_ENV !== 'production') {
-  app.use((req: Request, res: Response, next: NextFunction) => {
-    logger.debug('Session ID:', req.sessionID);
-    logger.debug('Session Data:', req.session);
-    next();
-  });
-}
-
-app.use('/api/v1', (req: Request, res: Response, next: NextFunction) => {
-  if (!req.session) {
-    logger.error('No session found');
-    return res.status(500).json({
-      status: 'E00',
-      success: false,
-      message: 'Session error'
-    });
-  }
-  next();
-});
-// Rate Limiters
-const limiter = rateLimit({
-  windowMs: 15 * 60 * 1000,
-  max: 100,
-  standardHeaders: true,
-  legacyHeaders: false,
-  validate: { trustProxy: false }
-});
-
-const resetLimiter = rateLimit({
-  windowMs: 15 * 60 * 1000,
-  max: 5,
-  message:
-    'Too many password reset attempts, please try again after 15 minutes.'
-});
-
-app.use('/api/v1/forgot-password', resetLimiter);
-app.use('/api/v1', limiter);
-
-// Static Files
-app.use(express.static(path.join(__dirname, 'public')));
+// Security headers
 app.use(
-  express.static('public', {
-    setHeaders: (res, path) => {
-      if (path.endsWith('.js')) {
-        res.setHeader('Content-Type', 'application/javascript');
+  helmet({
+    crossOriginResourcePolicy: { policy: 'cross-origin' },
+    crossOriginOpenerPolicy: { policy: 'same-origin-allow-popups' },
+    contentSecurityPolicy: {
+      directives: {
+        defaultSrc: ["'self'"],
+        imgSrc: ["'self'", 'data:', 'blob:', 'https:'],
+        scriptSrc: ["'self'", "'unsafe-inline'", 'https:'],
+        styleSrc: ["'self'", "'unsafe-inline'", 'https:'],
+        connectSrc: ["'self'", process.env.FRONTEND_URL!, 'https://ladx-backend-ts.onrender.com'],
+        upgradeInsecureRequests: null
       }
     }
   })
 );
 
-// Upload Handler
-app.use('/uploads', (req: Request, res: Response, next: NextFunction) => {
-  const ext = path.extname(req.url);
-  if (['.jpg', '.jpeg', '.png', '.gif'].includes(ext)) {
-    express.static(path.join(__dirname, 'uploads'))(req, res, next);
-  } else {
-    res.status(403).send('Access denied');
+// Session check middleware
+app.use('/api/v1', (req: Request, res: Response, next: NextFunction) => {
+  if (!req.session) {
+    logger.error('Session middleware not properly initialized');
+    return res.status(500).json({
+      status: 'E00',
+      success: false,
+      message: 'Internal server error'
+    });
   }
+  next();
 });
+
+// Development logging
+if (process.env.NODE_ENV !== 'production') {
+  app.use((req: Request, _res: Response, next: NextFunction) => {
+    logger.debug({
+      sessionId: req.sessionID,
+      session: req.session,
+      cookies: req.cookies
+    });
+    next();
+  });
+}
+
+// Rate limiting
+const limiter = rateLimit({
+  windowMs: 15 * 60 * 1000,
+  max: 100,
+  standardHeaders: true,
+  legacyHeaders: false
+});
+
+app.use('/api/v1', limiter);
 
 // Routes
 app.use('/api/v1', router);
 app.use('/api/v1', authRouter);
 
-// Production static files
-if (process.env.NODE_ENV === 'production') {
-  app.use(express.static('build'));
-}
-
-// Server Setup
-const PORT = process.env.PORT || 1337;
-const host: string = '0.0.0.0';
-const httpServer = http.createServer(app);
-
-// Graceful Shutdown
-process.on('SIGINT', async () => {
-  try {
-    await db.close();
-    console.log('Connection to db closed by application termination');
-    process.exit(0);
-  } catch (error) {
-    console.error('Error closing MongoDB connection:', error);
-    process.exit(1);
-  }
-});
-
-// Start Server
-httpServer.listen({ port: PORT, host }, () => {
-  logger.info(`Server running on port ${PORT}...`, {
+// Health check endpoint
+app.get('/health', (_req: Request, res: Response) => {
+  res.json({
+    status: 'healthy',
+    environment: process.env.NODE_ENV,
+    redis: redisClient.isOpen ? 'connected' : 'disconnected',
     timestamp: new Date().toISOString()
   });
+});
+
+// Error handling
+app.use((err: Error, _req: Request, res: Response, _next: NextFunction) => {
+  logger.error('Server error:', err);
+  res.status(500).json({
+    status: 'E00',
+    success: false,
+    message: process.env.NODE_ENV === 'production' ? 'Internal server error' : err.message
+  });
+});
+
+// Server setup
+const PORT = process.env.PORT || 1337;
+const server = http.createServer(app);
+
+// Graceful shutdown
+process.on('SIGTERM', () => {
+  logger.info('SIGTERM received. Shutting down gracefully...');
+  server.close(async () => {
+    try {
+      await redisClient.quit();
+      await db.close();
+      logger.info('Server shutdown complete');
+      process.exit(0);
+    } catch (err) {
+      logger.error('Error during shutdown:', err);
+      process.exit(1);
+    }
+  });
+});
+
+// Start server
+server.listen(PORT, () => {
+  logger.info(`Server running on port ${PORT} in ${process.env.NODE_ENV} mode`);
 });
