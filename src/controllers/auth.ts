@@ -148,7 +148,11 @@ export const verifyOTP = async (req: Request, res: Response): Promise<void> => {
     // Verify OTP (Compare otp from req.body and session)
     const isMatch = await bcrypt.compare(otp, hashedOTP);
     if (!isMatch) {
-      res.status(400).json({ message: 'Invalid OTP' });
+      res.status(400).json({
+        status: 'E00',
+        success: false,
+        message: 'Invalid OTP'
+      });
       return;
     }
 
@@ -214,7 +218,11 @@ export const verifyOTP = async (req: Request, res: Response): Promise<void> => {
       });
   } catch (err: any) {
     createAppLog(JSON.stringify({ Error: err.message }));
-    res.status(500).json({ message: 'Internal Server Error: ' + err.message });
+    res.status(500).json({
+      status: 'E00',
+      success: false,
+      message: 'Internal Server Error: ' + err.message
+    });
   }
 };
 
