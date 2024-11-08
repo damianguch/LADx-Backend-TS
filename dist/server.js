@@ -63,25 +63,17 @@ const corsOptions = {
         'X-Requested-With',
         'Accept',
         'Origin'
-    ],
-    exposedHeaders: ['set-cookie']
+    ]
 };
-// Initialize Redis client
+// Initialize Redis client on server startup
 (() => __awaiter(void 0, void 0, void 0, function* () {
-    try {
-        yield (0, redisClient_1.connectRedis)();
-        logger_1.default.info('Redis client connected successfully');
-        // Keep Redis connection alive
-        setInterval(() => __awaiter(void 0, void 0, void 0, function* () {
-            if (redisClient_1.default.isOpen) {
-                yield redisClient_1.default.ping();
-            }
-        }), 30000);
-    }
-    catch (error) {
-        logger_1.default.error('Redis connection error:', error);
-        process.exit(1);
-    }
+    yield (0, redisClient_1.connectRedis)();
+    // Keep Redis connection alive
+    setInterval(() => __awaiter(void 0, void 0, void 0, function* () {
+        if (redisClient_1.default.isOpen) {
+            yield redisClient_1.default.ping();
+        }
+    }), 6000); // Ping every 60 seconds
 }))();
 // Apply initial middleware
 app.set('trust proxy', 1);
@@ -138,7 +130,7 @@ app.use('/api/v1', limiter);
 app.use('/api/v1', servicesRoutes_1.default);
 app.use('/api/v1', authRoutes_1.authRouter);
 // Error handling
-app.use((err, _req, res, _next) => {
+app.use((err, req, res, next) => {
     logger_1.default.error('Server error:', err);
     res.status(500).json({
         status: 'E00',
@@ -151,23 +143,21 @@ app.use((err, _req, res, _next) => {
 // Server setup
 const PORT = process.env.PORT || 1337;
 const server = http_1.default.createServer(app);
-// Graceful shutdown
-process.on('SIGTERM', () => {
-    logger_1.default.info('SIGTERM received. Shutting down gracefully...');
-    server.close(() => __awaiter(void 0, void 0, void 0, function* () {
-        try {
-            yield redisClient_1.default.quit();
-            yield db_1.default.close();
-            logger_1.default.info('Server shutdown complete');
-            process.exit(0);
-        }
-        catch (err) {
-            logger_1.default.error('Error during shutdown:', err);
-            process.exit(1);
-        }
-    }));
-});
+process.on('SIGINT', () => __awaiter(void 0, void 0, void 0, function* () {
+    try {
+        yield db_1.default.close();
+        console.log('Connection to db closed by application termination');
+        process.exit(0);
+    }
+    catch (error) {
+        console.error('Error closing MongoDB connection:', error);
+        process.exit(1);
+    }
+}));
+const host = '0.0.0.0';
 // Start server
-server.listen(PORT, () => {
-    logger_1.default.info(`Server running on port ${PORT} in ${process.env.NODE_ENV} mode`);
+server.listen({ port: PORT, host }, () => {
+    logger_1.default.info(`Server running on port ${PORT}...`, {
+        timestamp: new Date().toISOString()
+    });
 });

@@ -24,12 +24,14 @@ const bcrypt_1 = __importDefault(require("bcrypt"));
 const jsonwebtoken_1 = __importDefault(require("jsonwebtoken"));
 const jwt_1 = require("../utils/jwt");
 const LogFile_1 = __importDefault(require("../models/LogFile"));
+const createLog_1 = __importDefault(require("../utils/createLog"));
 const passwordEncrypt_1 = __importDefault(require("../utils/passwordEncrypt"));
 const date_1 = __importDefault(require("../utils/date"));
 const sanitize_1 = require("../utils/sanitize");
 const emailService_1 = require("../utils/emailService");
 const user_schema_1 = require("../schema/user.schema");
 const logger_1 = __importDefault(require("../logger/logger"));
+const otp_schema_1 = require("../schema/otp.schema");
 const randomNumbers_1 = __importDefault(require("../utils/randomNumbers"));
 const SignUp = (req, res) => __awaiter(void 0, void 0, void 0, function* () {
     try {
@@ -49,8 +51,7 @@ const SignUp = (req, res) => __awaiter(void 0, void 0, void 0, function* () {
         const otp = yield (0, randomNumbers_1.default)(6);
         const otpExpiry = Date.now() + 10 * 60 * 1000; // 10 minutes expiry
         const hashedOTP = yield bcrypt_1.default.hash(otp.toString(), 10);
-        // Store registration data and OTP in session
-        req.session.registrationData = {
+        const registrationData = {
             fullname,
             email,
             country,
@@ -60,13 +61,20 @@ const SignUp = (req, res) => __awaiter(void 0, void 0, void 0, function* () {
             otp: hashedOTP,
             otpExpiry
         };
-        // Save session explicitly
-        yield new Promise((resolve, reject) => {
-            req.session.save((err) => {
-                if (err)
-                    reject(err);
-                resolve();
-            });
+        // Store registration data and OTP in session
+        req.session.registrationData = registrationData;
+        req.session.save((err) => {
+            if (err) {
+                // Info level logging
+                logger_1.default.error(`Session save error`, {
+                    timestamp: new Date().toISOString()
+                });
+            }
+            // Info level logging
+            else
+                logger_1.default.info('Session saved successfully', {
+                    timestamp: new Date().toISOString()
+                });
         });
         // Send OTP via email
         yield (0, emailService_1.sendOTPEmail)({ email, otp });
@@ -89,9 +97,12 @@ const SignUp = (req, res) => __awaiter(void 0, void 0, void 0, function* () {
 exports.SignUp = SignUp;
 const verifyOTP = (req, res) => __awaiter(void 0, void 0, void 0, function* () {
     try {
-        const { email_verification_code } = req.body;
+        // Validate the request body using Zod
+        const { otp } = otp_schema_1.verifyOTPSchema.parse(req.body);
+        // Get session data
+        const registrationData = req.session.registrationData;
         // Check if session exists with registration data
-        if (!req.session.registrationData) {
+        if (!registrationData) {
             logger_1.default.warn('No registration data found in session');
             res.status(400).json({
                 status: 'E00',
@@ -100,18 +111,17 @@ const verifyOTP = (req, res) => __awaiter(void 0, void 0, void 0, function* () {
             });
             return;
         }
-        const registrationData = req.session.registrationData;
         // Check OTP expiry
         if (Date.now() > registrationData.otpExpiry) {
             res.status(400).json({
                 status: 'E00',
                 success: false,
-                message: 'OTP expired'
+                message: 'OTP has expired'
             });
             return;
         }
         // Verify OTP
-        const isValidOTP = yield bcrypt_1.default.compare(email_verification_code.toString(), registrationData.otp);
+        const isValidOTP = yield bcrypt_1.default.compare(otp, registrationData.otp);
         if (!isValidOTP) {
             res.status(400).json({
                 status: 'E00',
@@ -131,6 +141,7 @@ const verifyOTP = (req, res) => __awaiter(void 0, void 0, void 0, function* () {
             is_email_verified: 1
         });
         yield newUser.save();
+        yield (0, createLog_1.default)(JSON.stringify('OTP verified successfully. User account created.'));
         // Generate JWT token
         const token = (0, jwt_1.generateToken)({ email: newUser.email, id: newUser._id });
         // Clear session after successful verification
@@ -138,10 +149,18 @@ const verifyOTP = (req, res) => __awaiter(void 0, void 0, void 0, function* () {
             if (err)
                 logger_1.default.error('Session destruction error:', err);
         });
-        res.status(200).json({
+        res
+            .cookie('token', token, {
+            httpOnly: true,
+            secure: process.env.NODE_ENV === 'production' ? true : false,
+            sameSite: 'none',
+            maxAge: 60 * 60 * 1000
+        })
+            .status(200)
+            .json({
             status: '00',
             success: true,
-            message: 'Email verified successfully'
+            message: 'OTP verified successfully. User account created.'
         });
     }
     catch (error) {

@@ -100,10 +100,14 @@ export const SignUp = async (req: Request, res: Response): Promise<void> => {
 
 export const verifyOTP = async (req: Request, res: Response): Promise<void> => {
   try {
-    const { email_verification_code } = req.body;
+    // Validate the request body using Zod
+    const { otp } = verifyOTPSchema.parse(req.body);
+
+    // Get session data
+    const registrationData = req.session.registrationData;
 
     // Check if session exists with registration data
-    if (!req.session.registrationData) {
+    if (!registrationData) {
       logger.warn('No registration data found in session');
       res.status(400).json({
         status: 'E00',
@@ -113,23 +117,18 @@ export const verifyOTP = async (req: Request, res: Response): Promise<void> => {
       return;
     }
 
-    const registrationData = req.session.registrationData;
-
     // Check OTP expiry
     if (Date.now() > registrationData.otpExpiry) {
       res.status(400).json({
         status: 'E00',
         success: false,
-        message: 'OTP expired'
+        message: 'OTP has expired'
       });
       return;
     }
 
     // Verify OTP
-    const isValidOTP = await bcrypt.compare(
-      email_verification_code.toString(),
-      registrationData.otp
-    );
+    const isValidOTP = await bcrypt.compare(otp, registrationData.otp);
 
     if (!isValidOTP) {
       res.status(400).json({
@@ -153,6 +152,10 @@ export const verifyOTP = async (req: Request, res: Response): Promise<void> => {
 
     await newUser.save();
 
+    await createAppLog(
+      JSON.stringify('OTP verified successfully. User account created.')
+    );
+
     // Generate JWT token
     const token = generateToken({ email: newUser.email, id: newUser._id });
 
@@ -161,11 +164,19 @@ export const verifyOTP = async (req: Request, res: Response): Promise<void> => {
       if (err) logger.error('Session destruction error:', err);
     });
 
-    res.status(200).json({
-      status: '00',
-      success: true,
-      message: 'Email verified successfully'
-    });
+    res
+      .cookie('token', token, {
+        httpOnly: true,
+        secure: process.env.NODE_ENV === 'production' ? true : false,
+        sameSite: 'none',
+        maxAge: 60 * 60 * 1000
+      })
+      .status(200)
+      .json({
+        status: '00',
+        success: true,
+        message: 'OTP verified successfully. User account created.'
+      });
   } catch (error: any) {
     logger.error('OTP verification error:', error);
     res.status(500).json({
