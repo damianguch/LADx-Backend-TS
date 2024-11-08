@@ -53,8 +53,7 @@ export const SignUp = async (req: Request, res: Response): Promise<void> => {
     const otpExpiry = Date.now() + 10 * 60 * 1000; // 10 minutes expiry
     const hashedOTP = await bcrypt.hash(otp.toString(), 10);
 
-    // Store registration data and OTP in session
-    req.session.registrationData = {
+    const registrationData = {
       fullname,
       email,
       country,
@@ -65,14 +64,23 @@ export const SignUp = async (req: Request, res: Response): Promise<void> => {
       otpExpiry
     };
 
-    // Save session explicitly
-    await new Promise<void>((resolve, reject) => {
-      req.session.save((err) => {
-        if (err) reject(err);
-        resolve();
-      });
-    });
+    // Store registration data and OTP in session
+    req.session.registrationData = registrationData;
 
+    req.session.save((err) => {
+      if (err) {
+        // Info level logging
+        logger.error(`Session save error`, {
+          timestamp: new Date().toISOString()
+        });
+      }
+
+      // Info level logging
+      else
+        logger.info('Session saved successfully', {
+          timestamp: new Date().toISOString()
+        });
+    });
     // Send OTP via email
     await sendOTPEmail({ email, otp });
 
