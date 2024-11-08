@@ -54,7 +54,7 @@ const authRoutes_1 = require("./routes/authRoutes");
 const app = (0, express_1.default)();
 // CORS Options definition
 const corsOptions = {
-    origin: '*',
+    origin: 'https://ladx-frontend.netlify.app',
     credentials: true,
     methods: ['GET', 'POST', 'PUT', 'PATCH', 'DELETE'],
     allowedHeaders: [
@@ -106,14 +106,6 @@ app.use((0, express_session_1.default)({
         maxAge: 10 * 60 * 1000 // 10 minutes
     }
 }));
-// Add session debugging in development
-if (process.env.NODE_ENV !== 'production') {
-    app.use((req, _res, next) => {
-        console.log('Session ID:', req.sessionID);
-        console.log('Session Data:', req.session);
-        next();
-    });
-}
 // Security headers
 app.use((0, helmet_1.default)({
     crossOriginResourcePolicy: { policy: 'cross-origin' },
@@ -134,6 +126,13 @@ const limiter = (0, express_rate_limit_1.default)({
     standardHeaders: true,
     legacyHeaders: false
 });
+const resetLimiter = (0, express_rate_limit_1.default)({
+    windowMs: 15 * 60 * 1000, // 15 minutes
+    max: 5, // Limit each IP to 5 requests per window
+    message: 'Too many password reset attempts, please try again after 15 minutes.'
+});
+// Apply rate limit to password reset
+app.use('/api/v1/forgot-password', resetLimiter);
 app.use('/api/v1', limiter);
 // Routes
 app.use('/api/v1', servicesRoutes_1.default);

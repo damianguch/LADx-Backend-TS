@@ -2,7 +2,6 @@ import dotenv from 'dotenv';
 dotenv.config();
 import express, { Application, Request, Response, NextFunction } from 'express';
 import http from 'http';
-import path from 'path';
 import helmet from 'helmet';
 import rateLimit from 'express-rate-limit';
 import cors from 'cors';
@@ -20,7 +19,7 @@ const app: Application = express();
 
 // CORS Options definition
 const corsOptions = {
-  origin: '*',
+  origin: 'https://ladx-frontend.netlify.app',
   credentials: true,
   methods: ['GET', 'POST', 'PUT', 'PATCH', 'DELETE'],
   allowedHeaders: [
@@ -78,15 +77,6 @@ app.use(
   })
 );
 
-// Add session debugging in development
-if (process.env.NODE_ENV !== 'production') {
-  app.use((req: Request, _res: Response, next: NextFunction) => {
-    console.log('Session ID:', req.sessionID);
-    console.log('Session Data:', req.session);
-    next();
-  });
-}
-
 // Security headers
 app.use(
   helmet({
@@ -110,6 +100,16 @@ const limiter = rateLimit({
   standardHeaders: true,
   legacyHeaders: false
 });
+
+const resetLimiter = rateLimit({
+  windowMs: 15 * 60 * 1000, // 15 minutes
+  max: 5, // Limit each IP to 5 requests per window
+  message:
+    'Too many password reset attempts, please try again after 15 minutes.'
+});
+
+// Apply rate limit to password reset
+app.use('/api/v1/forgot-password', resetLimiter);
 
 app.use('/api/v1', limiter);
 
