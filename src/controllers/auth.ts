@@ -22,9 +22,6 @@ import logger from '../logger/logger';
 import { verifyOTPSchema } from '../schema/otp.schema';
 import generateOTP from '../utils/randomNumbers';
 
-// Define user roles
-type UserRole = 'sender' | 'traveler';
-
 interface ErrorResponse {
   status: string;
   success: boolean;
