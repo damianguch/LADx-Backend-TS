@@ -92,7 +92,7 @@ app.use((0, express_session_1.default)({
     saveUninitialized: false,
     rolling: true,
     cookie: {
-        secure: process.env.NODE_ENV === 'production',
+        secure: process.env.NODE_ENV === 'production' ? true : false,
         httpOnly: true,
         sameSite: process.env.NODE_ENV === 'production' ? 'none' : 'lax',
         maxAge: 10 * 60 * 1000 // 10 minutes

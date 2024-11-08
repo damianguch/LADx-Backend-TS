@@ -6,7 +6,7 @@ Object.defineProperty(exports, "__esModule", { value: true });
 const mongoose_1 = __importDefault(require("mongoose"));
 const logger_1 = __importDefault(require("../logger/logger"));
 mongoose_1.default
-    .connect(process.env.DB_CONNECTION)
+    .connect(process.env.MONGO_LOCAL)
     .then(() => logger_1.default.success(`Connected to database!`, {
     timestamp: new Date().toISOString()
 }))

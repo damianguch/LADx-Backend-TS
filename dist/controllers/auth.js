@@ -51,6 +51,7 @@ const SignUp = (req, res) => __awaiter(void 0, void 0, void 0, function* () {
         const otp = yield (0, randomNumbers_1.default)(6);
         const otpExpiry = Date.now() + 10 * 60 * 1000; // 10 minutes expiry
         const hashedOTP = yield bcrypt_1.default.hash(otp.toString(), 10);
+        console.log(otp);
         const registrationData = {
             fullname,
             email,
@@ -63,6 +64,7 @@ const SignUp = (req, res) => __awaiter(void 0, void 0, void 0, function* () {
         };
         // Store registration data and OTP in session
         req.session.registrationData = registrationData;
+        console.log(req.session);
         req.session.save((err) => {
             if (err) {
                 // Info level logging
@@ -101,6 +103,7 @@ const verifyOTP = (req, res) => __awaiter(void 0, void 0, void 0, function* () {
         const { otp } = otp_schema_1.verifyOTPSchema.parse(req.body);
         // Get session data
         const registrationData = req.session.registrationData;
+        console.log(registrationData);
         // Check if session exists with registration data
         if (!registrationData) {
             logger_1.default.warn('No registration data found in session');

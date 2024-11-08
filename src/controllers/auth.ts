@@ -50,6 +50,8 @@ export const SignUp = async (req: Request, res: Response): Promise<void> => {
     const otpExpiry = Date.now() + 10 * 60 * 1000; // 10 minutes expiry
     const hashedOTP = await bcrypt.hash(otp.toString(), 10);
 
+    console.log(otp);
+
     const registrationData = {
       fullname,
       email,
@@ -63,6 +65,8 @@ export const SignUp = async (req: Request, res: Response): Promise<void> => {
 
     // Store registration data and OTP in session
     req.session.registrationData = registrationData;
+
+    console.log(req.session);
 
     req.session.save((err) => {
       if (err) {
@@ -105,6 +109,8 @@ export const verifyOTP = async (req: Request, res: Response): Promise<void> => {
 
     // Get session data
     const registrationData = req.session.registrationData;
+
+    console.log(registrationData);
 
     // Check if session exists with registration data
     if (!registrationData) {
