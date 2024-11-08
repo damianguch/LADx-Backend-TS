@@ -16,17 +16,26 @@ exports.connectRedis = void 0;
 const redis_1 = require("redis");
 const logger_1 = __importDefault(require("../logger/logger"));
 const redisClient = (0, redis_1.createClient)({
-    url: process.env.REDIS_URL
+    url: process.env.REDIS_URL,
+    socket: {
+        reconnectStrategy: (retries) => {
+            if (retries > 10) {
+                return new Error('Redis retry attempts exhausted');
+            }
+            return Math.min(retries * 100, 3000);
+        }
+    }
 });
-redisClient.on('connect', () => logger_1.default.info(`Connected to redis`, {
-    timestamp: new Date().toISOString()
-}));
-redisClient.on('error', (error) => logger_1.default.error(`Redis connection error, ${error.message}`, {
-    timestamp: new Date().toISOString()
-}));
+redisClient.on('error', (err) => {
+    logger_1.default.error('Redis Client Error:', err);
+});
 const connectRedis = () => __awaiter(void 0, void 0, void 0, function* () {
-    if (!redisClient.isOpen) {
+    try {
         yield redisClient.connect();
+    }
+    catch (error) {
+        logger_1.default.error('Redis Connection Error:', error);
+        process.exit(1);
     }
 });
 exports.connectRedis = connectRedis;

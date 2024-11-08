@@ -74,11 +74,7 @@ export const SignUp = async (req: Request, res: Response): Promise<void> => {
     });
 
     // Send OTP via email
-    await sendOTPEmail({
-      email,
-      otp,
-      template: 'registration'
-    });
+    await sendOTPEmail({ email, otp });
 
     logger.info(`OTP sent to ${email}`);
 
@@ -126,7 +122,7 @@ export const verifyOTP = async (req: Request, res: Response): Promise<void> => {
 
     // Verify OTP
     const isValidOTP = await bcrypt.compare(
-      email_verification_code.toString(), 
+      email_verification_code.toString(),
       registrationData.otp
     );
 
@@ -153,10 +149,7 @@ export const verifyOTP = async (req: Request, res: Response): Promise<void> => {
     await newUser.save();
 
     // Generate JWT token
-    const token = generateToken({
-      email: newUser.email,
-      id: newUser._id
-    });
+    const token = generateToken({ email: newUser.email, id: newUser._id });
 
     // Clear session after successful verification
     req.session.destroy((err) => {
@@ -212,11 +205,7 @@ export const resendOTP = async (req: Request, res: Response): Promise<void> => {
     });
 
     // Send new OTP
-    await sendOTPEmail({
-      email,
-      otp,
-      template: 'resend'
-    });
+    await sendOTPEmail({ email, otp });
 
     res.status(200).json({
       status: '00',
@@ -258,7 +247,8 @@ export const Login = async (req: Request, res: Response): Promise<void> => {
       return;
     }
 
-    if (user.is_email_verified !== 1) { // Changed to match your model
+    if (user.is_email_verified !== 1) {
+      // Changed to match your model
       res.status(401).json({
         status: 'E00',
         success: false,
@@ -269,8 +259,7 @@ export const Login = async (req: Request, res: Response): Promise<void> => {
 
     const token = generateToken({
       email: user.email,
-      id: user._id,
-      role: user.role
+      id: user._id
     });
 
     // Log login activity
@@ -280,64 +269,21 @@ export const Login = async (req: Request, res: Response): Promise<void> => {
       AddedOn: currentDate
     }).save();
 
-    res.cookie('token', token, {
-      httpOnly: true,
-      secure: process.env.NODE_ENV === 'production',
-      sameSite: 'strict',
-      maxAge: 24 * 60 * 60 * 1000
-    }).json({
-      status: '00',
-      success: true,
-      message: 'Login successful',
-      role: user.role
-    });
+    res
+      .cookie('token', token, {
+        httpOnly: true,
+        secure: process.env.NODE_ENV === 'production',
+        sameSite: 'strict',
+        maxAge: 24 * 60 * 60 * 1000
+      })
+      .json({
+        status: '00',
+        success: true,
+        message: 'Login successful',
+        role: user.role
+      });
   } catch (error: any) {
     logger.error('Login error:', error);
-    res.status(500).json({
-      status: 'E00',
-      success: false,
-      message: 'Internal Server Error'
-    });
-  }
-};
-
-export const resendOTP = async (req: Request, res: Response): Promise<void> => {
-  try {
-    const registrationData = req.session.registrationData;
-    if (!registrationData) {
-      res.status(400).json({
-        status: 'E00',
-        success: false,
-        message: 'Registration session expired'
-      });
-      return;
-    }
-
-    const otp = await generateOTP(6);
-    const hashedOTP = await bcrypt.hash(otp.toString(), 10);
-    const otpExpiry = Date.now() + 10 * 60 * 1000;
-
-    // Update session with new OTP data
-    req.session.registrationData = {
-      ...registrationData,
-      otp: hashedOTP,
-      otpExpiry
-    };
-
-    await sendOTPEmail({
-      email: registrationData.email,
-      otp,
-      template: 'resend',
-      role: registrationData.role
-    });
-
-    res.status(200).json({
-      status: '00',
-      success: true,
-      message: 'OTP resent successfully'
-    });
-  } catch (error: any) {
-    logger.error('Resend OTP error:', error);
     res.status(500).json({
       status: 'E00',
       success: false,
@@ -358,7 +304,10 @@ export const Logout = async (req: Request, res: Response): Promise<void> => {
       return;
     }
 
-    const decoded = jwt.verify(token, process.env.JWT_SECRET_KEY!) as JwtPayload;
+    const decoded = jwt.verify(
+      token,
+      process.env.JWT_SECRET_KEY!
+    ) as JwtPayload;
 
     // Log logout activity
     await new LogFile({

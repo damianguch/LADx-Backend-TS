@@ -45,7 +45,8 @@ const userSchema = new Schema({
     role: {
         type: String,
         enum: ['traveler', 'sender'],
-        default: 'sender'
+        default: 'sender',
+        required: true
     },
     resetPasswordToken: String,
     resetPasswordExpires: Date

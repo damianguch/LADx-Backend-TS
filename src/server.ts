@@ -20,14 +20,9 @@ const app: Application = express();
 
 // CORS Options definition
 const corsOptions = {
-  origin: process.env.NODE_ENV === 'production' 
-    ? [
-        'https://ladx.africa',
-        'https://www.ladx.africa',
-      ]
-    : ['http://localhost:3000'],
+  origin: '*',
   credentials: true,
-  methods: ['GET', 'POST', 'PUT', 'PATCH', 'DELETE', 'OPTIONS'],
+  methods: ['GET', 'POST', 'PUT', 'PATCH', 'DELETE'],
   allowedHeaders: [
     'Content-Type',
     'Authorization',
@@ -38,19 +33,12 @@ const corsOptions = {
   exposedHeaders: ['set-cookie']
 };
 
-// Initialize Redis and Session store
-const RedisSessionStore = new RedisStore({ 
-  client: redisClient,
-  prefix: "ladx_session:",
-  ttl: 60 * 60 // 1 hour
-});
-
 // Initialize Redis client
 (async () => {
   try {
     await connectRedis();
     logger.info('Redis client connected successfully');
-    
+
     // Keep Redis connection alive
     setInterval(async () => {
       if (redisClient.isOpen) {
@@ -74,21 +62,18 @@ app.use(morgan('common'));
 // Session Configuration
 app.use(
   session({
-    store: new RedisStore({ 
-      client: redisClient,
-      prefix: "ladx:",
-      ttl: 60 * 10 // 10 minutes
+    store: new RedisStore({
+      client: redisClient
     }),
     secret: process.env.SECRET_KEY!,
-    name: 'ladx.sid',
-    resave: true, // Changed to true
+    resave: false,
     saveUninitialized: false,
     rolling: true,
     cookie: {
       secure: process.env.NODE_ENV === 'production',
       httpOnly: true,
       sameSite: process.env.NODE_ENV === 'production' ? 'none' : 'lax',
-      maxAge: 10 * 60 * 1000, // 10 minutes
+      maxAge: 10 * 60 * 1000 // 10 minutes
     }
   })
 );
@@ -112,38 +97,11 @@ app.use(
         defaultSrc: ["'self'"],
         imgSrc: ["'self'", 'data:', 'blob:', 'https:'],
         scriptSrc: ["'self'", "'unsafe-inline'", 'https:'],
-        styleSrc: ["'self'", "'unsafe-inline'", 'https:'],
-        connectSrc: ["'self'", process.env.FRONTEND_URL!, 'https://ladx-backend-ts.onrender.com'],
-        upgradeInsecureRequests: null
+        styleSrc: ["'self'", "'unsafe-inline'", 'https:']
       }
     }
   })
 );
-
-// Session check middleware
-app.use('/api/v1', (req: Request, res: Response, next: NextFunction) => {
-  if (!req.session) {
-    logger.error('Session middleware not properly initialized');
-    return res.status(500).json({
-      status: 'E00',
-      success: false,
-      message: 'Internal server error'
-    });
-  }
-  next();
-});
-
-// Development logging
-if (process.env.NODE_ENV !== 'production') {
-  app.use((req: Request, _res: Response, next: NextFunction) => {
-    logger.debug({
-      sessionId: req.sessionID,
-      session: req.session,
-      cookies: req.cookies
-    });
-    next();
-  });
-}
 
 // Rate limiting
 const limiter = rateLimit({
@@ -159,23 +117,16 @@ app.use('/api/v1', limiter);
 app.use('/api/v1', router);
 app.use('/api/v1', authRouter);
 
-// Health check endpoint
-app.get('/health', (_req: Request, res: Response) => {
-  res.json({
-    status: 'healthy',
-    environment: process.env.NODE_ENV,
-    redis: redisClient.isOpen ? 'connected' : 'disconnected',
-    timestamp: new Date().toISOString()
-  });
-});
-
 // Error handling
 app.use((err: Error, _req: Request, res: Response, _next: NextFunction) => {
   logger.error('Server error:', err);
   res.status(500).json({
     status: 'E00',
     success: false,
-    message: process.env.NODE_ENV === 'production' ? 'Internal server error' : err.message
+    message:
+      process.env.NODE_ENV === 'production'
+        ? 'Internal server error'
+        : err.message
   });
 });
 

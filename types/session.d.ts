@@ -9,13 +9,15 @@ declare module 'express-session' {
       hashedOTP: string;
       expiresAt: number;
     };
-    tempUser: {
+    registrationData: {
       fullname: string;
       email: string;
       phone: string | null;
       country: string;
       state: string;
       password: string;
+      otp: string;
+      otpExpiry;
     };
   }
 }

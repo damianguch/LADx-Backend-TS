@@ -39,7 +39,6 @@ const dotenv_1 = __importDefault(require("dotenv"));
 dotenv_1.default.config();
 const express_1 = __importDefault(require("express"));
 const http_1 = __importDefault(require("http"));
-const path_1 = __importDefault(require("path"));
 const helmet_1 = __importDefault(require("helmet"));
 const express_rate_limit_1 = __importDefault(require("express-rate-limit"));
 const cors_1 = __importDefault(require("cors"));
@@ -55,99 +54,47 @@ const authRoutes_1 = require("./routes/authRoutes");
 const app = (0, express_1.default)();
 // CORS Options definition
 const corsOptions = {
-    origin: [
-        'https://ladx-frontend.netlify.app',
-        'https://ladx.africa',
-        'https://www.ladx.africa',
-        'https://dashboard-lyart-nine-87.vercel.app',
-        'http://localhost:3000', // Frontend local development
-        'http://localhost:3001' // Dashboard local development
-    ],
-    methods: ['GET', 'POST', 'PUT', 'PATCH', 'DELETE', 'OPTIONS'],
+    origin: '*',
+    credentials: true,
+    methods: ['GET', 'POST', 'PUT', 'PATCH', 'DELETE'],
     allowedHeaders: [
-        'Authorization',
         'Content-Type',
+        'Authorization',
         'X-Requested-With',
         'Accept',
-        'Origin',
-        'Access-Control-Allow-Origin',
-        'Access-Control-Allow-Headers',
-        'Access-Control-Allow-Methods',
-        'Access-Control-Allow-Credentials'
+        'Origin'
     ],
-    credentials: true,
-    maxAge: 86400, // 24 hours
     exposedHeaders: ['set-cookie']
 };
-// Initialize Redis client on server startup
+// Initialize Redis client
 (() => __awaiter(void 0, void 0, void 0, function* () {
-    yield (0, redisClient_1.connectRedis)();
-    // Keep Redis connection alive
-    setInterval(() => __awaiter(void 0, void 0, void 0, function* () {
-        if (redisClient_1.default.isOpen) {
-            yield redisClient_1.default.ping();
-        }
-    }), 6000); // Ping every 60 seconds
+    try {
+        yield (0, redisClient_1.connectRedis)();
+        logger_1.default.info('Redis client connected successfully');
+        // Keep Redis connection alive
+        setInterval(() => __awaiter(void 0, void 0, void 0, function* () {
+            if (redisClient_1.default.isOpen) {
+                yield redisClient_1.default.ping();
+            }
+        }), 30000);
+    }
+    catch (error) {
+        logger_1.default.error('Redis connection error:', error);
+        process.exit(1);
+    }
 }))();
-// Trust the first proxy
-app.set('trust proxy', true);
-// Apply CORS
+// Apply initial middleware
+app.set('trust proxy', 1);
 app.use((0, cors_1.default)(corsOptions));
-app.options('*', (0, cors_1.default)(corsOptions));
-// Add specific headers for authentication and cookies
-app.use((req, res, next) => {
-    const origin = req.headers.origin;
-    if (origin && corsOptions.origin.includes(origin)) {
-        res.setHeader('Access-Control-Allow-Origin', origin);
-    }
-    res.setHeader('Access-Control-Allow-Credentials', 'true');
-    res.setHeader('Access-Control-Allow-Methods', 'GET, POST, PUT, PATCH, DELETE, OPTIONS');
-    res.setHeader('Access-Control-Allow-Headers', 'Origin, X-Requested-With, Content-Type, Accept, Authorization');
-    next();
-});
-// Combined Helmet Configuration
-app.use((0, helmet_1.default)({
-    crossOriginResourcePolicy: { policy: 'cross-origin' },
-    crossOriginOpenerPolicy: { policy: 'same-origin-allow-popups' },
-    xContentTypeOptions: false,
-    hsts: {
-        maxAge: 31536000,
-        includeSubDomains: true,
-        preload: true
-    },
-    contentSecurityPolicy: {
-        useDefaults: true,
-        directives: {
-            'img-src': ["'self'", 'https: data: blob:'],
-            'script-src': ["'self'", "'unsafe-inline'", 'https:'],
-            'style-src': ["'self'", "'unsafe-inline'", 'https:'],
-            'connect-src': [
-                "'self'",
-                'https://ladx-backend-ts.onrender.com',
-                'https://ladx.africa',
-                'https://dashboard-lyart-nine-87.vercel.app'
-            ],
-            'frame-ancestors': [
-                "'self'",
-                'https://ladx.africa',
-                'https://dashboard-lyart-nine-87.vercel.app'
-            ],
-            'form-action': [
-                "'self'",
-                'https://ladx.africa',
-                'https://dashboard-lyart-nine-87.vercel.app'
-            ]
-        }
-    }
-}));
-// Basic middleware
-app.use((0, cookie_parser_1.default)());
-app.use((0, morgan_1.default)('common'));
-app.use(express_1.default.urlencoded({ extended: true }));
 app.use(express_1.default.json());
+app.use(express_1.default.urlencoded({ extended: true }));
+app.use((0, cookie_parser_1.default)(process.env.SECRET_KEY));
+app.use((0, morgan_1.default)('common'));
 // Session Configuration
 app.use((0, express_session_1.default)({
-    store: new connect_redis_1.default({ client: redisClient_1.default }),
+    store: new connect_redis_1.default({
+        client: redisClient_1.default
+    }),
     secret: process.env.SECRET_KEY,
     resave: false,
     saveUninitialized: false,
@@ -156,70 +103,72 @@ app.use((0, express_session_1.default)({
         secure: process.env.NODE_ENV === 'production',
         httpOnly: true,
         sameSite: process.env.NODE_ENV === 'production' ? 'none' : 'lax',
-        maxAge: 60 * 60 * 1000, // 1 hour
-        domain: process.env.NODE_ENV === 'production' ? '.ladx.africa' : undefined
+        maxAge: 10 * 60 * 1000 // 10 minutes
     }
 }));
-// Rate Limiters
+// Add session debugging in development
+if (process.env.NODE_ENV !== 'production') {
+    app.use((req, _res, next) => {
+        console.log('Session ID:', req.sessionID);
+        console.log('Session Data:', req.session);
+        next();
+    });
+}
+// Security headers
+app.use((0, helmet_1.default)({
+    crossOriginResourcePolicy: { policy: 'cross-origin' },
+    crossOriginOpenerPolicy: { policy: 'same-origin-allow-popups' },
+    contentSecurityPolicy: {
+        directives: {
+            defaultSrc: ["'self'"],
+            imgSrc: ["'self'", 'data:', 'blob:', 'https:'],
+            scriptSrc: ["'self'", "'unsafe-inline'", 'https:'],
+            styleSrc: ["'self'", "'unsafe-inline'", 'https:']
+        }
+    }
+}));
+// Rate limiting
 const limiter = (0, express_rate_limit_1.default)({
     windowMs: 15 * 60 * 1000,
     max: 100,
     standardHeaders: true,
-    legacyHeaders: false,
-    validate: { trustProxy: false }
+    legacyHeaders: false
 });
-const resetLimiter = (0, express_rate_limit_1.default)({
-    windowMs: 15 * 60 * 1000,
-    max: 5,
-    message: 'Too many password reset attempts, please try again after 15 minutes.'
-});
-app.use('/api/v1/forgot-password', resetLimiter);
 app.use('/api/v1', limiter);
-// Static Files
-app.use(express_1.default.static(path_1.default.join(__dirname, 'public')));
-app.use(express_1.default.static('public', {
-    setHeaders: (res, path) => {
-        if (path.endsWith('.js')) {
-            res.setHeader('Content-Type', 'application/javascript');
-        }
-    }
-}));
-// Upload Handler
-app.use('/uploads', (req, res, next) => {
-    const ext = path_1.default.extname(req.url);
-    if (['.jpg', '.jpeg', '.png', '.gif'].includes(ext)) {
-        express_1.default.static(path_1.default.join(__dirname, 'uploads'))(req, res, next);
-    }
-    else {
-        res.status(403).send('Access denied');
-    }
-});
 // Routes
 app.use('/api/v1', servicesRoutes_1.default);
 app.use('/api/v1', authRoutes_1.authRouter);
-// Production static files
-if (process.env.NODE_ENV === 'production') {
-    app.use(express_1.default.static('build'));
-}
-// Server Setup
-const PORT = process.env.PORT || 1337;
-const host = '0.0.0.0';
-const httpServer = http_1.default.createServer(app);
-// Graceful Shutdown
-process.on('SIGINT', () => __awaiter(void 0, void 0, void 0, function* () {
-    try {
-        yield db_1.default.close();
-        console.log('Connection to db closed by application termination');
-        process.exit(0);
-    }
-    catch (error) {
-        console.error('Error closing MongoDB connection:', error);
-        process.exit(1);
-    }
-}));
-// Start Server
-httpServer.listen({ port: PORT, host }, () => {
-    logger_1.default.info(`Server running on port ${PORT}...`, {
-        timestamp: new Date().toISOString()
+// Error handling
+app.use((err, _req, res, _next) => {
+    logger_1.default.error('Server error:', err);
+    res.status(500).json({
+        status: 'E00',
+        success: false,
+        message: process.env.NODE_ENV === 'production'
+            ? 'Internal server error'
+            : err.message
     });
+});
+// Server setup
+const PORT = process.env.PORT || 1337;
+const server = http_1.default.createServer(app);
+// Graceful shutdown
+process.on('SIGTERM', () => {
+    logger_1.default.info('SIGTERM received. Shutting down gracefully...');
+    server.close(() => __awaiter(void 0, void 0, void 0, function* () {
+        try {
+            yield redisClient_1.default.quit();
+            yield db_1.default.close();
+            logger_1.default.info('Server shutdown complete');
+            process.exit(0);
+        }
+        catch (err) {
+            logger_1.default.error('Error during shutdown:', err);
+            process.exit(1);
+        }
+    }));
+});
+// Start server
+server.listen(PORT, () => {
+    logger_1.default.info(`Server running on port ${PORT} in ${process.env.NODE_ENV} mode`);
 });

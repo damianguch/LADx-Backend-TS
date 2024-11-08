@@ -70,9 +70,10 @@ const userSchema = new Schema(
     },
 
     role: {
-  type: String,
-  enum: ['traveler', 'sender'],
-  required: true  
+      type: String,
+      enum: ['traveler', 'sender'],
+      default: 'sender',
+      required: true
     },
 
     resetPasswordToken: String,
