@@ -28,26 +28,19 @@ const corsOptions = {
     'X-Requested-With',
     'Accept',
     'Origin'
-  ],
-  exposedHeaders: ['set-cookie']
+  ]
 };
 
-// Initialize Redis client
+// Initialize Redis client on server startup
 (async () => {
-  try {
-    await connectRedis();
-    logger.info('Redis client connected successfully');
+  await connectRedis();
 
-    // Keep Redis connection alive
-    setInterval(async () => {
-      if (redisClient.isOpen) {
-        await redisClient.ping();
-      }
-    }, 30000);
-  } catch (error) {
-    logger.error('Redis connection error:', error);
-    process.exit(1);
-  }
+  // Keep Redis connection alive
+  setInterval(async () => {
+    if (redisClient.isOpen) {
+      await redisClient.ping();
+    }
+  }, 6000); // Ping every 60 seconds
 })();
 
 // Apply initial middleware
