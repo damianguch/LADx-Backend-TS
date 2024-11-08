@@ -111,7 +111,7 @@ app.use('/api/v1', router);
 app.use('/api/v1', authRouter);
 
 // Error handling
-app.use((err: Error, _req: Request, res: Response, _next: NextFunction) => {
+app.use((err: Error, req: Request, res: Response, next: NextFunction) => {
   logger.error('Server error:', err);
   res.status(500).json({
     status: 'E00',
@@ -142,7 +142,7 @@ const host: string = '0.0.0.0';
 
 // Start server
 server.listen({ port: PORT, host }, () => {
-  logger.info(`HTTPS Server running on port ${PORT}...`, {
+  logger.info(`Server running on port ${PORT}...`, {
     timestamp: new Date().toISOString()
   });
 });
