@@ -134,23 +134,22 @@ app.use((err: Error, _req: Request, res: Response, _next: NextFunction) => {
 const PORT = process.env.PORT || 1337;
 const server = http.createServer(app);
 
-// Graceful shutdown
-process.on('SIGTERM', () => {
-  logger.info('SIGTERM received. Shutting down gracefully...');
-  server.close(async () => {
-    try {
-      await redisClient.quit();
-      await db.close();
-      logger.info('Server shutdown complete');
-      process.exit(0);
-    } catch (err) {
-      logger.error('Error during shutdown:', err);
-      process.exit(1);
-    }
-  });
+process.on('SIGINT', async () => {
+  try {
+    await db.close();
+    console.log('Connection to db closed by application termination');
+    process.exit(0);
+  } catch (error) {
+    console.error('Error closing MongoDB connection:', error);
+    process.exit(1);
+  }
 });
 
+const host: string = '0.0.0.0';
+
 // Start server
-server.listen(PORT, () => {
-  logger.info(`Server running on port ${PORT} in ${process.env.NODE_ENV} mode`);
+server.listen({ port: PORT, host }, () => {
+  logger.info(`HTTPS Server running on port ${PORT}...`, {
+    timestamp: new Date().toISOString()
+  });
 });
