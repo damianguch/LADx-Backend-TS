@@ -28,10 +28,7 @@ const corsOptions = {
     'X-Requested-With',
     'Accept',
     'Origin'
-  ], 
-    exposedHeaders: ['set-cookie'],
-    preflightContinue: false,
-    optionsSuccessStatus: 204
+  ]
 };
 
 // Initialize Redis client on server startup
