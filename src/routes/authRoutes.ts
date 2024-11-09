@@ -18,7 +18,7 @@ authRouter.post('/verify-otp', verifyOTP);
 authRouter.post('/resend-otp', resendOTP);
 
 //Use multer to handle multipart/form-data requests.
-authRouter.post('/login', verifyTokenFromCookie, Login);
+authRouter.post('/login', Login);
 
 authRouter.post('/logout', Logout);
 authRouter.post('/forgot-password', ForgotPassword);
