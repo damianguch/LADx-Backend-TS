@@ -8,6 +8,7 @@ import {
 import { ForgotPassword, ResetPassword } from '../controllers/forgotPassword';
 import { validateUserSignup } from '../schema/user.schema';
 import { Router } from 'express';
+import { verifyTokenFromCookie } from '../utils/jwt';
 
 const authRouter = Router();
 
@@ -21,5 +22,7 @@ authRouter.post('/login', Login);
 authRouter.post('/logout', Logout);
 authRouter.post('/forgot-password', ForgotPassword);
 authRouter.put('/reset-password', ResetPassword);
+
+authRouter.get('/check-auth', verifyTokenFromCookie);
 
 export { authRouter };
