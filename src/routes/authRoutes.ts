@@ -8,7 +8,6 @@ import {
 import { ForgotPassword, ResetPassword } from '../controllers/forgotPassword';
 import { validateUserSignup } from '../schema/user.schema';
 import { Router } from 'express';
-import { verifyTokenFromCookie } from '../utils/jwt';
 
 const authRouter = Router();
 
