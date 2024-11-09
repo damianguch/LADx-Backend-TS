@@ -3,8 +3,7 @@ import {
   SignUp,
   verifyOTP,
   Logout,
-  resendOTP,
-  isAuthenticated
+  resendOTP
 } from '../controllers/auth';
 import { ForgotPassword, ResetPassword } from '../controllers/forgotPassword';
 import { validateUserSignup } from '../schema/user.schema';
@@ -23,7 +22,5 @@ authRouter.post('/login', Login);
 authRouter.post('/logout', Logout);
 authRouter.post('/forgot-password', ForgotPassword);
 authRouter.put('/reset-password', ResetPassword);
-
-authRouter.get('/check-auth', verifyTokenFromCookie, isAuthenticated);
 
 export { authRouter };

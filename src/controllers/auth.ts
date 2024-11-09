@@ -365,31 +365,3 @@ export const Logout = async (req: Request, res: Response): Promise<void> => {
     });
   }
 };
-
-// Backend endpoint to check if user is authenticated
-export const isAuthenticated = async (req: Request, res: Response) => {
-  const userId = req.id;
-
-  try {
-    if (userId) {
-      // Function to validate the session or JWT
-      res.status(200).json({
-        status: '00',
-        success: true,
-        isAuthenticated: true
-      });
-    } else {
-      res.json({
-        status: 'E00',
-        success: false,
-        isAuthenticated: false
-      });
-    }
-  } catch (err: any) {
-    res.status(500).json({
-      status: 'E00',
-      success: false,
-      message: `Authentication Error: ${err.message}`
-    });
-  }
-};
