@@ -19,7 +19,7 @@ const app: Application = express();
 
 // CORS Options definition
 const corsOptions = {
-  origin: 'http://localhost:5173',
+  origin: 'https://ladx-7h6y.vercel.app',
   credentials: true,
   methods: ['GET', 'POST', 'PUT', 'PATCH', 'DELETE'],
   allowedHeaders: [
