@@ -263,8 +263,8 @@ const Login = (req, res) => __awaiter(void 0, void 0, void 0, function* () {
         res
             .cookie('token', token, {
             httpOnly: true,
-            secure: process.env.NODE_ENV === 'production',
-            sameSite: 'strict',
+            secure: process.env.NODE_ENV === 'production' ? true : false,
+            sameSite: 'none',
             maxAge: 24 * 60 * 60 * 1000
         })
             .json({

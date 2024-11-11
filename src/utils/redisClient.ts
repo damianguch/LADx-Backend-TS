@@ -10,8 +10,8 @@ redisClient.on('connect', () =>
     timestamp: new Date().toISOString()
   })
 );
-redisClient.on('error', (error) =>
-  logger.error(`Redis connection error, ${error.message}`, {
+redisClient.on('error', (err: any) =>
+  logger.error(`Redis connection error, ${err.message}`, {
     timestamp: new Date().toISOString()
   })
 );

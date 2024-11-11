@@ -54,7 +54,7 @@ const authRoutes_1 = require("./routes/authRoutes");
 const app = (0, express_1.default)();
 // CORS Options definition
 const corsOptions = {
-    origin: 'https://ladx-frontend.netlify.app',
+    origin: 'http://localhost:5173',
     credentials: true,
     methods: ['GET', 'POST', 'PUT', 'PATCH', 'DELETE'],
     allowedHeaders: [
